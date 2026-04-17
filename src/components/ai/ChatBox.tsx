@@ -411,7 +411,7 @@ export default function ChatBox() {
             <button
               type="submit"
               disabled={isLoading || (!input.trim() && isOpen) || showLeadModal}
-              className={`bg-primary text-white w-10 h-10 md:w-11 md:h-11 p-0 rounded-xl hover:scale-105 active:scale-95 transition-all shadow-md shadow-primary/20 mr-3 md:mr-1 flex items-center justify-center shrink-0 ${(!input.trim() && isOpen && !isLoading) ? 'opacity-50 scale-100' : 'opacity-100'}`}
+              className={`bg-primary text-white w-10 h-10 md:w-11 md:h-11 p-0 rounded-xl hover:scale-105 active:scale-95 transition-all shadow-md shadow-primary/20 mr-5 md:mr-1 flex items-center justify-center shrink-0 ${(!input.trim() && isOpen && !isLoading) ? 'opacity-50 scale-100' : 'opacity-100'}`}
               onClick={(e) => {
                 if(!isOpen) {
                   e.preventDefault();
