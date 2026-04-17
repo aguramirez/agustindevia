@@ -24,8 +24,7 @@
   --container-xs: 20rem;
 }
 
-:root {
-}
+/* Se eliminó el :root {} vacío para evitar advertencias en tu editor */
 
 body {
   scroll-padding-top: 80px;

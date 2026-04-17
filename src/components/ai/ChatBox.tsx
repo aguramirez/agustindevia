@@ -44,6 +44,18 @@ export default function ChatBox() {
     scrollToBottom();
   }, [messages, isOpen, isLoading]);
 
+  // Bloquear scroll de la web (fondo) al abrir el chat
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
   useEffect(() => {
     if (localStorage.getItem("hasSubmittedData") === "true") {
       setHasSubmittedData(true);
@@ -112,6 +124,15 @@ export default function ChatBox() {
       formParams.append("nombre", leadName);
       formParams.append("email", leadEmail);
       formParams.append("telefono", leadPhone);
+
+      // Extraer y limpiar el historial de la conversación a formato texto
+      const historialChat = messages.map(m => {
+        const emisor = m.role === "user" ? "👤 Cliente" : "🤖 IA";
+        let texto = m.parts[0].text;
+        texto = texto.replace(/\[BUTTON: Ver Proyectos\]/g, '').replace(/\[BUTTON: Hablar por WhatsApp\]/g, '').trim();
+        return `${emisor}: ${texto}`;
+      }).join("\n\n");
+      formParams.append("historial", historialChat);
       
       const scriptUrl = process.env.NEXT_PUBLIC_GOOGLE_SCRIPT_URL;
       if (scriptUrl) {
@@ -282,79 +303,76 @@ export default function ChatBox() {
                 </div>
               )}
               <div ref={messagesEndRef} />
-              
-                {/* Modal Prompt Explorer */}
-              {showPromptModal && (
-                <div className="absolute inset-0 z-[70] bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm flex flex-col p-4 animate-in fade-in zoom-in-95">
-                  <div className="bg-white dark:bg-white/5 border border-[#d9cdea] dark:border-white/10 rounded-2xl p-5 shadow-xl flex-1 flex flex-col relative overflow-hidden">
-                    <button 
-                      onClick={() => setShowPromptModal(false)}
-                      className="absolute top-3 right-3 text-text-dark/50 dark:text-text-light/50 hover:text-primary transition-colors z-10"
-                    >
-                      <span className="material-symbols-outlined">close</span>
-                    </button>
-                    
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="material-symbols-outlined text-primary">terminal</span>
-                      <h4 className="font-bold text-text-dark dark:text-text-light text-sm">System Prompt (Under the hood)</h4>
-                    </div>
-                    
-                    <p className="text-xs text-text-dark/70 dark:text-text-light/70 mb-3 text-balance leading-relaxed">
-                      Así es como programé el comportamiento de esta IA. Imagina definir tus propias reglas, productos y tono de voz para la IA de tu negocio:
-                    </p>
-                    
-                    <div className="flex-1 bg-[#1e1e1e] rounded-xl p-4 border border-[#d9cdea] dark:border-white/10 overflow-y-auto w-full relative shadow-inner">
-                       <code className="text-[11px] md:text-xs text-[#a5d6ff] whitespace-pre-wrap font-mono block leading-relaxed">
-                         {SYSTEM_PROMPT}
-                       </code>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-            {/* Modal/Popup Paywall superpuesto en los mensajes */}
-            {showLeadModal && (
-              <div className="absolute inset-0 z-10 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm flex flex-col p-4 animate-in fade-in zoom-in-95">
-                  <div className="bg-white dark:bg-white/5 border border-[#d9cdea] dark:border-white/10 rounded-2xl p-5 shadow-xl flex-1 flex flex-col justify-center">
-                    <div className="text-center mb-4">
-                      <span className="material-symbols-outlined text-4xl text-primary mb-2">auto_awesome</span>
-                      <h4 className="font-bold text-text-dark dark:text-text-light">¡No pierdas tu conversación!</h4>
-                      <p className="text-xs text-text-dark/60 dark:text-text-light/60 mt-1">
-                        Ingresa tus datos para continuar chateando gratis con nuestro experto IA y recibir asesoramiento.
-                      </p>
-                    </div>
-                    
-                    <form onSubmit={handleLeadSubmit} className="flex flex-col gap-3">
-                      <input required type="text" placeholder="Tu Nombre" value={leadName} onChange={e => setLeadName(e.target.value)}
-                             className="bg-background-light dark:bg-white/5 border border-[#d9cdea] dark:border-white/10 rounded-xl px-3 py-2 text-sm text-text-dark dark:text-text-light focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" />
-                      <input required type="email" placeholder="Tu Email" value={leadEmail} onChange={e => setLeadEmail(e.target.value)}
-                             className="bg-background-light dark:bg-white/5 border border-[#d9cdea] dark:border-white/10 rounded-xl px-3 py-2 text-sm text-text-dark dark:text-text-light focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" />
-                      <input required type="tel" placeholder="Tu Teléfono (WhatsApp)" value={leadPhone} onChange={e => setLeadPhone(e.target.value)}
-                             className="bg-background-light dark:bg-white/5 border border-[#d9cdea] dark:border-white/10 rounded-xl px-3 py-2 text-sm text-text-dark dark:text-text-light focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" />
-                      
-                      <button type="submit" disabled={leadLoading} className="mt-2 bg-primary text-white font-bold py-2.5 rounded-xl shadow-md hover:bg-primary/90 transition-colors flex items-center justify-center gap-2">
-                        {leadLoading ? (
-                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                        ) : (
-                          <>Continuar <span className="material-symbols-outlined text-sm">arrow_forward</span></>
-                        )}
-                      </button>
-                      
-                      <button type="button" onClick={() => setShowLeadModal(false)} className="text-xs text-text-dark/40 dark:text-text-light/40 hover:underline">
-                        Ahora no, gracias
-                      </button>
-                    </form>
-                  </div>
-                </div>
-              )}
-            </div>
-            
-             {/* <div className="bg-white dark:bg-background-dark py-1.5 border-t border-[#d9cdea] dark:border-white/10 shrink-0 flex justify-center w-full">
-                 <p className="text-[10px] text-text-dark/40 dark:text-text-light/40 font-medium whitespace-nowrap">IA puede generar información inexacta.</p>
-            </div> */}
+            </div> {/* Fin de Messages Area */}
               </div>
             </div>
           </div>
+
+          {/* Modales trasladados FUERA del div con scroll para solucionar bug de visualización */}
+          {/* Modal Prompt Explorer */}
+          {showPromptModal && (
+            <div className="absolute inset-0 z-[70] bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm flex flex-col p-4 animate-in fade-in zoom-in-95">
+              <div className="bg-white dark:bg-white/5 border border-[#d9cdea] dark:border-white/10 rounded-2xl p-5 shadow-xl flex-1 flex flex-col relative overflow-hidden">
+                <button 
+                  onClick={() => setShowPromptModal(false)}
+                  className="absolute top-3 right-3 text-text-dark/50 dark:text-text-light/50 hover:text-primary transition-colors z-10 p-2"
+                >
+                  <span className="material-symbols-outlined">close</span>
+                </button>
+                
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="material-symbols-outlined text-primary">terminal</span>
+                  <h4 className="font-bold text-text-dark dark:text-text-light text-sm">System Prompt (Under the hood)</h4>
+                </div>
+                
+                <p className="text-xs text-text-dark/70 dark:text-text-light/70 mb-3 text-balance leading-relaxed pr-6">
+                  Así es como programé el comportamiento de esta IA. Imagina definir tus propias reglas, productos y tono de voz para la IA de tu negocio:
+                </p>
+                
+                <div className="flex-1 bg-[#1e1e1e] rounded-xl p-4 border border-[#d9cdea] dark:border-white/10 overflow-y-auto w-full relative shadow-inner">
+                   <code className="text-[11px] md:text-xs text-[#a5d6ff] whitespace-pre-wrap font-mono block leading-relaxed">
+                     {SYSTEM_PROMPT}
+                   </code>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Modal/Popup Paywall superpuesto */}
+          {showLeadModal && (
+            <div className="absolute inset-0 z-[65] bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm flex flex-col p-4 animate-in fade-in zoom-in-95">
+              <div className="bg-white dark:bg-white/5 border border-[#d9cdea] dark:border-white/10 rounded-2xl p-5 shadow-xl flex-1 flex flex-col justify-center">
+                <div className="text-center mb-4">
+                  <span className="material-symbols-outlined text-4xl text-primary mb-2">auto_awesome</span>
+                  <h4 className="font-bold text-text-dark dark:text-text-light">¡No pierdas tu conversación!</h4>
+                  <p className="text-xs text-text-dark/60 dark:text-text-light/60 mt-1">
+                    Ingresa tus datos para continuar chateando gratis con nuestro experto IA y recibir asesoramiento.
+                  </p>
+                </div>
+                
+                <form onSubmit={handleLeadSubmit} className="flex flex-col gap-3">
+                  <input required type="text" placeholder="Tu Nombre" value={leadName} onChange={e => setLeadName(e.target.value)}
+                         className="bg-background-light dark:bg-white/5 border border-[#d9cdea] dark:border-white/10 rounded-xl px-3 py-2 text-sm text-text-dark dark:text-text-light focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" />
+                  <input required type="email" placeholder="Tu Email" value={leadEmail} onChange={e => setLeadEmail(e.target.value)}
+                         className="bg-background-light dark:bg-white/5 border border-[#d9cdea] dark:border-white/10 rounded-xl px-3 py-2 text-sm text-text-dark dark:text-text-light focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" />
+                  <input required type="tel" placeholder="Tu Teléfono (WhatsApp)" value={leadPhone} onChange={e => setLeadPhone(e.target.value)}
+                         className="bg-background-light dark:bg-white/5 border border-[#d9cdea] dark:border-white/10 rounded-xl px-3 py-2 text-sm text-text-dark dark:text-text-light focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" />
+                  
+                  <button type="submit" disabled={leadLoading} className="mt-2 bg-primary text-white font-bold py-2.5 rounded-xl shadow-md hover:bg-primary/90 transition-colors flex items-center justify-center gap-2">
+                    {leadLoading ? (
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    ) : (
+                      <>Continuar <span className="material-symbols-outlined text-sm">arrow_forward</span></>
+                    )}
+                  </button>
+                  
+                  <button type="button" onClick={() => setShowLeadModal(false)} className="text-xs text-text-dark/40 dark:text-text-light/40 hover:underline">
+                    Ahora no, gracias
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
 
           {/* --- BOTTOM PORTION: Always visible Input --- */}
           <form 
@@ -378,7 +396,7 @@ export default function ChatBox() {
             <button
               type="submit"
               disabled={isLoading || (!input.trim() && isOpen) || showLeadModal}
-              className={`bg-primary text-white p-3 rounded-xl hover:scale-105 active:scale-95 transition-all shadow-md shadow-primary/20 mr-1 flex items-center justify-center shrink-0 ${(!input.trim() && isOpen && !isLoading) ? 'opacity-50 scale-100' : 'opacity-100'}`}
+              className={`bg-primary text-white w-10 h-10 md:w-11 md:h-11 p-0 rounded-xl hover:scale-105 active:scale-95 transition-all shadow-md shadow-primary/20 mr-1 flex items-center justify-center shrink-0 ${(!input.trim() && isOpen && !isLoading) ? 'opacity-50 scale-100' : 'opacity-100'}`}
               onClick={(e) => {
                 if(!isOpen) {
                   e.preventDefault();
