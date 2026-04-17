@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import ChatBox from "@/components/ai/ChatBox";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -66,12 +67,13 @@ export default function Home() {
                 <a className="text-text-dark dark:text-text-light text-sm font-medium hover:text-primary transition-colors" href="#proceso">Cómo trabajo</a>
                 <a className="text-text-dark dark:text-text-light text-sm font-medium hover:text-primary transition-colors" href="#contacto">Contacto</a>
               </nav>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-1 md:gap-4">
+                <ThemeToggle />
                 <a href="https://wa.me/5493885056441" target="_blank" rel="noreferrer" className="hidden md:flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-text-light text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors">
                   <span className="truncate">Solicitar Demo</span>
                 </a>
-                <button onClick={() => setMobileMenuOpen(true)} className="md:hidden text-text-dark dark:text-text-light focus:outline-none" aria-label="Abrir menú">
-                  <span className="material-symbols-outlined">menu</span>
+                <button onClick={() => setMobileMenuOpen(true)} className="md:hidden p-2 text-text-dark dark:text-text-light focus:outline-none flex items-center justify-center" aria-label="Abrir menú">
+                  <span className="material-symbols-outlined text-3xl">menu</span>
                 </button>
               </div>
             </div>

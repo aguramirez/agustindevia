@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={`light scroll-smooth ${inter.variable}`} style={{ scrollPaddingTop: "80px" }}>
+    <html lang="es" className={`scroll-smooth ${inter.variable}`} style={{ scrollPaddingTop: "80px" }}>
       <head>
         <link
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"

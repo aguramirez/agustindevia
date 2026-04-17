@@ -44,17 +44,28 @@ export default function ChatBox() {
     scrollToBottom();
   }, [messages, isOpen, isLoading]);
 
-  // Bloquear scroll de la web (fondo) al abrir el chat
+  // Bloquear scroll de la web y registrar estado en historial (Botón atrás de Android)
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
+      window.history.pushState({ chatOpen: true }, "");
     } else {
       document.body.style.overflow = "";
     }
-    return () => {
-      document.body.style.overflow = "";
-    };
+    return () => { document.body.style.overflow = ""; };
   }, [isOpen]);
+
+  // Interceptar la tecla física "Atrás" de los celulares para cerrar el ChatBox sin salir de la web
+  useEffect(() => {
+    const handlePopState = (e: PopStateEvent) => {
+      // Si el nuevo estado ya no dice que el chat está abierto, lo cerramos en la UI
+      if (!e.state?.chatOpen) {
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
 
   useEffect(() => {
     if (localStorage.getItem("hasSubmittedData") === "true") {
@@ -204,7 +215,11 @@ export default function ChatBox() {
                    <span className="inline sm:hidden">Instrucciones IA</span>
                  </button>
                  <button 
-                  onClick={(e) => { e.stopPropagation(); setIsOpen(false); }} 
+                  onClick={(e) => { 
+                    e.stopPropagation(); 
+                    if (window.history.state?.chatOpen) window.history.back(); 
+                    else setIsOpen(false); 
+                  }} 
                   className="text-white hover:text-white/70 transition-colors flex items-center justify-center p-1" 
                   aria-label="Cerrar chat"
                  >
@@ -263,7 +278,7 @@ export default function ChatBox() {
                         {hasProjectsBtn && (
                            <button 
                              onClick={() => {
-                               setIsOpen(false);
+                               if (window.history.state?.chatOpen) window.history.back(); else setIsOpen(false);
                                setTimeout(() => {
                                  document.getElementById('apps')?.scrollIntoView({ behavior: 'smooth' });
                                }, 400); // Darle tiempo al chat a cerrarse suavemente antes del scroll
@@ -322,7 +337,7 @@ export default function ChatBox() {
                 
                 <div className="flex items-center gap-2 mb-3">
                   <span className="material-symbols-outlined text-primary">terminal</span>
-                  <h4 className="font-bold text-text-dark dark:text-text-light text-sm">System Prompt (Under the hood)</h4>
+                  <h4 className="font-bold text-text-dark dark:text-text-light text-sm">System Prompt</h4>
                 </div>
                 
                 <p className="text-xs text-text-dark/70 dark:text-text-light/70 mb-3 text-balance leading-relaxed pr-6">
@@ -396,7 +411,7 @@ export default function ChatBox() {
             <button
               type="submit"
               disabled={isLoading || (!input.trim() && isOpen) || showLeadModal}
-              className={`bg-primary text-white w-10 h-10 md:w-11 md:h-11 p-0 rounded-xl hover:scale-105 active:scale-95 transition-all shadow-md shadow-primary/20 mr-1 flex items-center justify-center shrink-0 ${(!input.trim() && isOpen && !isLoading) ? 'opacity-50 scale-100' : 'opacity-100'}`}
+              className={`bg-primary text-white w-10 h-10 md:w-11 md:h-11 p-0 rounded-xl hover:scale-105 active:scale-95 transition-all shadow-md shadow-primary/20 mr-3 md:mr-1 flex items-center justify-center shrink-0 ${(!input.trim() && isOpen && !isLoading) ? 'opacity-50 scale-100' : 'opacity-100'}`}
               onClick={(e) => {
                 if(!isOpen) {
                   e.preventDefault();
