@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html class="light scroll-smooth" lang="es" style="scroll-padding-top: 80px;">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>AgustinDev</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link href="https://fonts.googleapis.com" rel="preconnect" />
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <link href="styles.css" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#4b00ad",
+            "background-light": "#f7f5f8",
+            "background-dark": "#180f23",
+            "text-dark": "#130c1d",
+            "text-light": "#faf8fc",
+          },
+          fontFamily: {
+            "display": ["Inter", "sans-serif"]
+          },
+          borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+        },
+      },
+    }
+  </script>
+  <style>
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s ease-out;
+    }
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .tech-pill {
+      padding: 0.25rem 0.75rem;
+      background-color: rgba(255, 255, 255, 0.5);
+      border: 1px solid #d9cdea;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+      backdrop-filter: blur(4px);
+      transition: all 0.3s ease;
+    }
+    .dark .tech-pill {
+      background-color: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+    .tech-pill:hover {
+      border-color: #4b00ad;
+    }
+
+    /* Infinite Carousel */
+    @keyframes scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .animate-infinite-scroll {
+      animation: scroll 30s linear infinite;
+    }
+    .tech-logo {
+      filter: grayscale(1) blur(0) opacity(0.4);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      width: 40px;
+      height: 40px;
+      flex-shrink: 0;
+    }
+    .tech-logo:hover {
+      filter: grayscale(0) blur(0) opacity(1);
+      transform: scale(1.2);
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+
+<body
+  class="bg-background-light dark:bg-background-dark font-display text-text-dark dark:text-text-light antialiased overflow-x-hidden">
+  <div class="relative flex h-auto w-full flex-col group/design-root">
+    <!-- TopNavBar -->
+    <header
+      class="sticky top-0 z-50 w-full border-b border-solid border-[#ece6f4] dark:border-[#2d1b42] bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm">
+      <div class="layout-container flex h-full grow flex-col">
+        <div class="px-4 md:px-10 lg:px-40 flex justify-center">
+          <div class="layout-content-container flex w-full max-w-[960px] items-center justify-between py-4">
+            <div class="flex items-center gap-4 text-text-dark dark:text-text-light">
+              <div class="size-7 text-primary">
+                <svg viewBox="0 0 155 89" fill="none" xmlns="http://www.w3.org/2000/svg"
+                  class="w-full h-full text-current">
+                  <path d="M77.4316 49.4968L70.7829 49.4969L55.2691 2.21685" stroke="currentColor"
+                    stroke-width="4.43251" stroke-linecap="round" />
+                  <path d="M3.55859 54.6685L55.2724 2.21657" stroke="currentColor" stroke-width="4.43251"
+                    stroke-linecap="round" />
+                  <line x1="2.21625" y1="-2.21625" x2="45.1255" y2="-2.21625"
+                    transform="matrix(-0.709987 -0.704215 -0.704215 0.709987 33.6113 88.6511)" stroke="currentColor"
+                    stroke-width="4.43251" stroke-linecap="round" />
+                  <line x1="2.21625" y1="-2.21625" x2="26.5109" y2="-2.21625"
+                    transform="matrix(-0.710271 0.703929 0.703929 0.710271 54.0137 68.429)" stroke="currentColor"
+                    stroke-width="4.43251" stroke-linecap="round" />
+                  <line x1="2.21625" y1="-2.21625" x2="15.5114" y2="-2.21625"
+                    transform="matrix(0.721056 0.692877 0.692877 -0.721056 41.2324 56.146)" stroke="currentColor"
+                    stroke-width="4.43251" stroke-linecap="round" />
+                  <line x1="2.21625" y1="-2.21625" x2="8.31857" y2="-2.21625"
+                    transform="matrix(0.723435 -0.690393 -0.690393 -0.723435 33.6113 63.4189)" stroke="currentColor"
+                    stroke-width="4.43251" stroke-linecap="round" />
+                  <path d="M40.4961 67.2271L36.7316 63.7292" stroke="currentColor" stroke-width="4.43251"
+                    stroke-linecap="round" />
+                  <path d="M77.4316 49.4971L84.0804 49.4972L99.5942 2.2171" stroke="currentColor" stroke-width="4.43251"
+                    stroke-linecap="round" />
+                  <path d="M151.305 54.6687L99.5909 2.21681" stroke="currentColor" stroke-width="4.43251"
+                    stroke-linecap="round" />
+                  <line x1="121.263" y1="85.5169" x2="151.728" y2="55.2996" stroke="currentColor" stroke-width="4.43251"
+                    stroke-linecap="round" />
+                  <line x1="103.982" y1="68.4151" x2="121.238" y2="85.5168" stroke="currentColor" stroke-width="4.43251"
+                    stroke-linecap="round" />
+                  <line x1="113.566" y1="59.2799" x2="103.98" y2="68.4918" stroke="currentColor" stroke-width="4.43251"
+                    stroke-linecap="round" />
+                  <line x1="118.117" y1="63.4924" x2="113.702" y2="59.2794" stroke="currentColor" stroke-width="4.43251"
+                    stroke-linecap="round" />
+                  <path d="M114.367 67.2271L118.132 63.7292" stroke="currentColor" stroke-width="4.43251"
+                    stroke-linecap="round" />
+                </svg>
+
+              </div>
+              <h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">AgustinDev</h2>
+            </div>
+            <nav class="hidden md:flex items-center gap-9">
+              <a data-i18n="nav_services"
+                class="text-text-dark dark:text-text-light text-sm font-medium hover:text-primary transition-colors"
+                href="#servicios">Servicios</a>
+              <a data-i18n="nav_work"
+                class="text-text-dark dark:text-text-light text-sm font-medium hover:text-primary transition-colors"
+                href="#apps">Apps</a>
+              <a data-i18n="nav_process"
+                class="text-text-dark dark:text-text-light text-sm font-medium hover:text-primary transition-colors"
+                href="#proceso">Cómo trabajo</a>
+              <a data-i18n="nav_contact"
+                class="text-text-dark dark:text-text-light text-sm font-medium hover:text-primary transition-colors"
+                href="#contacto">Contacto</a>
+            </nav>
+            <div class="flex items-center gap-4">
+              <a href="https://wa.me/5493885056441" target="_blank"
+                class="hidden md:flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-text-light text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors">
+                <span data-i18n="nav_demo" class="truncate">Solicitar Demo</span>
+              </a>
+
+              <!-- Language Switcher -->
+              <button onclick="toggleLanguage()"
+                class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer"
+                aria-label="Cambiar Idioma">
+                <span class="material-symbols-outlined text-text-dark dark:text-text-light">language</span>
+                <span id="lang-indicator" class="text-xs font-bold ml-1 text-primary">ES</span>
+              </button>
+
+              <!-- Mobile Menu Icon -->
+              <button id="mobileMenuBtn" class="md:hidden text-text-dark dark:text-text-light focus:outline-none" aria-label="Abrir menú">
+                <span class="material-symbols-outlined">menu</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <!-- HeroSection -->
+    <div id="hero" class="layout-container flex grow flex-col">
+      <div class="px-4 md:px-10 lg:px-40 flex flex-1 justify-center py-5">
+        <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+          <div class="@container">
+            <div class="flex flex-col gap-6 px-4 py-10 md:gap-12 md:flex-row items-center">
+              <div class="flex flex-col gap-6 md:w-1/2 md:justify-center">
+                <div class="flex flex-col gap-4 text-left">
+                  <h1 data-i18n="hero_title"
+                    class="text-text-dark dark:text-text-light text-4xl font-black leading-tight tracking-[-0.033em] md:text-5xl lg:text-6xl">
+                    Una App para tu empresa
+                  </h1>
+                  <h2 data-i18n="hero_subtitle"
+                    class="text-text-dark/80 dark:text-text-light/80 text-base font-normal leading-relaxed md:text-lg">
+                    Haz crecer tu negocio, no tus horas de trabajo
+                  </h2>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-4">
+                  <a href="https://wa.me/5493885056441" target="_blank"
+                    class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-primary text-text-light text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors shadow-lg shadow-primary/30">
+                    <span data-i18n="hero_demo" class="truncate">Solicitar Demo</span>
+                  </a>
+                  <a href="#apps"
+                    class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-white dark:bg-white/10 border border-[#d9cdea] dark:border-white/20 text-primary dark:text-text-light text-base font-bold leading-normal tracking-[0.015em] hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                    <span data-i18n="hero_view_work" class="truncate">Ver Nuestros Proyectos</span>
+                  </a>
+                </div>
+              </div>
+              <div class="reveal w-full md:w-1/2 bg-center bg-no-repeat aspect-[4/3] bg-cover rounded-xl shadow-2xl"
+                data-alt="Modern abstract software interface visualization with blue and purple gradients"
+                style='background-image: url("assets/working.png");'>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Tech Stack Carousel -->
+    <div class="reveal w-full border-y border-[#ece6f4] dark:border-white/5 bg-white/30 dark:bg-white/5 backdrop-blur-md overflow-hidden py-8">
+      <div class="flex items-center">
+        <!-- Masking gradient for smooth edges -->
+        <div class="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-background-light dark:from-background-dark to-transparent z-10 pointer-events-none"></div>
+        <div class="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-background-light dark:from-background-dark to-transparent z-10 pointer-events-none"></div>
+
+        <div class="flex animate-infinite-scroll gap-16 items-center px-8">
+          <!-- First set of logos -->
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JavaScript" title="JavaScript" class="tech-logo" />
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" alt="TypeScript" title="TypeScript" class="tech-logo" />
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React" title="React" class="tech-logo" />
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/angularjs/angularjs-original.svg" alt="Angular" title="Angular" class="tech-logo" />
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" alt="Next.js" title="Next.js" class="tech-logo dark:invert" />
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="Node.js" title="Node.js" class="tech-logo" />
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" alt="Java" title="Java" class="tech-logo" />
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" alt="Spring Boot" title="Spring Boot" class="tech-logo" />
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" alt="MySQL" title="MySQL" class="tech-logo" />
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" alt="PostgreSQL" title="PostgreSQL" class="tech-logo" />
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" alt="MongoDB" title="MongoDB" class="tech-logo" />
+          
+          <!-- Duplicated set for seamless loop -->
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JavaScript" title="JavaScript" class="tech-logo" />
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" alt="TypeScript" title="TypeScript" class="tech-logo" />
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React" title="React" class="tech-logo" />
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/angularjs/angularjs-original.svg" alt="Angular" title="Angular" class="tech-logo" />
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" alt="Next.js" title="Next.js" class="tech-logo dark:invert" />
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="Node.js" title="Node.js" class="tech-logo" />
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" alt="Java" title="Java" class="tech-logo" />
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" alt="Spring Boot" title="Spring Boot" class="tech-logo" />
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" alt="MySQL" title="MySQL" class="tech-logo" />
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" alt="PostgreSQL" title="PostgreSQL" class="tech-logo" />
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" alt="MongoDB" title="MongoDB" class="tech-logo" />
+        </div>
+      </div>
+    </div>
+    <!-- FeatureSection -->
+    <div id="servicios" class="reveal layout-container flex grow flex-col bg-white dark:bg-white/5 py-10">
+      <div class="px-4 md:px-10 lg:px-40 flex flex-1 justify-center">
+        <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+          <div class="flex flex-col gap-10 px-4 py-10 @container">
+            <div class="flex flex-col gap-4 items-center text-center">
+              <h1 data-i18n="features_title"
+                class="text-text-dark dark:text-text-light tracking-tight text-3xl font-bold leading-tight md:text-4xl max-w-[720px]">
+                Compromiso
+              </h1>
+              <p data-i18n="features_subtitle"
+                class="text-text-dark/70 dark:text-text-light/70 text-base font-normal leading-normal max-w-[720px]">
+                La optimización de procesos internos, la mejora de la experiencia del cliente y la digitalización de
+                flujos de trabajo tradicionales
+              </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <!-- Card 1 -->
+              <div
+                class="group flex flex-1 gap-4 rounded-xl border border-[#d9cdea] dark:border-white/10 bg-background-light dark:bg-background-dark p-6 flex-col hover:shadow-lg hover:border-primary/50 transition-all duration-300">
+                <div
+                  class="text-primary bg-primary/10 w-12 h-12 rounded-lg flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
+                  <span class="material-symbols-outlined text-3xl">code</span>
+                </div>
+                <div class="flex flex-col gap-2">
+                  <h2 data-i18n="feat_web_title"
+                    class="text-text-dark dark:text-text-light text-lg font-bold leading-tight">Desarrollo Web a Medida
+                  </h2>
+                  <p data-i18n="feat_web_desc"
+                    class="text-text-dark/60 dark:text-text-light/60 text-sm font-normal leading-relaxed">Aplicaciones
+                    web escalables, seguras y de alto rendimiento construidas desde cero utilizando frameworks modernos.
+                  </p>
+                </div>
+              </div>
+              <!-- Card 2 -->
+              <div
+                class="group flex flex-1 gap-4 rounded-xl border border-[#d9cdea] dark:border-white/10 bg-background-light dark:bg-background-dark p-6 flex-col hover:shadow-lg hover:border-primary/50 transition-all duration-300">
+                <div
+                  class="text-primary bg-primary/10 w-12 h-12 rounded-lg flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
+                  <span class="material-symbols-outlined text-3xl">smartphone</span>
+                </div>
+                <div class="flex flex-col gap-2">
+                  <h2 data-i18n="feat_mobile_title"
+                    class="text-text-dark dark:text-text-light text-lg font-bold leading-tight">Soluciones Móviles
+                  </h2>
+                  <p data-i18n="feat_mobile_desc"
+                    class="text-text-dark/60 dark:text-text-light/60 text-sm font-normal leading-relaxed">Experiencias
+                    responsive mobile y multiplataforma que atraen a los usuarios y amplían su alcance.</p>
+                </div>
+              </div>
+              <!-- Card 3 -->
+              <div
+                class="group flex flex-1 gap-4 rounded-xl border border-[#d9cdea] dark:border-white/10 bg-background-light dark:bg-background-dark p-6 flex-col hover:shadow-lg hover:border-primary/50 transition-all duration-300">
+                <div
+                  class="text-primary bg-primary/10 w-12 h-12 rounded-lg flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
+                  <span class="material-symbols-outlined text-3xl">update</span>
+                </div>
+                <div class="flex flex-col gap-2">
+                  <h2 data-i18n="feat_legacy_title"
+                    class="text-text-dark dark:text-text-light text-lg font-bold leading-tight">Modernización de Legado
+                  </h2>
+                  <p data-i18n="feat_legacy_desc"
+                    class="text-text-dark/60 dark:text-text-light/60 text-sm font-normal leading-relaxed">Transformación
+                    de sistemas obsoletos en herramientas digitales modernas y eficientes sin perder datos críticos.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- SectionHeader: Recent Projects -->
+    <div id="apps" class="reveal layout-container flex grow flex-col pt-10">
+      <div class="px-4 md:px-10 lg:px-40 flex flex-1 justify-center py-5">
+        <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+          <div class="flex justify-between items-end px-4 pb-6 pt-5">
+            <div>
+              <h2 data-i18n="projects_title"
+                class="text-text-dark dark:text-text-light text-3xl font-bold leading-tight tracking-[-0.015em]">
+                Proyectos Recientes</h2>
+              <p data-i18n="projects_subtitle" class="text-text-dark/60 dark:text-text-light/60 mt-2">Explora nuestro
+                portafolio de transformaciones digitales exitosas.</p>
+            </div>
+            <!-- <a class="hidden sm:flex items-center gap-1 text-primary font-bold hover:gap-2 transition-all" href="#">
+              View All <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            </a> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Detailed Projects Grid -->
+    <div class="reveal layout-container flex grow flex-col pb-16">
+      <div class="px-4 md:px-10 lg:px-40 flex flex-1 justify-center">
+        <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+          <div class="grid grid-cols-1 gap-12 px-4">
+            <!-- Project 1: FinTech Dashboard -->
+            <div
+              class="flex flex-col gap-8 bg-white dark:bg-white/5 rounded-2xl overflow-hidden border border-[#d9cdea] dark:border-white/10 shadow-sm">
+              <div class="grid grid-cols-1 lg:grid-cols-12 gap-0">
+                <div class="lg:col-span-7 h-full min-h-[300px] bg-center bg-no-repeat bg-cover"
+                  data-alt="FinTech Dashboard Preview" style='background-image: url("assets/recortadaapppuntos.png");'>
+                </div>
+                <div class="lg:col-span-5 p-8 flex flex-col justify-between gap-6">
+                  <div>
+                    <h3 data-i18n="project_fintech_title"
+                      class="text-2xl font-bold text-text-dark dark:text-text-light mb-2">Panel Fintech</h3>
+                    <p data-i18n="project_fintech_desc"
+                      class="text-text-dark/70 dark:text-text-light/70 text-sm leading-relaxed mb-4">
+                      Plataforma de visualización de datos
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                      <span
+                        class="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold uppercase rounded">Next.js</span>
+                      <span
+                        class="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold uppercase rounded">PostgreSQL</span>
+                      <span
+                        class="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold uppercase rounded">Vercel</span>
+                    </div>
+                  </div>
+                  <div
+                    class="flex items-center gap-4 p-4 bg-background-light dark:bg-black/20 rounded-xl border border-[#d9cdea] dark:border-white/10">
+                    <div class="size-20 bg-white p-1 rounded-lg shrink-0">
+                      <img alt="Scan for mobile demo" class="w-full h-full object-contain"
+                        src="assets/qr-pointsapp.png" />
+                    </div>
+                    <div>
+                      <p class="text-xs font-bold text-text-dark dark:text-text-light">App Demo</p>
+                      <p class="text-[10px] text-text-dark/60 dark:text-text-light/60">Escanea el QR en tu celu y proba
+                        la App!</p>
+                      <a href="https://pointsapp-five.vercel.app/" target="_blank"
+                        class="text-[10px] font-bold text-primary hover:underline cursor-pointer block mt-1">
+                        o Click aquí
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="px-8 pb-8">
+                <div class="aspect-video w-full rounded-xl overflow-hidden bg-black shadow-inner">
+                  <iframe
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen="" class="w-full h-full" frameborder="0"
+                    src="https://www.youtube.com/embed/6lerdQ_z1ek" title="App de puntos"></iframe>
+                </div>
+                <p
+                  class="mt-3 text-xs text-center text-text-dark/50 dark:text-text-light/50 font-medium tracking-wide italic">
+                  App de puntos &amp; Fidelizacion de clientes</p>
+              </div>
+            </div>
+            <!-- Project 2: Healthcare Portal -->
+            <div
+              class="flex flex-col gap-8 bg-white dark:bg-white/5 rounded-2xl overflow-hidden border border-[#d9cdea] dark:border-white/10 shadow-sm">
+              <div class="grid grid-cols-1 lg:grid-cols-12 gap-0">
+                <div class="lg:col-span-5 p-8 flex flex-col justify-between gap-6 order-2 lg:order-1">
+                  <div>
+                    <h3 class="text-2xl font-bold text-text-dark dark:text-text-light mb-2">OMEGAFIT</h3>
+                    <p class="text-text-dark/70 dark:text-text-light/70 text-sm leading-relaxed mb-4">
+                      Web app para el seguimiento de pacientes del kinesiologo Lic. Oscar Robles, permite gestionar
+                      pacientes, tratamientos, ejercicios, etc. Credencial de prueba: DNI 11111111
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                      <span
+                        class="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold uppercase rounded">Next.js</span>
+                      <span
+                        class="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold uppercase rounded">PostgreSQL</span>
+                      <span
+                        class="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold uppercase rounded">Vercel</span>
+                    </div>
+                  </div>
+                  <div
+                    class="flex items-center gap-4 p-4 bg-background-light dark:bg-black/20 rounded-xl border border-[#d9cdea] dark:border-white/10">
+                    <div class="size-20 bg-white p-1 rounded-lg shrink-0">
+                      <img alt="Scan for mobile demo" class="w-full h-full object-contain"
+                        src="assets/qr-omega.png" />
+                    </div>
+                    <div>
+                      <p class="text-xs font-bold text-text-dark dark:text-text-light">App Vendida</p>
+                      <p class="text-[10px] text-text-dark/60 dark:text-text-light/60">Escanea el QR en tu celu y proba
+                        la App!</p>
+                      <a href="https://omegafit.agustindev.com.ar" target="_blank"
+                        class="text-[10px] font-bold text-primary hover:underline cursor-pointer block mt-1">
+                        o Click aquí
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <div class="lg:col-span-7 h-full min-h-[300px] bg-center bg-no-repeat bg-cover order-1 lg:order-2"
+                  data-alt="Healthcare Portal Preview"
+                  style='background-image: url("assets/omegaimg.png");'>
+                </div>
+              </div>
+              <div class="px-8 pb-8">
+                <div class="aspect-video w-full rounded-xl overflow-hidden bg-black shadow-inner">
+                  <iframe
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen="" class="w-full h-full" frameborder="0"
+                    src="https://www.youtube.com/embed/OjyveSE8YDs" title="Healthcare Portal Tutorial"></iframe>
+                </div>
+                <p
+                  class="mt-3 text-xs text-center text-text-dark/50 dark:text-text-light/50 font-medium tracking-wide italic">
+                  Personal Trainer App Case Study</p>
+              </div>
+            </div>
+            <!-- Proyect 3 -->
+            <div
+              class="flex flex-col gap-8 bg-white dark:bg-white/5 rounded-2xl overflow-hidden border border-[#d9cdea] dark:border-white/10 shadow-sm">
+              <div class="grid grid-cols-1 lg:grid-cols-12 gap-0">
+                <div class="lg:col-span-7 h-full min-h-[300px] bg-center bg-no-repeat bg-cover"
+                  data-alt="Healthcare Portal Preview"
+                  style='background-image: url("assets/lumiereimg.png");'>
+                </div>
+                <div class="lg:col-span-5 p-8 flex flex-col justify-between gap-6">
+                  <div>
+                    <h3 class="text-2xl font-bold text-text-dark dark:text-text-light mb-2">Turnos Online</h3>
+                    <p class="text-text-dark/70 dark:text-text-light/70 text-sm leading-relaxed mb-4">
+                      Web app para que tus pacientes saquen turnos desde su celular, sin necesidad de llamar por teléfono o mandar whatsapp. Puede integrar
+                      mercado pago para cobrar adelantos de los turnos.
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                      <span
+                        class="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold uppercase rounded">Next.js</span>
+                      <span
+                        class="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold uppercase rounded">PostgreSQL</span>
+                      <span
+                        class="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold uppercase rounded">Vercel</span>
+                    </div>
+                  </div>
+                  <div
+                    class="flex items-center gap-4 p-4 bg-background-light dark:bg-black/20 rounded-xl border border-[#d9cdea] dark:border-white/10">
+                    <div class="size-20 bg-white p-1 rounded-lg shrink-0">
+                      <img alt="Scan for mobile demo" class="w-full h-full object-contain"
+                        src="assets/qr-lumiere.png" />
+                    </div>
+                    <div>
+                      <p class="text-xs font-bold text-text-dark dark:text-text-light">App Demo</p>
+                      <p class="text-[10px] text-text-dark/60 dark:text-text-light/60">Escanea el QR en tu celu y proba
+                        la App!</p>
+                      <a href="https://lumiere.agustindev.com.ar" target="_blank"
+                        class="text-[10px] font-bold text-primary hover:underline cursor-pointer block mt-1">
+                        o Click aquí
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="px-8 pb-8">
+                <div class="aspect-video w-full rounded-xl overflow-hidden bg-black shadow-inner">
+                  <iframe
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen="" class="w-full h-full" frameborder="0"
+                    src="https://www.youtube.com/embed/W_8-Q9HA6sE" title="Turnos Online Demo"></iframe>
+                </div>
+                <p
+                  class="mt-3 text-xs text-center text-text-dark/50 dark:text-text-light/50 font-medium tracking-wide italic">
+                  Turnos Online Case Study</p>
+              </div>
+            </div>
+          </div>
+          <!-- <div class="flex justify-center mt-12">
+            <button
+              class="flex items-center gap-2 text-primary font-bold px-8 py-3 border-2 border-primary rounded-lg hover:bg-primary hover:text-white transition-all">
+              View All Projects <span class="material-symbols-outlined">arrow_forward</span>
+            </button>
+          </div> -->
+        </div>
+      </div>
+    </div>
+    <!-- Process Section -->
+    <div id="proceso" class="reveal layout-container flex grow flex-col py-20 bg-background-light dark:bg-background-dark">
+      <div class="px-4 md:px-10 lg:px-40 flex flex-1 justify-center">
+        <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+          <div class="text-center mb-16">
+            <h2 data-i18n="process_title" class="text-3xl font-bold text-text-dark dark:text-text-light mb-4">¿Cómo trabajamos juntos?</h2>
+            <p data-i18n="process_subtitle" class="text-text-dark/60 dark:text-text-light/60 max-w-2xl mx-auto">Un proceso claro y transparente para asegurar el éxito de tu proyecto digital.</p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <!-- Step 1 -->
+            <div class="group p-6 bg-white dark:bg-white/5 rounded-2xl border border-[#d9cdea] dark:border-white/10 hover:border-primary/50 transition-all">
+              <div class="text-2xl font-black text-primary/20 group-hover:text-primary/40 transition-colors mb-4">01</div>
+              <h3 data-i18n="step1_title" class="font-bold text-text-dark dark:text-text-light mb-2">Descubrimiento</h3>
+              <p data-i18n="step1_desc" class="text-sm text-text-dark/60 dark:text-text-light/60">Análisis detallado de tus necesidades y objetivos comerciales.</p>
+            </div>
+            <!-- Step 2 -->
+            <div class="group p-6 bg-white dark:bg-white/5 rounded-2xl border border-[#d9cdea] dark:border-white/10 hover:border-primary/50 transition-all">
+              <div class="text-2xl font-black text-primary/20 group-hover:text-primary/40 transition-colors mb-4">02</div>
+              <h3 data-i18n="step2_title" class="font-bold text-text-dark dark:text-text-light mb-2">Estrategia</h3>
+              <p data-i18n="step2_desc" class="text-sm text-text-dark/60 dark:text-text-light/60">Diseño de la arquitectura y planificación del desarrollo.</p>
+            </div>
+            <!-- Step 3 -->
+            <div class="group p-6 bg-white dark:bg-white/5 rounded-2xl border border-[#d9cdea] dark:border-white/10 hover:border-primary/50 transition-all">
+              <div class="text-2xl font-black text-primary/20 group-hover:text-primary/40 transition-colors mb-4">03</div>
+              <h3 data-i18n="step3_title" class="font-bold text-text-dark dark:text-text-light mb-2">Desarrollo</h3>
+              <p data-i18n="step3_desc" class="text-sm text-text-dark/60 dark:text-text-light/60">Codificación limpia y pruebas rigurosas de funcionalidad.</p>
+            </div>
+            <!-- Step 4 -->
+            <div class="group p-6 bg-white dark:bg-white/5 rounded-2xl border border-[#d9cdea] dark:border-white/10 hover:border-primary/50 transition-all">
+              <div class="text-2xl font-black text-primary/20 group-hover:text-primary/40 transition-colors mb-4">04</div>
+              <h3 data-i18n="step4_title" class="font-bold text-text-dark dark:text-text-light mb-2">Lanzamiento</h3>
+              <p data-i18n="step4_desc" class="text-sm text-text-dark/60 dark:text-text-light/60">Despliegue y soporte continuo para asegurar la evolución.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- About Section (Generated Component) -->
+    <div class="reveal layout-container flex grow flex-col bg-white dark:bg-white/5 py-16">
+      <div class="px-4 md:px-10 lg:px-40 flex flex-1 justify-center">
+        <div class="layout-content-container flex flex-col md:flex-row max-w-[960px] flex-1 gap-12 items-center px-4">
+          <div class="flex-1 flex flex-col gap-6">
+            <div
+              class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 w-fit">
+              <span data-i18n="about_badge" class="text-xs font-bold text-primary uppercase tracking-wider">Soporte
+                Continuo</span>
+            </div>
+            <h2 data-i18n="about_title" class="text-text-dark dark:text-text-light text-3xl font-bold leading-tight">
+              No
+              Solo Construimos.<br />Evolucionamos Contigo.</h2>
+            <p data-i18n="about_desc" class="text-text-dark/70 dark:text-text-light/70 text-lg leading-relaxed">
+              El día de lanzamiento es solo el comienzo. Nuestros equipos de soporte dedicados
+              aseguran que sus aplicaciones personalizadas permanezcan seguras, actualizadas y alineadas con sus
+              estrategias comerciales en evolución.
+            </p>
+            <ul class="flex flex-col gap-3 mt-2">
+              <li class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-primary">check_circle</span>
+                <span data-i18n="about_list_1" class="text-text-dark dark:text-text-light font-medium">Monitoreo
+                  24/7</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-primary">check_circle</span>
+                <span data-i18n="about_list_2" class="text-text-dark dark:text-text-light font-medium">Auditorías de
+                  Seguridad Regulares</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-primary">check_circle</span>
+                <span data-i18n="about_list_3" class="text-text-dark dark:text-text-light font-medium">Optimización de
+                  Rendimiento</span>
+              </li>
+            </ul>
+          </div>
+          <div class="flex-1 relative">
+            <div
+              class="w-full aspect-square bg-gradient-to-tr from-primary/20 to-primary/5 rounded-full absolute -top-4 -right-4 -z-10 blur-3xl">
+            </div>
+            <div class="w-full bg-center bg-no-repeat aspect-[4/3] bg-cover rounded-xl shadow-xl"
+              data-alt="Team of developers collaborating on code in a modern office"
+              style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAGXjlUty4-TTdClM3DZNsM8BELwO3u68SsB_pRsPtFg5MBa799JAlBXaCOppb9yWm1FhbgR8o4a3tkoaDD9l0Pm7lErEn6RJNRZrR09skN7RqzV9khDahWOGNM6GR_I0B3IRIQ78hW1y9kfYNb9W0gyGeyPrMFDqrrJOC3m2rIz0d5CET7NresYbJ1j_FOBwRhgZ4wfD1lw8rw9YCNJscGS0jSsRbLO2xOOMv8-caWEJZDOvl5Om9gycg1G1hiJOARxKhhdEwGx08");'>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Footer with Contact Form -->
+    <footer id="contacto"
+      class="reveal bg-background-light dark:bg-background-dark border-t border-[#d9cdea] dark:border-white/10 pt-16 pb-8">
+      <div class="px-4 md:px-10 lg:px-40 flex justify-center">
+        <div class="layout-content-container flex flex-col max-w-[960px] flex-1 px-4">
+          <div class="flex flex-col md:flex-row gap-12 mb-12">
+            <!-- Contact Info -->
+            <div class="flex-1 flex flex-col gap-6">
+              <div class="flex items-center gap-3 text-text-dark dark:text-text-light mb-2">
+                <div class="size-8 text-primary">
+                  <svg viewBox="0 0 155 89" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    class="w-full h-full text-current">
+                    <path d="M77.4316 49.4968L70.7829 49.4969L55.2691 2.21685" stroke="currentColor"
+                      stroke-width="4.43251" stroke-linecap="round" />
+                    <path d="M3.55859 54.6685L55.2724 2.21657" stroke="currentColor" stroke-width="4.43251"
+                      stroke-linecap="round" />
+                    <line x1="2.21625" y1="-2.21625" x2="45.1255" y2="-2.21625"
+                      transform="matrix(-0.709987 -0.704215 -0.704215 0.709987 33.6113 88.6511)" stroke="currentColor"
+                      stroke-width="4.43251" stroke-linecap="round" />
+                    <line x1="2.21625" y1="-2.21625" x2="26.5109" y2="-2.21625"
+                      transform="matrix(-0.710271 0.703929 0.703929 0.710271 54.0137 68.429)" stroke="currentColor"
+                      stroke-width="4.43251" stroke-linecap="round" />
+                    <line x1="2.21625" y1="-2.21625" x2="15.5114" y2="-2.21625"
+                      transform="matrix(0.721056 0.692877 0.692877 -0.721056 41.2324 56.146)" stroke="currentColor"
+                      stroke-width="4.43251" stroke-linecap="round" />
+                    <line x1="2.21625" y1="-2.21625" x2="8.31857" y2="-2.21625"
+                      transform="matrix(0.723435 -0.690393 -0.690393 -0.723435 33.6113 63.4189)" stroke="currentColor"
+                      stroke-width="4.43251" stroke-linecap="round" />
+                    <path d="M40.4961 67.2271L36.7316 63.7292" stroke="currentColor" stroke-width="4.43251"
+                      stroke-linecap="round" />
+                    <path d="M77.4316 49.4971L84.0804 49.4972L99.5942 2.2171" stroke="currentColor"
+                      stroke-width="4.43251" stroke-linecap="round" />
+                    <path d="M151.305 54.6687L99.5909 2.21681" stroke="currentColor" stroke-width="4.43251"
+                      stroke-linecap="round" />
+                    <line x1="121.263" y1="85.5169" x2="151.728" y2="55.2996" stroke="currentColor"
+                      stroke-width="4.43251" stroke-linecap="round" />
+                    <line x1="103.982" y1="68.4151" x2="121.238" y2="85.5168" stroke="currentColor"
+                      stroke-width="4.43251" stroke-linecap="round" />
+                    <line x1="113.566" y1="59.2799" x2="103.98" y2="68.4918" stroke="currentColor"
+                      stroke-width="4.43251" stroke-linecap="round" />
+                    <line x1="118.117" y1="63.4924" x2="113.702" y2="59.2794" stroke="currentColor"
+                      stroke-width="4.43251" stroke-linecap="round" />
+                    <path d="M114.367 67.2271L118.132 63.7292" stroke="currentColor" stroke-width="4.43251"
+                      stroke-linecap="round" />
+                  </svg>
+                </div>
+                <h2 class="text-xl font-bold">AgustinDev</h2>
+              </div>
+              <h3 data-i18n="footer_title" class="text-3xl font-bold text-text-dark dark:text-text-light">Construyamos
+                algo grandioso.
+              </h3>
+              <p data-i18n="footer_subtitle" class="text-text-dark/70 dark:text-text-light/70">
+                ¿Listo para transformar tu negocio? Ponte en contacto con nuestro equipo para una consulta gratuita.
+              </p>
+              <!-- <div class="mt-4 flex gap-4 text-text-dark dark:text-text-light">
+                <a class="hover:text-primary" href="#"><span class="material-symbols-outlined">mail</span></a>
+                <a class="hover:text-primary" href="#"><span class="material-symbols-outlined">call</span></a>
+                <a class="hover:text-primary" href="#"><span class="material-symbols-outlined">location_on</span></a>
+              </div> -->
+            </div>
+            <!-- Contact Form -->
+            <div
+              class="flex-1 bg-white dark:bg-white/5 p-8 rounded-xl border border-[#d9cdea] dark:border-white/10 shadow-sm">
+              <div class="flex flex-col items-center justify-center gap-6 h-full text-center">
+                <h3 class="text-xl font-bold text-text-dark dark:text-text-light">¡Hablemos ahora!</h3>
+                <p class="text-text-dark/70 dark:text-text-light/70 text-sm">
+                  Contáctame directamente por WhatsApp para resolver tus dudas al instante.
+                </p>
+                <a href="https://wa.me/5493885056441" target="_blank"
+                  class="flex items-center justify-center gap-3 w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-4 px-6 rounded-xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-1">
+                  <svg viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8">
+                    <path fill-rule="evenodd" clip-rule="evenodd"
+                      d="M18.403 5.633A8.919 8.919 0 0 0 12.053 3c-4.948 0-8.976 4.027-8.978 8.977 0 1.582.413 3.126 1.198 4.488L3 21.116l4.759-1.249a8.981 8.981 0 0 0 4.29 1.093h.004c4.947 0 8.975-4.027 8.977-8.977a8.926 8.926 0 0 0-2.627-6.35m-6.35 13.812h-.003a7.446 7.446 0 0 1-3.798-1.041l-.272-.162-2.824.741.753-2.753-.177-.282a7.448 7.448 0 0 1-1.141-3.971c.002-4.114 3.349-7.461 7.465-7.461a7.413 7.413 0 0 1 5.275 2.188 7.42 7.42 0 0 1 2.183 5.279c-.002 4.114-3.349 7.462-7.461 7.462m4.093-5.589c-.225-.113-1.327-.655-1.533-.73-.205-.075-.354-.112-.504.112-.15.224-.579.73-.71.88-.131.149-.261.168-.486.056-.225-.113-.95-.351-1.809-1.116-.667-.595-1.117-1.329-1.248-1.554-.131-.225-.014-.347.099-.458.101-.1.224-.261.336-.393.112-.132.149-.225.224-.374.075-.149.038-.281-.019-.393-.056-.113-.505-1.217-.692-1.666-.181-.435-.366-.377-.497-.383l-.424-.005c-.149-.002-.349.056-.53.28-.182.224-.693.677-.693 1.65 0 .973.709 1.923.807 2.054.099.13 1.394 2.126 3.376 2.982.472.204.84.326 1.127.418.474.152.906.129 1.246.08.38-.055 1.171-.479 1.338-.941.164-.464.164-.86.114-.943-.049-.084-.182-.133-.406-.244" />
+                  </svg>
+                  <span class="text-xl">Enviar mensaje por WhatsApp</span>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div
+            class="flex flex-col md:flex-row justify-between items-center gap-4 border-t border-[#ece6f4] dark:border-white/10 pt-8 text-sm text-text-dark/50 dark:text-text-light/50">
+            <p data-i18n="footer_rights">© 2026 AgustinDev. Todos los derechos reservados.</p>
+            <div class="flex gap-6">
+              <a data-i18n="footer_privacy" class="hover:text-primary" href="#">Política de Privacidad</a>
+              <a data-i18n="footer_terms" class="hover:text-primary" href="#">Términos de Servicio</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Mobile Menu Overlay -->
+  <div id="mobileMenu" 
+    class="fixed inset-0 z-[60] bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col items-center justify-center gap-8">
+    <button id="closeMenuBtn" class="absolute top-6 right-6 text-text-dark dark:text-text-light" aria-label="Cerrar menú">
+      <span class="material-symbols-outlined text-3xl">close</span>
+    </button>
+    
+    <nav class="flex flex-col items-center gap-8">
+      <a data-i18n="nav_services" class="text-2xl font-bold text-text-dark dark:text-text-light hover:text-primary transition-colors mobile-link" href="#servicios">Servicios</a>
+      <a data-i18n="nav_work" class="text-2xl font-bold text-text-dark dark:text-text-light hover:text-primary transition-colors mobile-link" href="#apps">Apps</a>
+      <a data-i18n="nav_process" class="text-2xl font-bold text-text-dark dark:text-text-light hover:text-primary transition-colors mobile-link" href="#proceso">Cómo trabajo</a>
+      <a data-i18n="nav_contact" class="text-2xl font-bold text-text-dark dark:text-text-light hover:text-primary transition-colors mobile-link" href="#contacto">Contacto</a>
+      
+      <div class="mt-4 flex flex-col items-center gap-4">
+        <a href="https://wa.me/5493885056441" target="_blank"
+          class="flex min-w-[200px] items-center justify-center rounded-lg h-12 px-6 bg-primary text-text-light text-base font-bold shadow-lg shadow-primary/30">
+          <span data-i18n="nav_demo">Solicitar Demo</span>
+        </a>
+        
+        <!-- Theme Toggle in Mobile Menu (Optional but nice) -->
+        <button onclick="toggleTheme()" class="flex items-center gap-2 text-text-dark/60 dark:text-text-light/60">
+          <span class="material-symbols-outlined">dark_mode</span>
+          <span id="theme-text">Cambiar Tema</span>
+        </button>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Floating Back to Top Button -->
+  <button id="backToTop" 
+    class="fixed bottom-8 right-8 z-50 flex items-center justify-center w-12 h-12 rounded-full bg-primary text-white shadow-lg shadow-primary/40 translate-y-20 opacity-0 transition-all duration-500 hover:scale-110 hover:bg-primary/90 focus:outline-none"
+    onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+    aria-label="Ir al inicio">
+    <span class="material-symbols-outlined">expand_less</span>
+  </button>
+
+  <script>
+    // Scroll visibility for Back to Top button
+    const backToTopBtn = document.getElementById('backToTop');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 400) {
+        backToTopBtn.classList.remove('translate-y-20', 'opacity-0');
+        backToTopBtn.classList.add('translate-y-0', 'opacity-100');
+      } else {
+        backToTopBtn.classList.add('translate-y-20', 'opacity-0');
+        backToTopBtn.classList.remove('translate-y-0', 'opacity-100');
+      }
+    });
+
+    const translations = {
+      en: {
+        nav_services: "Services",
+        nav_work: "Apps",
+        nav_process: "How I Work",
+        nav_contact: "Contact",
+        nav_demo: "I want my app",
+        hero_title: "An App for your business",
+        hero_subtitle: "Make your business grow, not your working hours.",
+        hero_demo: "I want my app",
+        hero_view_work: "View Projects",
+        features_title: "Custom apps for your business",
+        features_subtitle: "Internal processes optimization, better user experience and traditional business processes digitalization.",
+        feat_web_title: "Custom Web Development",
+        feat_web_desc: "Scalable, secure, and high-performance web applications built from scratch using modern frameworks.",
+        feat_mobile_title: "Mobile App Solutions",
+        feat_mobile_desc: "Responsive and user-friendly mobile applications that engage users and extend your reach.",
+        feat_legacy_title: "Legacy Modernization",
+        feat_legacy_desc: "Transforming outdated systems into modern, efficient digital tools without losing critical data.",
+        process_title: "How do we work together?",
+        process_subtitle: "A clear and transparent process to ensure the success of your digital project.",
+        step1_title: "Discovery",
+        step1_desc: "Detailed analysis of your needs and business goals.",
+        step2_title: "Strategy",
+        step2_desc: "Architecture design and development planning.",
+        step3_title: "Development",
+        step3_desc: "Clean coding and rigorous functionality testing.",
+        step4_title: "Launch",
+        step4_desc: "Deployment and continuous support to ensure evolution.",
+        projects_title: "Recent Projects",
+        projects_subtitle: "Explore our portfolio of successful digital transformations.",
+        view_all: "View All",
+        project_fintech_title: "Points App",
+        project_fintech_desc: "Loyalty program for local businesses",
+        project_healthcare_title: "OMEGAFIT App",
+        project_healthcare_desc: "Patient management system",
+        project_logistics_title: "Logistics Tracker",
+        project_logistics_desc: "Real-time fleet tracking",
+        about_badge: "Continuous Support",
+        about_title: "We Don't Just Build.\nWe Evolve With You.",
+        about_desc: "Launch day is just the beginning. Our dedicated support teams ensure your custom applications remain secure, updated, and aligned with your evolving business strategies.",
+        about_list_1: "24/7 System Monitoring",
+        about_list_2: "Regular Security Audits",
+        about_list_3: "Performance Optimization",
+        footer_title: "Let's build something great together.",
+        footer_subtitle: "Ready to transform your business? Get in touch with our team for a free consultation.",
+        form_first_name: "First Name",
+        form_first_name_ph: "John",
+        form_last_name: "Last Name",
+        form_last_name_ph: "Doe",
+        form_email: "Email Address",
+        form_email_ph: "john@company.com",
+        form_message: "Message",
+        form_message_ph: "Tell us about your project...",
+        form_send: "Send Message",
+        footer_rights: "© 2026 AgustinDev. All rights reserved.",
+        footer_privacy: "Privacy Policy",
+        footer_terms: "Terms of Service"
+      },
+      es: {
+        nav_services: "Servicios",
+        nav_work: "Apps",
+        nav_process: "Cómo trabajo",
+        nav_contact: "Contacto",
+        nav_demo: "Quiero mi app",
+        hero_title: "Una App para tu empresa",
+        hero_subtitle: "Haz crecer tu negocio, no tus horas de trabajo.",
+        hero_demo: "Quiero mi app",
+        hero_view_work: "Ver Proyectos",
+        features_title: "Compromiso con tu objetivo",
+        features_subtitle: "Optimización de procesos internos, mejora de la experiencia de tus clientes y digitalización de flujos de trabajo tradicionales",
+        feat_web_title: "Desarrollo Web a Medida",
+        feat_web_desc: "Aplicaciones web escalables, seguras y de alto rendimiento construidas desde cero utilizando frameworks modernos.",
+        feat_mobile_title: "Soluciones Móviles",
+        feat_mobile_desc: "Experiencia web responsive que atraen a los usuarios y amplían su alcance.",
+        feat_legacy_title: "Modernización de Legado",
+        feat_legacy_desc: "Transformación de sistemas obsoletos en herramientas digitales modernas y eficientes sin perder datos críticos.",
+        process_title: "¿Cómo trabajamos juntos?",
+        process_subtitle: "Un proceso claro y transparente para asegurar el éxito de tu proyecto digital.",
+        step1_title: "Descubrimiento",
+        step1_desc: "Análisis detallado de tus necesidades y objetivos comerciales.",
+        step2_title: "Estrategia",
+        step2_desc: "Diseño de la arquitectura y planificación del desarrollo.",
+        step3_title: "Desarrollo",
+        step3_desc: "Codificación limpia y pruebas rigurosas de funcionalidad.",
+        step4_title: "Lanzamiento",
+        step4_desc: "Despliegue y soporte continuo para asegurar la evolución.",
+        projects_title: "Proyectos Recientes",
+        projects_subtitle: "Explora nuestro portafolio de transformaciones digitales exitosas.",
+        view_all: "Ver Todos",
+        project_fintech_title: "App de puntos",
+        project_fintech_desc: "Plataforma de fidelizacion de clientes para comercios",
+        project_healthcare_title: "Portal de Salud",
+        project_healthcare_desc: "Sistema de gestión de pacientes",
+        project_logistics_title: "Rastreador Logístico",
+        project_logistics_desc: "Seguimiento de flota en tiempo real",
+        about_badge: "Soporte Continuo",
+        about_title: "No Solo Construimos.\nEvolucionamos con vos.",
+        about_desc: "El soporte dedicado asegura que tu aplicacion personalizada permanezca segura, actualizada y alineada con tus estrategias comerciales en evolución.",
+        about_list_1: "Monitoreo 24/7",
+        about_list_2: "Auditorías de Seguridad Regulares",
+        about_list_3: "Optimización de Rendimiento",
+        footer_title: "Construyamos algo grandioso.",
+        footer_subtitle: "¿Listo para actualizar tu negocio? Escribime para una consulta gratuita.",
+        form_first_name: "Nombre",
+        form_first_name_ph: "Juan",
+        form_last_name: "Apellido",
+        form_last_name_ph: "Pérez",
+        form_email: "Correo Electrónico",
+        form_email_ph: "juan@empresa.com",
+        form_message: "Mensaje",
+        form_message_ph: "Cuéntanos sobre tu proyecto...",
+        form_send: "Enviar Mensaje",
+        footer_rights: "© 2026 AgustinDev. Todos los derechos reservados.",
+        footer_privacy: "Política de Privacidad",
+        footer_terms: "Términos de Servicio"
+      }
+    };
+
+    let currentLang = 'es';
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'en' ? 'es' : 'en';
+      updateContent();
+    }
+
+    function updateContent() {
+      // Update HTML Lang attribute
+      document.documentElement.lang = currentLang;
+
+      // Update Indicator
+      document.getElementById('lang-indicator').textContent = currentLang.toUpperCase();
+
+      // Update Text
+      document.querySelectorAll('[data-i18n]').forEach(element => {
+        const key = element.getAttribute('data-i18n');
+        const translation = translations[currentLang][key];
+
+        if (translation) {
+          if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+            if (key.endsWith('_ph')) {
+              element.placeholder = translation;
+            } else {
+              // Label handling for inputs is usually separate, but here we just have placeholder keys and label keys separately
+            }
+          } else {
+            element.innerText = translation;
+          }
+        }
+      });
+    }
+
+    // Scroll Reveal implementation
+    const observerOptions = {
+      threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Mobile Menu Logic
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const closeMenuBtn = document.getElementById('closeMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileLinks = document.querySelectorAll('.mobile-link');
+
+    function toggleMobileMenu() {
+      mobileMenu.classList.toggle('translate-x-full');
+      document.body.classList.toggle('overflow-hidden');
+    }
+
+    mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+    closeMenuBtn.addEventListener('click', toggleMobileMenu);
+
+    mobileLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.add('translate-x-full');
+        document.body.classList.remove('overflow-hidden');
+      });
+    });
+
+    // Theme toggle helper (assuming .light/.dark classes on html)
+    function toggleTheme() {
+      const html = document.documentElement;
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        html.classList.add('light');
+        localStorage.setItem('theme', 'light');
+      } else {
+        html.classList.remove('light');
+        html.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      }
+    }
+
+    // Initialize translations
+    updateContent();
+  </script>
+</body>
+
+</html>

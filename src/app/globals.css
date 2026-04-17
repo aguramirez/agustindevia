@@ -1,0 +1,142 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #4b00ad;
+  --color-background-light: #f7f5f8;
+  --color-background-dark: #180f23;
+  --color-text-dark: #130c1d;
+  --color-text-light: #faf8fc;
+  --font-display: Inter, sans-serif;
+  --radius-DEFAULT: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-full: 9999px;
+  --container-7xl: 80rem;
+  --container-6xl: 72rem;
+  --container-5xl: 64rem;
+  --container-4xl: 56rem;
+  --container-3xl: 48rem;
+  --container-2xl: 42rem;
+  --container-xl: 36rem;
+  --container-lg: 32rem;
+  --container-md: 28rem;
+  --container-sm: 24rem;
+  --container-xs: 20rem;
+}
+
+:root {
+}
+
+body {
+  scroll-padding-top: 80px;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s ease-out;
+}
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+.tech-pill {
+  padding: 0.25rem 0.75rem;
+  background-color: rgba(255, 255, 255, 0.5);
+  border: 1px solid #d9cdea;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  backdrop-filter: blur(4px);
+  transition: all 0.3s ease;
+}
+.dark .tech-pill {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+.tech-pill:hover {
+  border-color: #4b00ad;
+}
+
+/* Infinite Carousel */
+@keyframes scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-infinite-scroll {
+  animation: scroll 30s linear infinite;
+}
+.tech-logo {
+  filter: grayscale(1) blur(0) opacity(0.4);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+.tech-logo:hover {
+  filter: grayscale(0) blur(0) opacity(1);
+  transform: scale(1.2);
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* AI Glow Effect */
+@keyframes ai-glow-anim {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.ai-glow-bg {
+  background: linear-gradient(270deg, #0cebeb, #20e3b2, #29ffc6, #f093fb, #f5576c);
+  background-size: 300% 300%;
+  animation: ai-glow-anim 6s ease infinite;
+}
+
+.ai-glow-bg.thinking {
+  animation: ai-glow-anim 2s ease infinite;
+}
+
+.ai-glow-border {
+  position: relative;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+.ai-glow-border::after {
+  content: '';
+  position: absolute;
+  top: -2px; bottom: -2px;
+  left: -2px; right: -2px;
+  background: linear-gradient(90deg, #4b00ad, #00d2ff, #ff00d2, #00d2ff, #4b00ad);
+  background-size: 300% 100%;
+  border-radius: inherit;
+  z-index: -1;
+  animation: ai-gradient-wave 5s ease-in-out infinite;
+}
+
+.ai-text-glow {
+  background: linear-gradient(90deg, #4b00ad, #00d2ff, #ff00d2, #00d2ff, #4b00ad);
+  background-size: 300% 100%;
+  animation: ai-gradient-wave 5s ease-in-out infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+}
+
+/* Oscila de ida y vuelta: 0%→50%→0%. Al terminar está en el mismo punto exacto que al iniciar. */
+@keyframes ai-gradient-wave {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
