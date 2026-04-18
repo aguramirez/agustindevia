@@ -26,8 +26,18 @@
 
 /* Se eliminó el :root {} vacío para evitar advertencias en tu editor */
 
+html,
 body {
   scroll-padding-top: 80px;
+}
+
+/* Hide scrollbar globally across all browsers */
+* {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE/Edge */
+}
+*::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari, Opera */
 }
 
 .reveal {
@@ -107,19 +117,23 @@ body {
 
 .ai-glow-border {
   position: relative;
-  border: 2px solid transparent;
-  background-clip: padding-box;
+  padding: 2px;
+  border-radius: 1rem;
+  overflow: hidden;
 }
-.ai-glow-border::after {
+.ai-glow-border::before {
   content: '';
   position: absolute;
-  top: -2px; bottom: -2px;
-  left: -2px; right: -2px;
+  inset: 0;
   background: linear-gradient(90deg, #4b00ad, #00d2ff, #ff00d2, #00d2ff, #4b00ad);
   background-size: 300% 100%;
   border-radius: inherit;
-  z-index: -1;
   animation: ai-gradient-wave 5s ease-in-out infinite;
+  z-index: 0;
+}
+.ai-glow-border > * {
+  position: relative;
+  z-index: 1;
 }
 
 .ai-text-glow {

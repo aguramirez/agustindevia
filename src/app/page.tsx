@@ -41,7 +41,7 @@ export default function Home() {
           <div className="px-4 md:px-10 lg:px-40 flex justify-center">
             <div className="layout-content-container flex w-full max-w-[960px] items-center justify-between py-4">
               <div className="flex items-center gap-4 text-text-dark dark:text-text-light">
-                <div className="size-7 text-primary">
+                <div className="size-7 text-primary dark:text-violet-300">
                   <svg viewBox="0 0 155 89" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full text-current">
                     <path d="M77.4316 49.4968L70.7829 49.4969L55.2691 2.21685" stroke="currentColor" strokeWidth="4.43251" strokeLinecap="round" />
                     <path d="M3.55859 54.6685L55.2724 2.21657" stroke="currentColor" strokeWidth="4.43251" strokeLinecap="round" />
@@ -160,7 +160,7 @@ export default function Home() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="group flex flex-1 gap-4 rounded-xl border border-[#d9cdea] dark:border-white/10 bg-background-light dark:bg-background-dark p-6 flex-col hover:shadow-lg hover:border-primary/50 transition-all duration-300">
-                  <div className="text-primary bg-primary/10 w-12 h-12 rounded-lg flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
+                  <div className="text-primary dark:text-violet-300 bg-primary/10 dark:bg-violet-400/15 w-12 h-12 rounded-lg flex items-center justify-center group-hover:bg-primary group-hover:text-white dark:group-hover:text-white transition-colors">
                     <span className="material-symbols-outlined text-3xl">code</span>
                   </div>
                   <div className="flex flex-col gap-2">
@@ -169,7 +169,7 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="group flex flex-1 gap-4 rounded-xl border border-[#d9cdea] dark:border-white/10 bg-background-light dark:bg-background-dark p-6 flex-col hover:shadow-lg hover:border-primary/50 transition-all duration-300">
-                  <div className="text-primary bg-primary/10 w-12 h-12 rounded-lg flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
+                  <div className="text-primary dark:text-violet-300 bg-primary/10 dark:bg-violet-400/15 w-12 h-12 rounded-lg flex items-center justify-center group-hover:bg-primary group-hover:text-white dark:group-hover:text-white transition-colors">
                     <span className="material-symbols-outlined text-3xl">smartphone</span>
                   </div>
                   <div className="flex flex-col gap-2">
@@ -178,7 +178,7 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="group flex flex-1 gap-4 rounded-xl border border-[#d9cdea] dark:border-white/10 bg-background-light dark:bg-background-dark p-6 flex-col hover:shadow-lg hover:border-primary/50 transition-all duration-300">
-                  <div className="text-primary bg-primary/10 w-12 h-12 rounded-lg flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
+                  <div className="text-primary dark:text-violet-300 bg-primary/10 dark:bg-violet-400/15 w-12 h-12 rounded-lg flex items-center justify-center group-hover:bg-primary group-hover:text-white dark:group-hover:text-white transition-colors">
                     <span className="material-symbols-outlined text-3xl">update</span>
                   </div>
                   <div className="flex flex-col gap-2">
@@ -223,8 +223,8 @@ export default function Home() {
                       <h3 className="text-2xl font-bold text-text-dark dark:text-text-light mb-2">App de puntos</h3>
                       <p className="text-text-dark/70 dark:text-text-light/70 text-sm leading-relaxed mb-4">Plataforma de fidelización de clientes</p>
                       <div className="flex flex-wrap gap-2 mb-6">
-                        <span className="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold uppercase rounded">Next.js</span>
-                        <span className="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold uppercase rounded">PostgreSQL</span>
+                        <span className="px-2 py-1 bg-primary/10 dark:bg-violet-400/15 text-primary dark:text-violet-300 text-[10px] font-bold uppercase rounded">Next.js</span>
+                        <span className="px-2 py-1 bg-primary/10 dark:bg-violet-400/15 text-primary dark:text-violet-300 text-[10px] font-bold uppercase rounded">PostgreSQL</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-4 p-4 bg-background-light dark:bg-black/20 rounded-xl border border-[#d9cdea] dark:border-white/10">
@@ -234,7 +234,7 @@ export default function Home() {
                       <div>
                         <p className="text-xs font-bold text-text-dark dark:text-text-light">App Demo</p>
                         <p className="text-[10px] text-text-dark/60 dark:text-text-light/60">Escanea el QR en tu celu y proba la App!</p>
-                        <a href="https://pointsapp-five.vercel.app/" target="_blank" rel="noreferrer" className="text-[10px] font-bold text-primary hover:underline cursor-pointer block mt-1">o Click aquí</a>
+                        <a href="https://pointsapp-five.vercel.app/" target="_blank" rel="noreferrer" className="text-[10px] font-bold text-primary dark:text-violet-300 hover:underline cursor-pointer block mt-1">o Click aquí</a>
                       </div>
                     </div>
                   </div>
@@ -260,8 +260,8 @@ export default function Home() {
                         Web app para el seguimiento de pacientes del kinesiologo Lic. Oscar Robles, permite gestionar pacientes, tratamientos, ejercicios, etc. Credencial de prueba: DNI 11111111
                       </p>
                       <div className="flex flex-wrap gap-2 mb-6">
-                        <span className="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold uppercase rounded">Next.js</span>
-                        <span className="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold uppercase rounded">PostgreSQL</span>
+                        <span className="px-2 py-1 bg-primary/10 dark:bg-violet-400/15 text-primary dark:text-violet-300 text-[10px] font-bold uppercase rounded">Next.js</span>
+                        <span className="px-2 py-1 bg-primary/10 dark:bg-violet-400/15 text-primary dark:text-violet-300 text-[10px] font-bold uppercase rounded">PostgreSQL</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-4 p-4 bg-background-light dark:bg-black/20 rounded-xl border border-[#d9cdea] dark:border-white/10">
@@ -271,7 +271,7 @@ export default function Home() {
                       <div>
                         <p className="text-xs font-bold text-text-dark dark:text-text-light">App Vendida</p>
                         <p className="text-[10px] text-text-dark/60 dark:text-text-light/60">Escanea el QR en tu celu y proba la App!</p>
-                        <a href="https://omegafit.agustindev.com.ar" target="_blank" rel="noreferrer" className="text-[10px] font-bold text-primary hover:underline cursor-pointer block mt-1">o Click aquí</a>
+                        <a href="https://omegafit.agustindev.com.ar" target="_blank" rel="noreferrer" className="text-[10px] font-bold text-primary dark:text-violet-300 hover:underline cursor-pointer block mt-1">o Click aquí</a>
                       </div>
                     </div>
                   </div>
@@ -301,8 +301,8 @@ export default function Home() {
                       <h3 className="text-2xl font-bold text-text-dark dark:text-text-light mb-2">Turnos Online</h3>
                       <p className="text-text-dark/70 dark:text-text-light/70 text-sm leading-relaxed mb-4">Web app para que tus pacientes saquen turnos desde su celular, sin necesidad de llamar por teléfono o mandar whatsapp. Puede integrar mercado pago para cobrar adelantos de los turnos.</p>
                       <div className="flex flex-wrap gap-2 mb-6">
-                        <span className="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold uppercase rounded">Next.js</span>
-                        <span className="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold uppercase rounded">PostgreSQL</span>
+                        <span className="px-2 py-1 bg-primary/10 dark:bg-violet-400/15 text-primary dark:text-violet-300 text-[10px] font-bold uppercase rounded">Next.js</span>
+                        <span className="px-2 py-1 bg-primary/10 dark:bg-violet-400/15 text-primary dark:text-violet-300 text-[10px] font-bold uppercase rounded">PostgreSQL</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-4 p-4 bg-background-light dark:bg-black/20 rounded-xl border border-[#d9cdea] dark:border-white/10">
@@ -312,7 +312,7 @@ export default function Home() {
                       <div>
                         <p className="text-xs font-bold text-text-dark dark:text-text-light">App Demo</p>
                         <p className="text-[10px] text-text-dark/60 dark:text-text-light/60">Escanea el QR en tu celu y proba la App!</p>
-                        <a href="https://lumiere.agustindev.com.ar" target="_blank" rel="noreferrer" className="text-[10px] font-bold text-primary hover:underline cursor-pointer block mt-1">o Click aquí</a>
+                        <a href="https://lumiere.agustindev.com.ar" target="_blank" rel="noreferrer" className="text-[10px] font-bold text-primary dark:text-violet-300 hover:underline cursor-pointer block mt-1">o Click aquí</a>
                       </div>
                     </div>
                   </div>
@@ -343,22 +343,22 @@ export default function Home() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="group p-6 bg-white dark:bg-white/5 rounded-2xl border border-[#d9cdea] dark:border-white/10 hover:border-primary/50 transition-all">
-                <div className="text-2xl font-black text-primary/20 group-hover:text-primary/40 transition-colors mb-4">01</div>
+                <div className="text-2xl font-black text-primary/30 dark:text-violet-300/40 group-hover:text-primary dark:group-hover:text-violet-300 transition-colors mb-4">1</div>
                 <h3 className="font-bold text-text-dark dark:text-text-light mb-2">Descubrimiento</h3>
                 <p className="text-sm text-text-dark/60 dark:text-text-light/60">Análisis detallado de tus necesidades y objetivos comerciales.</p>
               </div>
               <div className="group p-6 bg-white dark:bg-white/5 rounded-2xl border border-[#d9cdea] dark:border-white/10 hover:border-primary/50 transition-all">
-                <div className="text-2xl font-black text-primary/20 group-hover:text-primary/40 transition-colors mb-4">02</div>
+                <div className="text-2xl font-black text-primary/30 dark:text-violet-300/40 group-hover:text-primary dark:group-hover:text-violet-300 transition-colors mb-4">2</div>
                 <h3 className="font-bold text-text-dark dark:text-text-light mb-2">Estrategia</h3>
                 <p className="text-sm text-text-dark/60 dark:text-text-light/60">Diseño de la arquitectura y planificación del desarrollo.</p>
               </div>
               <div className="group p-6 bg-white dark:bg-white/5 rounded-2xl border border-[#d9cdea] dark:border-white/10 hover:border-primary/50 transition-all">
-                <div className="text-2xl font-black text-primary/20 group-hover:text-primary/40 transition-colors mb-4">03</div>
+                <div className="text-2xl font-black text-primary/30 dark:text-violet-300/40 group-hover:text-primary dark:group-hover:text-violet-300 transition-colors mb-4">3</div>
                 <h3 className="font-bold text-text-dark dark:text-text-light mb-2">Desarrollo</h3>
                 <p className="text-sm text-text-dark/60 dark:text-text-light/60">Codificación limpia y pruebas rigurosas de funcionalidad.</p>
               </div>
               <div className="group p-6 bg-white dark:bg-white/5 rounded-2xl border border-[#d9cdea] dark:border-white/10 hover:border-primary/50 transition-all">
-                <div className="text-2xl font-black text-primary/20 group-hover:text-primary/40 transition-colors mb-4">04</div>
+                <div className="text-2xl font-black text-primary/30 dark:text-violet-300/40 group-hover:text-primary dark:group-hover:text-violet-300 transition-colors mb-4">4</div>
                 <h3 className="font-bold text-text-dark dark:text-text-light mb-2">Lanzamiento</h3>
                 <p className="text-sm text-text-dark/60 dark:text-text-light/60">Despliegue y soporte continuo para asegurar la evolución.</p>
               </div>
@@ -374,7 +374,7 @@ export default function Home() {
             <div className="flex flex-col md:flex-row gap-12 mb-12">
               <div className="flex-1 flex flex-col gap-6">
                 <div className="flex items-center gap-3 text-text-dark dark:text-text-light mb-2">
-                  <div className="size-8 text-primary">
+                  <div className="size-8 text-primary dark:text-violet-300">
                     <svg viewBox="0 0 155 89" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full text-current">
                        <path d="M77.4316 49.4968L70.7829 49.4969L55.2691 2.21685" stroke="currentColor" strokeWidth="4.43251" strokeLinecap="round" />
                        <path d="M3.55859 54.6685L55.2724 2.21657" stroke="currentColor" strokeWidth="4.43251" strokeLinecap="round" />
@@ -438,7 +438,7 @@ export default function Home() {
 
       <button 
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className={`fixed bottom-24 right-6 z-40 flex items-center justify-center w-12 h-12 rounded-full bg-primary/20 text-primary backdrop-blur shadow-sm transition-all duration-500 hover:bg-primary hover:text-white ${showBackToTop ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0 pointer-events-none'}`}
+        className={`fixed bottom-24 right-6 z-40 flex items-center justify-center w-12 h-12 rounded-full bg-primary/20 dark:bg-violet-400/20 text-primary dark:text-violet-300 backdrop-blur shadow-sm transition-all duration-500 hover:bg-primary hover:text-white dark:hover:bg-violet-500 dark:hover:text-white ${showBackToTop ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0 pointer-events-none'}`}
       >
         <span className="material-symbols-outlined">expand_less</span>
       </button>

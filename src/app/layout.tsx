@@ -21,7 +21,7 @@ export default function RootLayout({
     <html lang="es" className={`scroll-smooth ${inter.variable}`} style={{ scrollPaddingTop: "80px" }}>
       <head>
         <link
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block"
           rel="stylesheet"
         />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
