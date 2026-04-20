@@ -1,6 +1,25 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 import { SYSTEM_PROMPT } from "@/lib/system-prompt";
+
+const safetySettings = [
+  {
+    category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+    threshold: HarmBlockThreshold.BLOCK_NONE,
+  },
+  {
+    category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+    threshold: HarmBlockThreshold.BLOCK_NONE,
+  },
+  {
+    category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+    threshold: HarmBlockThreshold.BLOCK_NONE,
+  },
+  {
+    category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+    threshold: HarmBlockThreshold.BLOCK_NONE,
+  },
+];
 
 export async function POST(req: Request) {
   try {
@@ -19,6 +38,7 @@ export async function POST(req: Request) {
       const model = genAI.getGenerativeModel({
         model: "gemini-2.5-flash",
         systemInstruction: SYSTEM_PROMPT,
+        safetySettings,
       });
       const chatSession = model.startChat({ history: history || [] });
       result = await chatSession.sendMessage(message);
@@ -28,15 +48,16 @@ export async function POST(req: Request) {
       const is429 = primaryError.message?.includes("429") || primaryError.status === 429;
       
       if (is503 || is429) {
-        console.warn(`Gemini 2.5 Flash error (${is503 ? '503' : '429'}). Fallback to 1.5 Flash...`);
+        console.warn(`Gemini 2.5 Flash error (${is503 ? '503' : '429'}). Fallback to 2.0 Flash...`);
         const fallbackModel = genAI.getGenerativeModel({
-          model: "gemini-1.5-flash",
+          model: "gemini-2.0-flash",
           systemInstruction: SYSTEM_PROMPT,
+          safetySettings,
         });
         const fallbackSession = fallbackModel.startChat({ history: history || [] });
         result = await fallbackSession.sendMessage(message);
       } else {
-        // Si es otro error (ej: 429), lo lanzamos para que lo atrape el catch general
+        // Si es otro error (ej: 429 u otro no contemplado), lo lanzamos
         throw primaryError;
       }
     }
