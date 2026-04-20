@@ -32,34 +32,54 @@ export async function POST(req: Request) {
 
     const genAI = new GoogleGenerativeAI(apiKey);
 
+    const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
+
+    const modelsToTry = [
+      "gemini-2.5-flash",
+      "gemini-2.0-flash",
+      "gemini-2.5-flash-lite",
+    ];
+
     let result;
-    try {
-      // Intento 1: Usar el modelo más nuevo (2.5)
-      const model = genAI.getGenerativeModel({
-        model: "gemini-2.5-flash",
-        systemInstruction: SYSTEM_PROMPT,
-        safetySettings,
-      });
-      const chatSession = model.startChat({ history: history || [] });
-      result = await chatSession.sendMessage(message);
-    } catch (primaryError: any) {
-      // Si el 2.5 falla por sobrecarga (503) O por límite de peticiones (429), hacemos fallback al 1.5
-      const is503 = primaryError.message?.includes("503") || primaryError.status === 503;
-      const is429 = primaryError.message?.includes("429") || primaryError.status === 429;
-      
-      if (is503 || is429) {
-        console.warn(`Gemini 2.5 Flash error (${is503 ? '503' : '429'}). Fallback to 2.0 Flash...`);
-        const fallbackModel = genAI.getGenerativeModel({
-          model: "gemini-2.0-flash",
+    let lastError;
+
+    for (let i = 0; i < modelsToTry.length; i++) {
+      try {
+        const modelName = modelsToTry[i];
+        console.log(`Intentando con modelo: ${modelName}`);
+        
+        const model = genAI.getGenerativeModel({
+          model: modelName,
           systemInstruction: SYSTEM_PROMPT,
           safetySettings,
         });
-        const fallbackSession = fallbackModel.startChat({ history: history || [] });
-        result = await fallbackSession.sendMessage(message);
-      } else {
-        // Si es otro error (ej: 429 u otro no contemplado), lo lanzamos
-        throw primaryError;
+        
+        const chatSession = model.startChat({ history: history || [] });
+        result = await chatSession.sendMessage(message);
+        
+        // Si funcionó, salimos del loop
+        break;
+      } catch (error: any) {
+        lastError = error;
+        const is503 = error.message?.includes("503") || error.status === 503;
+        const is429 = error.message?.includes("429") || error.status === 429;
+        
+        if (is503 || is429) {
+          console.warn(`[${modelsToTry[i]}] falló con ${is503 ? '503' : '429'}.`);
+          if (i < modelsToTry.length - 1) {
+            console.warn(`Esperando 2 segundos antes de usar el siguiente modelo de respaldo...`);
+            await delay(2000); // Esperar 2 segundos antes de intentar con el siguiente modelo para darle respiro a la API
+          }
+        } else {
+          // Si es un error distinto (ej. de validación de API KEY), cortamos el intento.
+          throw error;
+        }
       }
+    }
+
+    if (!result) {
+      // Si agotamos todos los modelos y fallaron, lanzamos el último error
+      throw lastError;
     }
 
     return NextResponse.json({ text: result.response.text() });
