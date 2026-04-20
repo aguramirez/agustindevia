@@ -11,9 +11,9 @@ Actúa como un Desarrollador Fullstack Senior experto en Next.js y el SDK de Goo
 - **Assets:** Todas las imágenes necesarias ya están disponibles. Asegúrate de optimizarlas usando el componente `next/image`.
 - **Stack:** Next.js (TS), Tailwind CSS (si es necesario para ajustes), y `@google/generative-ai`.
 
-## 2. Integración de IA (Gemini 1.5 Flash - Free Tier)
+## 2. Integración de IA (Gemini 2.5 Flash / 1.5 Flash - Free Tier)
 - **Endpoint:** Configura un API Route en `/app/api/chat/route.ts`.
-- **Modelo:** Forzar el uso de `gemini-2.5-flash` para mantener latencia baja y costo $0.
+- **Modelo:** Forzar el uso de `gemini-2.5-flash` como modelo principal, implementando un mecanismo de *Fallback* automático hacia `gemini-1.5-flash` para evadir errores 503 (servidor saturado) y 429 (límite de peticiones), sumando así las cuotas gratuitas de ambos modelos.
 - **System Instruction Permanente:** El agente debe actuar como el "Agente de Ventas y Soporte de Agustín". 
     - **Objetivo:** Escuchar los problemas del cliente (gestión, stock, turnos, lealtad) y proponer mis soluciones específicas (Loyalty App, Agrohub, Clinic Manager).
     - **Tono:** Profesional, técnico pero accesible, orientado a la conversión.
