@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
@@ -24,6 +24,9 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
     title: "AgustinDev",
   },
+};
+
+export const viewport: Viewport = {
   themeColor: "#ffffff",
 };
 
@@ -33,8 +36,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={`scroll-smooth ${inter.variable}`} style={{ scrollPaddingTop: "80px" }}>
+    <html lang="es" className={`dark scroll-smooth ${inter.variable}`} style={{ scrollPaddingTop: "80px" }} suppressHydrationWarning>
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                if (localStorage.getItem('theme') === 'light') {
+                  document.documentElement.classList.remove('dark');
+                } else {
+                  document.documentElement.classList.add('dark');
+                }
+              } catch (_) {}
+            `,
+          }}
+        />
         <link
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block"
           rel="stylesheet"

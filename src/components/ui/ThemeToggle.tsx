@@ -2,12 +2,14 @@
 import { useEffect, useState } from "react";
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
 
   useEffect(() => {
-    if (document.documentElement.classList.contains("dark")) {
-      setTheme("dark");
-    } else if (localStorage.getItem("theme") === "dark" || (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "light") {
+      setTheme("light");
+      document.documentElement.classList.remove("dark");
+    } else {
       setTheme("dark");
       document.documentElement.classList.add("dark");
     }
@@ -19,9 +21,7 @@ export default function ThemeToggle() {
     localStorage.setItem("theme", newTheme);
     if (newTheme === "dark") {
       document.documentElement.classList.add("dark");
-      document.documentElement.classList.remove("light");
     } else {
-      document.documentElement.classList.add("light");
       document.documentElement.classList.remove("dark");
     }
   };

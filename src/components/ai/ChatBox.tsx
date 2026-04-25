@@ -103,6 +103,7 @@ function saveSession(messages: Message[]) {
 // ── Component ─────────────────────────────────────────────────────────────────
 export default function ChatBox() {
   const [isOpen, setIsOpen] = useState(false);
+  const [hasEverOpened, setHasEverOpened] = useState(false);
   const [messages, setMessages] = useState<Message[]>([INITIAL_MESSAGE]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -133,6 +134,9 @@ export default function ChatBox() {
   useEffect(() => {
     const saved = loadSession();
     setMessages(saved);
+    if (saved.length > 1) {
+      setHasEverOpened(true);
+    }
 
     if (localStorage.getItem("hasSubmittedData") === "true") {
       setHasSubmittedData(true);
@@ -150,6 +154,9 @@ export default function ChatBox() {
 
   // ── Body scroll lock + historial Android ───────────────────────────────────
   useEffect(() => {
+    if (isOpen && !hasEverOpened) {
+      setHasEverOpened(true);
+    }
     if (isOpen) {
       document.body.style.overflow = "hidden";
       window.history.pushState({ chatOpen: true }, "");
@@ -305,7 +312,7 @@ export default function ChatBox() {
     <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] w-[90%] md:w-[80%] lg:w-[60%] max-w-[800px] flex flex-col drop-shadow-2xl">
 
       {/* Main Box */}
-      <div className="ai-glow-border relative rounded-2xl group transition-shadow duration-500">
+      <div className={`ai-glow-border relative rounded-2xl group transition-all duration-500 ${!isOpen && !hasEverOpened ? "animate-attention" : ""}`}>
         <div className="bg-white dark:bg-[#1f162d] rounded-[calc(1rem-2px)] flex flex-col w-full relative overflow-hidden">
 
           {/* TOP: Header + Messages (animated expand) */}

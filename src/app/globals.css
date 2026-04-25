@@ -153,3 +153,22 @@ body {
   50%  { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
+
+@keyframes attention-bounce-v2 {
+  0%, 80%, 100% {
+    transform: translateY(0);
+  }
+  85% {
+    transform: translateY(-8px);
+  }
+  90% {
+    transform: translateY(0);
+  }
+  95% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-attention {
+  animation: attention-bounce-v2 7s ease-in-out infinite;
+}
