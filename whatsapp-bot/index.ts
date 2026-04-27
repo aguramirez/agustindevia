@@ -142,14 +142,43 @@ async function connectToWhatsApp() {
             // Recuperar historial o crear uno nuevo
             let history = memoryStore.get(senderNumber) || [];
 
-            const model = genAI.getGenerativeModel({
-                model: "gemini-2.5-flash",
-                systemInstruction: SOCIAL_PROMPT,
-            });
+            const modelsToTry = [
+                "gemini-2.5-flash",
+                "gemini-2.0-flash",
+                "gemini-2.5-flash-lite",
+            ];
 
-            const chatSession = model.startChat({ history });
-            const result = await chatSession.sendMessage(textMessage);
-            let responseText = result.response.text();
+            let responseText = "";
+            let success = false;
+
+            for (const modelName of modelsToTry) {
+                try {
+                    const model = genAI.getGenerativeModel({
+                        model: modelName,
+                        systemInstruction: SOCIAL_PROMPT,
+                    });
+
+                    const chatSession = model.startChat({ history });
+                    const result = await chatSession.sendMessage(textMessage);
+                    responseText = result.response.text();
+                    success = true;
+                    break; // Si funcionó, salir del loop
+                } catch (err: any) {
+                    const is503 = err.message?.includes("503") || err.status === 503;
+                    const is429 = err.message?.includes("429") || err.status === 429;
+                    
+                    if (is503 || is429) {
+                        console.warn(`⚠️ [${modelName}] saturado (${is503 ? '503' : '429'}). Intentando con el de respaldo...`);
+                        await new Promise(resolve => setTimeout(resolve, 2000)); // Esperar 2 segundos antes de intentar otro
+                    } else {
+                        throw err; // Es un error distinto (ej. API Key inválida)
+                    }
+                }
+            }
+
+            if (!success) {
+                throw new Error("Todos los modelos de IA están saturados en este momento.");
+            }
 
             // Convertir Markdown de Gemini (**) a Negritas de WhatsApp (*)
             responseText = responseText.replace(/\*\*(.*?)\*\*/g, '*$1*');
