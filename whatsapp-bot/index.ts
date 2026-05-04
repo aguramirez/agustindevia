@@ -36,9 +36,9 @@ let botStatus = "Iniciando...";
 const server = http.createServer((req, res) => {
     if (req.url === '/reset-whatsapp') {
         try {
-            if (fs.existsSync('./auth_info_baileys')) {
-                fs.rmSync('./auth_info_baileys', { recursive: true, force: true });
-            }
+            // En vez de borrar ahora (que está en uso por Baileys), creamos un archivo bandera
+            fs.writeFileSync('./.reset_bot', 'true');
+            
             res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
             res.end(`
                 <div style="font-family: Arial, sans-serif; text-align: center; margin-top: 50px;">
@@ -121,6 +121,20 @@ server.listen(PORT, () => {
 // ==========================================
 
 async function connectToWhatsApp() {
+    // Si existe el archivo de reset, borramos la carpeta antes de que Baileys la bloquee
+    if (fs.existsSync('./.reset_bot')) {
+        console.log('🔄 Archivo de reset detectado. Borrando sesión anterior...');
+        try {
+            if (fs.existsSync('./auth_info_baileys')) {
+                fs.rmSync('./auth_info_baileys', { recursive: true, force: true });
+            }
+            fs.unlinkSync('./.reset_bot');
+            console.log('✅ Sesión anterior borrada con éxito.');
+        } catch (err) {
+            console.error('❌ Error borrando la sesión en el inicio:', err);
+        }
+    }
+
     const { state, saveCreds } = await useMultiFileAuthState('auth_info_baileys');
     const { version } = await fetchLatestBaileysVersion();
     
