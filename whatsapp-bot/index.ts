@@ -126,7 +126,12 @@ async function connectToWhatsApp() {
         console.log('🔄 Archivo de reset detectado. Borrando sesión anterior...');
         try {
             if (fs.existsSync('./auth_info_baileys')) {
-                fs.rmSync('./auth_info_baileys', { recursive: true, force: true });
+                // Como Railway usa Volumes, la carpeta en sí misma puede ser un "punto de montaje"
+                // No podemos borrar la carpeta, pero sí podemos vaciar su contenido.
+                const files = fs.readdirSync('./auth_info_baileys');
+                for (const file of files) {
+                    fs.rmSync(`./auth_info_baileys/${file}`, { recursive: true, force: true });
+                }
             }
             fs.unlinkSync('./.reset_bot');
             console.log('✅ Sesión anterior borrada con éxito.');
