@@ -5,6 +5,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import * as dotenv from 'dotenv';
 import qrcode from 'qrcode-terminal';
 import pino from 'pino';
+import * as fs from 'fs';
 
 // Cargamos el .env desde la raíz del proyecto de Next.js
 dotenv.config({ path: '../.env' });
@@ -33,15 +34,47 @@ let botStatus = "Iniciando...";
 // SERVIDOR WEB INTEGRADO PARA VER EL QR
 // ==========================================
 const server = http.createServer((req, res) => {
+    if (req.url === '/reset-whatsapp') {
+        try {
+            if (fs.existsSync('./auth_info_baileys')) {
+                fs.rmSync('./auth_info_baileys', { recursive: true, force: true });
+            }
+            res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+            res.end(`
+                <div style="font-family: Arial, sans-serif; text-align: center; margin-top: 50px;">
+                    <h2>✅ Sesión reiniciada</h2>
+                    <p>La memoria del bot ha sido borrada. El servidor se está reiniciando...</p>
+                    <p>Serás redirigido automáticamente en unos segundos.</p>
+                </div>
+                <script>setTimeout(() => window.location.href = "/", 4000);</script>
+            `);
+            
+            setTimeout(() => {
+                process.exit(1);
+            }, 2000);
+        } catch (error: any) {
+            res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
+            res.end('Error al borrar la carpeta: ' + error.message);
+        }
+        return;
+    }
+
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
     
+    const resetBtn = `<div style="margin-top: 30px;"><a href="/reset-whatsapp" style="background-color: #ff4b4b; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; font-family: Arial, sans-serif;">🔄 Reiniciar y Generar Nuevo QR</a></div>`;
+
     if (botStatus === "Conectado") {
-        res.end(`<h2>✅ Bot conectado exitosamente.</h2><p>Ya puedes cerrar esta ventana.</p>`);
+        res.end(`<div style="font-family: Arial, sans-serif; text-align: center; margin-top: 50px;"><h2>✅ Bot conectado exitosamente.</h2><p>Ya puedes cerrar esta ventana.</p>${resetBtn}</div>`);
+        return;
+    }
+
+    if (botStatus === "Desconectado") {
+        res.end(`<div style="font-family: Arial, sans-serif; text-align: center; margin-top: 50px;"><h2>❌ Bot desconectado.</h2><p>Parece que cerraste la sesión desde tu celular.</p><p>Haz clic en el botón de abajo para generar un nuevo QR.</p>${resetBtn}</div>`);
         return;
     }
 
     if (!currentQR) {
-        res.end(`<h2>🔄 Generando QR...</h2><p>Por favor refresca la página en unos segundos.</p>`);
+        res.end(`<div style="font-family: Arial, sans-serif; text-align: center; margin-top: 50px;"><h2>🔄 Generando QR...</h2><p>Por favor espera un momento o recarga la página.</p>${resetBtn}</div>`);
         return;
     }
 
@@ -53,9 +86,11 @@ const server = http.createServer((req, res) => {
         <title>Escanear QR de WhatsApp</title>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
         <style>
-            body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background-color: #f0f2f5; }
+            body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background-color: #f0f2f5; margin: 0; }
             .card { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; }
             #qrcode { margin: 20px auto; display: flex; justify-content: center; }
+            .reset-btn { background-color: #ff4b4b; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block; margin-top: 20px; font-family: Arial, sans-serif; }
+            .reset-btn:hover { background-color: #e04343; }
         </style>
     </head>
     <body>
@@ -64,6 +99,7 @@ const server = http.createServer((req, res) => {
             <div id="qrcode"></div>
             <p>Abre WhatsApp > Dispositivos vinculados > Vincular un dispositivo</p>
             <p style="color: #666; font-size: 14px;">La página no se refresca sola. Si escaneas, la consola dirá conectado.</p>
+            <a href="/reset-whatsapp" class="reset-btn">🔄 Reiniciar / Generar Nuevo QR</a>
         </div>
         <script>
             new QRCode(document.getElementById("qrcode"), {
