@@ -24,24 +24,35 @@ export default function Home() {
   }, []);
 
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [wordIndex, setWordIndex] = useState(0);
+  const words = ["empresa", "marca"];
+
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 400) setShowBackToTop(true);
-      else setShowBackToTop(false);
+      setShowBackToTop(window.scrollY > 400);
+      setScrolled(window.scrollY > 50);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setWordIndex((prev) => (prev + 1) % words.length);
+    }, 9000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="relative flex h-auto w-full flex-col group/design-root">
       {/* TopNavBar */}
-      <header className="sticky top-0 z-40 w-full border-b border-solid border-[#ece6f4] dark:border-[#2d1b42] bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm">
+      <header className={`fixed top-0 z-50 w-full transition-all duration-300 border-none ${scrolled ? 'bg-background-dark/80 backdrop-blur-md shadow-lg py-2' : 'bg-transparent py-2'} landscape-mobile:hidden`}>
         <div className="layout-container flex h-full grow flex-col">
           <div className="px-4 md:px-10 lg:px-40 flex justify-center">
-            <div className="layout-content-container flex w-full max-w-[960px] items-center justify-between py-4">
-              <a href="/" className="flex items-center gap-4 text-text-dark dark:text-text-light hover:opacity-80 transition-opacity">
-                <div className="size-7 text-primary dark:text-violet-300">
+            <div className="layout-content-container flex w-full max-w-[960px] items-center justify-between">
+              <a href="/" className="flex items-center gap-4 text-white hover:opacity-80 transition-opacity">
+                <div className="size-7 text-white">
                   <svg viewBox="0 0 155 89" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full text-current">
                     <path d="M77.4316 49.4968L70.7829 49.4969L55.2691 2.21685" stroke="currentColor" strokeWidth="4.43251" strokeLinecap="round" />
                     <path d="M3.55859 54.6685L55.2724 2.21657" stroke="currentColor" strokeWidth="4.43251" strokeLinecap="round" />
@@ -61,15 +72,15 @@ export default function Home() {
                 </div>
                 <h2 className="text-lg font-bold leading-tight tracking-[-0.015em]">AgustinDev</h2>
               </a>
-              <nav className="hidden md:flex items-center gap-9">
-                <a className="text-text-dark dark:text-text-light text-sm font-medium hover:text-primary transition-colors" href="#servicios">Servicios</a>
-                <a className="text-text-dark dark:text-text-light text-sm font-medium hover:text-primary transition-colors" href="#apps">Apps</a>
-                <a className="text-text-dark dark:text-text-light text-sm font-medium hover:text-primary transition-colors" href="#proceso">Cómo trabajo</a>
-                <a className="text-text-dark dark:text-text-light text-sm font-medium hover:text-primary transition-colors" href="#contacto">Contacto</a>
+              <nav className="hidden min-[956px]:flex items-center gap-9">
+                <a className="text-white text-sm font-medium hover:text-white/80 transition-colors" href="#servicios">Servicios</a>
+                <a className="text-white text-sm font-medium hover:text-white/80 transition-colors" href="#apps">Apps</a>
+                <a className="text-white text-sm font-medium hover:text-white/80 transition-colors" href="#proceso">Cómo trabajo</a>
+                <a className="text-white text-sm font-medium hover:text-white/80 transition-colors" href="#contacto">Contacto</a>
                 <a href="/recursos" className="px-4 py-2 bg-primary dark:bg-violet-500 text-white text-sm font-bold rounded-lg shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all">Recursos Gratis</a>
               </nav>
-              <div className="flex items-center gap-2 md:gap-4">
-                <div className="hidden md:flex items-center gap-2">
+              <div className="flex items-center gap-2 min-[956px]:gap-4">
+                <div className="hidden min-[956px]:flex items-center gap-2">
                   <a href="https://www.youtube.com/@AgustinDev58" target="_blank" rel="noreferrer" className="flex size-10 cursor-pointer items-center justify-center rounded-lg bg-[#FF0000] text-white hover:shadow-lg transition-all hover:-translate-y-0.5" aria-label="YouTube">
                     <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 drop-shadow-sm">
                       <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
@@ -86,7 +97,7 @@ export default function Home() {
                     </svg>
                   </a>
                 </div>
-                <button onClick={() => setMobileMenuOpen(true)} className="md:hidden p-2 text-text-dark dark:text-text-light focus:outline-none flex items-center justify-center" aria-label="Abrir menú">
+                <button onClick={() => setMobileMenuOpen(true)} className="min-[956px]:hidden p-2 text-white focus:outline-none flex items-center justify-center" aria-label="Abrir menú">
                   <span className="material-symbols-outlined text-3xl">menu</span>
                 </button>
                 <ThemeToggle />
@@ -97,34 +108,66 @@ export default function Home() {
       </header>
 
       {/* HeroSection */}
-      <div id="hero" className="layout-container flex grow flex-col">
-        <div className="px-4 md:px-10 lg:px-40 flex flex-1 justify-center py-5">
-          <div className="layout-content-container flex flex-col max-w-[960px] flex-1">
-            <div className="@container">
-              <div className="flex flex-col gap-6 px-4 py-10 md:gap-12 md:flex-row items-center">
-                <div className="flex flex-col gap-6 md:w-1/2 md:justify-center">
-                  <div className="flex flex-col gap-4 text-left">
-                    <h1 className="text-text-dark dark:text-text-light text-4xl font-black leading-tight tracking-[-0.033em] md:text-5xl lg:text-6xl">
-                      Una App para tu empresa<br/> con <span className="ai-text-glow drop-shadow-sm font-extrabold pb-1">IA</span>
+      <div id="hero" className="relative layout-container flex grow flex-col overflow-hidden min-h-[450px] md:min-h-[500px] justify-center">
+        {/* Background Video */}
+        <video 
+          autoPlay 
+          muted 
+          loop 
+          playsInline 
+          className="absolute inset-0 w-full h-full object-cover z-0"
+        >
+          <source src="/assets/portada.webm" type="video/webm" />
+        </video>
+        
+        {/* Dark Overlay for Readability */}
+        <div className="absolute inset-0 bg-background-dark/60 dark:bg-black/70 z-10"></div>
+ 
+        <div className="relative z-20 px-4 md:px-10 lg:px-40 flex flex-1 justify-center py-20">
+          <div className="layout-content-container flex flex-col max-w-[960px] flex-1 justify-center items-center text-center">
+            <div className="@container w-full">
+              <div className="flex flex-col gap-8 items-center">
+                <div className="flex flex-col gap-6 max-w-[800px]">
+                  <div className="flex flex-col gap-4">
+                    <h1 className="text-white text-4xl font-black leading-tight tracking-[-0.033em] md:text-5xl lg:text-7xl drop-shadow-lg">
+                      Una App para tu 
+                      <span className="inline-grid grid-cols-1 grid-rows-1 h-[1.05em] align-bottom ml-2 mr-1 translate-y-[-9.8px]">
+                        <span 
+                          className="col-start-1 row-start-1 transition-all duration-1000 ease-in-out transform-gpu"
+                          style={{ 
+                            transform: wordIndex === 0 ? 'translateY(0) rotateX(0deg)' : 'translateY(-100%) rotateX(90deg)',
+                            opacity: wordIndex === 0 ? 1 : 0
+                          }}
+                        >
+                          empresa
+                        </span>
+                        <span 
+                          className="col-start-1 row-start-1 transition-all duration-1000 ease-in-out transform-gpu"
+                          style={{ 
+                            transform: wordIndex === 1 ? 'translateY(0) rotateX(0deg)' : 'translateY(100%) rotateX(-90deg)',
+                            opacity: wordIndex === 1 ? 1 : 0
+                          }}
+                        >
+                          marca
+                        </span>
+                      </span>
+                      <br/> con <span className="ai-text-glow drop-shadow-sm font-extrabold pb-1">IA</span>
                     </h1>
-                    <h2 className="text-text-dark/80 dark:text-text-light/80 text-base font-normal leading-relaxed md:text-lg">
+                    <h2 className="text-white/90 text-base font-normal leading-relaxed md:text-xl drop-shadow-md">
                       Haz crecer tu negocio, no tus horas de trabajo
                     </h2>
                   </div>
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <a href="https://wa.me/5493885056441" target="_blank" rel="noreferrer" className="flex min-w-[84px] cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-lg h-12 px-6 bg-gradient-to-r from-[#25D366] to-[#128C7E] text-white text-base font-bold leading-normal tracking-[0.015em] hover:shadow-lg hover:shadow-[#25D366]/40 transition-all hover:-translate-y-0.5">
-                      <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 drop-shadow-sm">
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center mt-4">
+                    <a href="https://wa.me/5493885056441" target="_blank" rel="noreferrer" className="flex min-w-[160px] cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-lg h-14 px-8 bg-gradient-to-r from-[#25D366] to-[#128C7E] text-white text-lg font-bold leading-normal tracking-[0.015em] hover:shadow-lg hover:shadow-[#25D366]/40 transition-all hover:-translate-y-0.5">
+                      <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 drop-shadow-sm">
                         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.888-.788-1.487-1.761-1.663-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                       </svg>
                       <span className="truncate">WhatsApp</span>
                     </a>
-                    <a href="#apps" className="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-white dark:bg-white/10 border border-[#d9cdea] dark:border-white/20 text-primary dark:text-text-light text-base font-bold leading-normal tracking-[0.015em] hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                    <a href="#apps" className="flex min-w-[160px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-8 bg-white/20 backdrop-blur-md border border-white/30 text-white text-lg font-bold leading-normal tracking-[0.015em] hover:bg-white/30 transition-colors">
                       <span className="truncate">Ver Proyectos</span>
                     </a>
                   </div>
-                </div>
-                <div className="reveal w-full md:w-1/2 aspect-[4/3] relative rounded-xl shadow-2xl overflow-hidden">
-                    <Image src="/assets/working.png" alt="Modern abstract software visualization" fill className="object-cover" sizes="(max-width: 768px) 100vw, 50vw" priority />
                 </div>
               </div>
             </div>
@@ -454,13 +497,13 @@ export default function Home() {
         <button onClick={() => setMobileMenuOpen(false)} className="absolute top-6 right-6 text-text-dark dark:text-text-light" aria-label="Cerrar menú">
           <span className="material-symbols-outlined text-3xl">close</span>
         </button>
-        <nav className="flex flex-col items-center gap-8">
+        <nav className="flex flex-col items-center gap-8 mobile-menu-landscape-fix">
           <a onClick={() => setMobileMenuOpen(false)} className="text-2xl font-bold text-text-dark dark:text-text-light hover:text-primary transition-colors" href="#servicios">Servicios</a>
           <a onClick={() => setMobileMenuOpen(false)} className="text-2xl font-bold text-text-dark dark:text-text-light hover:text-primary transition-colors" href="#apps">Apps</a>
           <a onClick={() => setMobileMenuOpen(false)} className="text-2xl font-bold text-text-dark dark:text-text-light hover:text-primary transition-colors" href="#proceso">Cómo trabajo</a>
           <a onClick={() => setMobileMenuOpen(false)} className="text-2xl font-bold text-text-dark dark:text-text-light hover:text-primary transition-colors" href="#contacto">Contacto</a>
           <a onClick={() => setMobileMenuOpen(false)} className="px-6 py-3 bg-primary dark:bg-violet-500 text-white rounded-xl text-xl font-bold shadow-lg" href="/recursos">Recursos Gratis</a>
-          <div className="flex items-center gap-6 mt-4">
+          <div className="flex items-center gap-6 mt-4 mobile-menu-landscape-fix">
             <a href="https://www.youtube.com/@AgustinDev58" target="_blank" rel="noreferrer" className="flex size-14 cursor-pointer items-center justify-center rounded-xl bg-[#FF0000] text-white shadow-md hover:shadow-lg transition-all hover:-translate-y-1" aria-label="YouTube">
               <svg viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7 drop-shadow-sm">
                 <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>

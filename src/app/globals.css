@@ -169,6 +169,19 @@ body {
   }
 }
 
-.animate-attention {
-  animation: attention-bounce-v2 7s ease-in-out infinite;
+@utility landscape-mobile {
+  @media (max-width: 932px) and (orientation: landscape) {
+    display: none;
+  }
+}
+
+/* Ensure mobile menu handles landscape better */
+.mobile-menu-landscape-fix {
+  @media (max-width: 932px) and (orientation: landscape) {
+    padding-top: 1rem;
+    gap: 1rem;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 }
