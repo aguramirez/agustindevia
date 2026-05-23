@@ -164,6 +164,30 @@ export default function RecursosPage() {
                 </div>
               </div>
             </div>
+
+            {/* Video Card - Sistema TPR */}
+            <div className="bg-white dark:bg-white/5 rounded-2xl overflow-hidden border border-[#d9cdea] dark:border-white/10 shadow-md hover:shadow-xl transition-shadow flex flex-col">
+              {/* YouTube Video Section */}
+              <div className="aspect-video w-full bg-black">
+                <iframe
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  className="w-full h-full"
+                  frameBorder="0"
+                  src="https://www.youtube.com/embed/HNBc6F-wRTU"
+                  title="Sistema TPR - Barberias y Salones de Belleza 5min"
+                ></iframe>
+              </div>
+              
+              <div className="p-6 flex flex-col flex-grow">
+                <h3 className="text-xl font-bold text-text-dark dark:text-text-light mb-4">
+                  Sistema TPR - Barberias y Salones de Belleza 5min
+                </h3>
+                <p className="text-text-dark/70 dark:text-text-light/70 mb-6 flex-grow">
+                  Conoce cómo funciona el Sistema TPR diseñado para optimizar la gestión, agenda de turnos y retención de clientes en barberías y salones de belleza en tan solo 5 minutos.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </main>
