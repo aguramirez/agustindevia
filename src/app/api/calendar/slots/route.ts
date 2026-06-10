@@ -38,7 +38,7 @@ export async function GET(req: Request) {
   });
 
   // Todos los tiempos que ya están ocupados
-  const bookedTimes = appointments.map(a => a.time);
+  const bookedTimes = appointments.map((a: { time: string }) => a.time);
 
   const [startH, startM] = availability.startTime.split(':').map(Number);
   const [endH, endM] = availability.endTime.split(':').map(Number);
