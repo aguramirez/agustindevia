@@ -4,9 +4,11 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import ChatBox from "@/components/ai/ChatBox";
 import ThemeToggle from "@/components/ui/ThemeToggle";
+import BookingModal from "@/components/calendar/BookingModal";
 
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
 
   useEffect(() => {
     const observerOptions = { threshold: 0.1 };
@@ -164,6 +166,10 @@ export default function Home() {
                       </svg>
                       <span className="truncate">WhatsApp</span>
                     </a>
+                    <button onClick={() => setIsBookingOpen(true)} className="flex min-w-[160px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-8 bg-primary dark:bg-violet-600 text-white text-lg font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 dark:hover:bg-violet-500 transition-colors hover:-translate-y-0.5 shadow-lg shadow-primary/30">
+                      <span className="material-symbols-outlined mr-2">calendar_month</span>
+                      <span className="truncate">Agendar Llamada</span>
+                    </button>
                     <a href="#apps" className="flex min-w-[160px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-8 bg-white/20 backdrop-blur-md border border-white/30 text-white text-lg font-bold leading-normal tracking-[0.015em] hover:bg-white/30 transition-colors">
                       <span className="truncate">Ver Proyectos</span>
                     </a>
@@ -534,6 +540,7 @@ export default function Home() {
         <span className="material-symbols-outlined">expand_less</span>
       </button>
 
+      <BookingModal isOpen={isBookingOpen} onClose={() => setIsBookingOpen(false)} />
     </div>
   );
 }

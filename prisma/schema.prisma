@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Appointment {
+  id        String   @id @default(cuid())
+  name      String
+  business  String
+  whatsapp  String
+  email     String
+  date      DateTime
+  time      String   // Added for simpler querying (e.g. "15:00")
+  status    String   @default("PENDING") // PENDING, CONFIRMED, CANCELLED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Availability {
+  id        String   @id @default(cuid())
+  dayOfWeek Int      // 0 = Sunday, 1 = Monday, etc.
+  startTime String   // "09:00"
+  endTime   String   // "18:00"
+  isActive  Boolean  @default(true)
+}
+
+model Settings {
+  id           String @id @default("global")
+  slotDuration Int    @default(60) // Duración del turno en minutos
+}

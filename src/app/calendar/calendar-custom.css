@@ -1,0 +1,44 @@
+/* Custom CSS for React Big Calendar to match the theme */
+.rbc-custom-wrapper {
+  color: inherit;
+}
+
+.rbc-custom-wrapper .rbc-toolbar button {
+  color: inherit;
+  border-color: rgba(150, 150, 150, 0.2);
+}
+
+.rbc-custom-wrapper .rbc-toolbar button:hover,
+.rbc-custom-wrapper .rbc-toolbar button:active,
+.rbc-custom-wrapper .rbc-toolbar button.rbc-active {
+  background-color: rgba(139, 92, 246, 0.1); /* Primary color low opacity */
+  color: #8b5cf6; /* Primary color */
+  border-color: #8b5cf6;
+}
+
+.rbc-custom-wrapper .rbc-event {
+  background-color: #8b5cf6; /* Primary color */
+  border-radius: 6px;
+}
+
+.rbc-custom-wrapper .rbc-today {
+  background-color: rgba(139, 92, 246, 0.05); /* Primary color very low opacity */
+}
+
+/* Dark mode overrides */
+.dark .rbc-custom-wrapper .rbc-month-view,
+.dark .rbc-custom-wrapper .rbc-time-view,
+.dark .rbc-custom-wrapper .rbc-header,
+.dark .rbc-custom-wrapper .rbc-day-bg,
+.dark .rbc-custom-wrapper .rbc-time-content,
+.dark .rbc-custom-wrapper .rbc-timeslot-group {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark .rbc-custom-wrapper .rbc-off-range-bg {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.dark .rbc-custom-wrapper .rbc-event {
+  background-color: #a78bfa; /* Violet 400 for better visibility in dark mode */
+}
