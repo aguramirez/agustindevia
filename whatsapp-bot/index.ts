@@ -123,13 +123,30 @@ app.post('/webhook/new-appointment', async (req, res) => {
             // Avisar a Admin
             await globalSock.sendMessage(adminPhone, { text: `🔔 *NUEVO TURNO AGENDADO*\n\n*Cliente:* ${apt.name}\n*Rubro:* ${apt.business}\n*Email:* ${apt.email}\n*Fecha:* ${new Date(apt.date).toLocaleDateString('es-AR')} a las ${apt.time} hs.\n\n*WhatsApp:* wa.me/${clientPhone.replace('@s.whatsapp.net','')}` });
             
-            console.log(`📲 Enviando mensaje de confirmación al Cliente (WhatsApp: ${clientPhone})...`);
+            console.log(`📲 Enviando mensaje de PENDIENTE al Cliente (WhatsApp: ${clientPhone})...`);
             // Confirmacion a Cliente
-            await globalSock.sendMessage(clientPhone, { text: `Hola ${apt.name} 👋\nRecibimos tu solicitud de turno para el día ${new Date(apt.date).toLocaleDateString('es-AR')} a las ${apt.time} hs.\nPronto nos comunicaremos contigo. ¡Gracias!` });
+            await globalSock.sendMessage(clientPhone, { text: `Hola ${apt.name} 👋\nRecibimos tu solicitud de turno para el día ${new Date(apt.date).toLocaleDateString('es-AR')} a las ${apt.time} hs.\n\n⚠️ Tu turno está *Pendiente de Confirmación*.\nPronto lo revisaremos y te enviaremos otro mensaje para confirmarlo. ¡Gracias!` });
         }
         res.json({ success: true });
     } catch (e) {
         console.error("Error enviando notificacion webhook:", e);
+        res.status(500).json({ error: "Error interno" });
+    }
+});
+
+// Endpoint webhook para cuando se CONFIRMA un turno
+app.post('/webhook/confirm-appointment', async (req, res) => {
+    try {
+        const apt = req.body;
+        if (globalSock && botStatus === "Conectado") {
+            const clientPhone = `${apt.whatsapp.replace(/\D/g,'')}@s.whatsapp.net`;
+            
+            console.log(`📲 Enviando mensaje de TURNO CONFIRMADO al Cliente (WhatsApp: ${clientPhone})...`);
+            await globalSock.sendMessage(clientPhone, { text: `✅ ¡Hola ${apt.name}! Tu turno para el día ${new Date(apt.date).toLocaleDateString('es-AR')} a las ${apt.time} hs ha sido *CONFIRMADO*.\n\nTe esperamos. ¡Gracias!` });
+        }
+        res.json({ success: true });
+    } catch (e) {
+        console.error("Error enviando notificacion confirmacion:", e);
         res.status(500).json({ error: "Error interno" });
     }
 });

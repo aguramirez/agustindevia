@@ -22,6 +22,16 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       where: { id },
       data: body,
     });
+
+    if (body.status === 'CONFIRMED') {
+      const botUrl = process.env.BOT_WEBHOOK_URL || 'http://localhost:3001';
+      fetch(`${botUrl}/webhook/confirm-appointment`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updated),
+      }).catch(e => console.error("Error contactando al bot para confirmacion:", e));
+    }
+
     return NextResponse.json(updated);
   } catch (error) {
     console.error("PUT /api/calendar/[id] Error:", error);
