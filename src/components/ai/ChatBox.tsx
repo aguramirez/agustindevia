@@ -258,7 +258,7 @@ export default function ChatBox() {
         setShowPromptModal(true);
         break;
       case "Hablar por WhatsApp":
-        window.open("https://wa.me/5493885056441", "_blank");
+        window.open("https://wa.me/5493884791424", "_blank");
         break;
       case "Instagram":
         window.open("https://instagram.com/agustindev", "_blank");

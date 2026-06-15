@@ -53,6 +53,16 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
         alert("Por favor ingresa un número de WhatsApp válido.");
         return;
       }
+
+      // Auto-corregir formato de WhatsApp para Argentina y México
+      let formattedWhatsapp = formData.whatsapp;
+      if (formattedWhatsapp.startsWith("+54") && formattedWhatsapp.charAt(3) !== "9") {
+        formattedWhatsapp = "+549" + formattedWhatsapp.slice(3);
+      } else if (formattedWhatsapp.startsWith("+52") && formattedWhatsapp.charAt(3) !== "1") {
+        formattedWhatsapp = "+521" + formattedWhatsapp.slice(3);
+      }
+      setFormData(prev => ({ ...prev, whatsapp: formattedWhatsapp }));
+
       setStep("confirm");
     }
   };
