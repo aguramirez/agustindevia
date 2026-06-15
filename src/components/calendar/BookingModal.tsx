@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { format, addDays, startOfToday, parseISO, isSameDay } from "date-fns";
+import { es } from "date-fns/locale";
 import { toZonedTime } from "date-fns-tz";
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
@@ -24,9 +25,10 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
   });
   const [loading, setLoading] = useState(false);
 
-  // Generamos los próximos 14 días para mostrar en el selector
+  // Generamos los próximos 14 días empezando desde mañana
   const today = startOfToday();
-  const nextDays = Array.from({ length: 14 }).map((_, i) => addDays(today, i));
+  const tomorrow = addDays(today, 1);
+  const nextDays = Array.from({ length: 14 }).map((_, i) => addDays(tomorrow, i));
 
   // Simularemos horarios por ahora (luego vendrán de la base de datos)
   useEffect(() => {
@@ -132,9 +134,9 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
                           : "border-gray-200 dark:border-white/10 hover:border-primary/50 text-text-dark dark:text-text-light"
                       }`}
                     >
-                      <span className="text-xs uppercase font-medium">{format(date, "EEE")}</span>
+                      <span className="text-xs uppercase font-medium">{format(date, "EEE", { locale: es })}</span>
                       <span className="text-xl font-bold">{format(date, "d")}</span>
-                      <span className="text-xs">{format(date, "MMM")}</span>
+                      <span className="text-xs capitalize">{format(date, "MMM", { locale: es })}</span>
                     </button>
                   );
                 })}
