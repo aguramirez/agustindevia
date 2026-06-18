@@ -26,9 +26,9 @@ if (!apiKey) {
 
 const genAI = new GoogleGenerativeAI(apiKey);
 
-// Diccionario rudimentario en memoria para guardar el historial por número
-// Nota: Cuando despliegues en producción de verdad, lo ideal es cambiar esto por una base de datos (Postgres/Redis)
 const memoryStore = new Map<string, any[]>();
+const messageBuffer = new Map<string, string[]>();
+const bufferTimeouts = new Map<string, NodeJS.Timeout>();
 
 // Variable global para almacenar el último QR generado y el estado
 let currentQR = "";
@@ -119,13 +119,23 @@ app.post('/webhook/new-appointment', async (req, res) => {
             const adminPhone = "5493885056441@s.whatsapp.net"; // Tu numero
             const clientPhone = `${apt.whatsapp.replace(/\D/g,'')}@s.whatsapp.net`;
             
+            const dateStr = new Date(apt.date).toLocaleDateString('es-AR');
+            const tzClean = apt.timezone && apt.clientTime 
+                ? apt.timezone.split('/').pop().replace(/_/g, ' ') 
+                : null;
+            
+            const adminTimeStr = apt.time + " hs (Argentina)" + (tzClean ? `\n*Hora Cliente:* ${apt.clientTime} hs (${tzClean})` : "");
+            const clientTimeStr = tzClean 
+                ? `${apt.clientTime} hs (${tzClean}) [${apt.time} hs Argentina]` 
+                : `${apt.time} hs (Argentina)`;
+
             console.log(`\n📲 Enviando mensaje de aviso a Admin (WhatsApp: ${adminPhone})...`);
             // Avisar a Admin
-            await globalSock.sendMessage(adminPhone, { text: `🔔 *NUEVO TURNO AGENDADO*\n\n*Cliente:* ${apt.name}\n*Rubro:* ${apt.business}\n*Email:* ${apt.email}\n*Fecha:* ${new Date(apt.date).toLocaleDateString('es-AR')} a las ${apt.time} hs.\n\n*WhatsApp:* wa.me/${clientPhone.replace('@s.whatsapp.net','')}` });
+            await globalSock.sendMessage(adminPhone, { text: `🔔 *NUEVO TURNO AGENDADO*\n\n*Cliente:* ${apt.name}\n*Rubro:* ${apt.business}\n*Email:* ${apt.email}\n*Fecha:* ${dateStr}\n*Hora:* ${adminTimeStr}\n\n*WhatsApp:* wa.me/${clientPhone.replace('@s.whatsapp.net','')}` });
             
             console.log(`📲 Enviando mensaje de PENDIENTE al Cliente (WhatsApp: ${clientPhone})...`);
             // Confirmacion a Cliente
-            await globalSock.sendMessage(clientPhone, { text: `Hola ${apt.name} 👋\nRecibimos tu solicitud de turno para el día ${new Date(apt.date).toLocaleDateString('es-AR')} a las ${apt.time} hs.\n\n⚠️ Tu turno está *Pendiente de Confirmación*.\nPronto lo revisaremos y te enviaremos otro mensaje para confirmarlo. ¡Gracias!` });
+            await globalSock.sendMessage(clientPhone, { text: `Hola ${apt.name} 👋\nRecibimos tu solicitud de turno para el día ${dateStr} a las ${clientTimeStr}.\n\n⚠️ Tu turno está *Pendiente de Confirmación*.\nPronto lo revisaremos y te enviaremos otro mensaje para confirmarlo. ¡Gracias!` });
         }
         res.json({ success: true });
     } catch (e) {
@@ -141,8 +151,16 @@ app.post('/webhook/confirm-appointment', async (req, res) => {
         if (globalSock && botStatus === "Conectado") {
             const clientPhone = `${apt.whatsapp.replace(/\D/g,'')}@s.whatsapp.net`;
             
+            const dateStr = new Date(apt.date).toLocaleDateString('es-AR');
+            const tzClean = apt.timezone && apt.clientTime 
+                ? apt.timezone.split('/').pop().replace(/_/g, ' ') 
+                : null;
+            const clientTimeStr = tzClean 
+                ? `${apt.clientTime} hs (${tzClean}) [${apt.time} hs Argentina]` 
+                : `${apt.time} hs (Argentina)`;
+            
             console.log(`📲 Enviando mensaje de TURNO CONFIRMADO al Cliente (WhatsApp: ${clientPhone})...`);
-            await globalSock.sendMessage(clientPhone, { text: `✅ ¡Hola ${apt.name}! Tu turno para el día ${new Date(apt.date).toLocaleDateString('es-AR')} a las ${apt.time} hs ha sido *CONFIRMADO*.\n\nTe esperamos. ¡Gracias!` });
+            await globalSock.sendMessage(clientPhone, { text: `✅ ¡Hola ${apt.name}! Tu turno para el día ${dateStr} a las ${clientTimeStr} ha sido *CONFIRMADO*.\n\nTe esperamos. ¡Gracias!` });
         }
         res.json({ success: true });
     } catch (e) {
@@ -175,16 +193,23 @@ cron.schedule('*/15 * * * *', async () => {
             
             const clientPhone = `${apt.whatsapp.replace(/\D/g,'')}@s.whatsapp.net`;
             
+            const tzClean = apt.timezone && apt.clientTime 
+                ? apt.timezone.split('/').pop().replace(/_/g, ' ') 
+                : null;
+            const clientTimeStr = tzClean 
+                ? `${apt.clientTime} hs (${tzClean}) [${apt.time} hs Argentina]` 
+                : `${apt.time} hs (Argentina)`;
+            
             // Recordatorio 24 horas (entre 23.75 y 24.0 horas)
             if (diffHours <= 24 && diffHours > 23.75) {
                 console.log(`⏰ Enviando recordatorio de 24hs a ${apt.name} (${clientPhone})`);
-                await globalSock.sendMessage(clientPhone, { text: `Hola ${apt.name} 👋\nTe recordamos que tienes un turno mañana a las ${apt.time} hs.\n¡Te esperamos!` });
+                await globalSock.sendMessage(clientPhone, { text: `Hola ${apt.name} 👋\nTe recordamos que tienes un turno mañana a las ${clientTimeStr}.\n¡Te esperamos!` });
             }
             
             // Recordatorio 2 horas (entre 1.75 y 2.0 horas)
             if (diffHours <= 2 && diffHours > 1.75) {
                 console.log(`⏰ Enviando recordatorio de 2hs a ${apt.name} (${clientPhone})`);
-                await globalSock.sendMessage(clientPhone, { text: `Hola ${apt.name} 👋\nTe recordamos que tu turno es en 2 horas (${apt.time} hs).\n¡Nos vemos pronto!` });
+                await globalSock.sendMessage(clientPhone, { text: `Hola ${apt.name} 👋\nTe recordamos que tu turno es en 2 horas (${clientTimeStr}).\n¡Nos vemos pronto!` });
             }
         }
     } catch (e) {
@@ -269,68 +294,93 @@ async function connectToWhatsApp() {
         if (!textMessage) return;
 
         console.log(`📩 Recibido de ${senderNumber}: ${textMessage}`);
-        
-        // Simular que estamos "Escribiendo..." en WhatsApp
-        await sock.sendPresenceUpdate('composing', senderNumber);
 
-        try {
-            // Recuperar historial o crear uno nuevo
-            let history = memoryStore.get(senderNumber) || [];
+        // Inicializar el buffer para este usuario
+        if (!messageBuffer.has(senderNumber)) {
+            messageBuffer.set(senderNumber, []);
+        }
+        messageBuffer.get(senderNumber)!.push(textMessage);
 
-            const modelsToTry = [
-                "gemini-2.5-flash",
-                "gemini-2.0-flash",
-                "gemini-2.5-flash-lite",
-            ];
+        // Cancelar el timeout anterior si existe
+        if (bufferTimeouts.has(senderNumber)) {
+            clearTimeout(bufferTimeouts.get(senderNumber)!);
+        }
 
-            let responseText = "";
-            let success = false;
+        // Programar el envío de respuesta después de 4 segundos de inactividad
+        const timeout = setTimeout(async () => {
+            bufferTimeouts.delete(senderNumber);
+            const messages = messageBuffer.get(senderNumber) || [];
+            messageBuffer.delete(senderNumber);
 
-            for (const modelName of modelsToTry) {
-                try {
-                    const model = genAI.getGenerativeModel({
-                        model: modelName,
-                        systemInstruction: SOCIAL_PROMPT,
-                    });
+            if (messages.length === 0) return;
 
-                    const chatSession = model.startChat({ history });
-                    const result = await chatSession.sendMessage(textMessage);
-                    responseText = result.response.text();
-                    success = true;
-                    break; // Si funcionó, salir del loop
-                } catch (err: any) {
-                    const is503 = err.message?.includes("503") || err.status === 503;
-                    const is429 = err.message?.includes("429") || err.status === 429;
-                    
-                    if (is503 || is429) {
-                        console.warn(`⚠️ [${modelName}] saturado (${is503 ? '503' : '429'}). Intentando con el de respaldo...`);
-                        await new Promise(resolve => setTimeout(resolve, 2000)); // Esperar 2 segundos antes de intentar otro
-                    } else {
-                        throw err; // Es un error distinto (ej. API Key inválida)
+            const combinedMessage = messages.join("\n");
+            console.log(`🤖 Procesando mensaje agrupado de ${senderNumber} (${messages.length} mensajes): "${combinedMessage}"`);
+
+            // Simular que estamos "Escribiendo..." en WhatsApp
+            await sock.sendPresenceUpdate('composing', senderNumber);
+
+            try {
+                // Recuperar historial o crear uno nuevo
+                let history = memoryStore.get(senderNumber) || [];
+
+                const modelsToTry = [
+                    "gemini-2.5-flash",
+                    "gemini-2.0-flash",
+                    "gemini-2.5-flash-lite",
+                ];
+
+                let responseText = "";
+                let success = false;
+
+                for (const modelName of modelsToTry) {
+                    try {
+                        const model = genAI.getGenerativeModel({
+                            model: modelName,
+                            systemInstruction: SOCIAL_PROMPT,
+                        });
+
+                        const chatSession = model.startChat({ history });
+                        const result = await chatSession.sendMessage(combinedMessage);
+                        responseText = result.response.text();
+                        success = true;
+                        break; // Si funcionó, salir del loop
+                    } catch (err: any) {
+                        const is503 = err.message?.includes("503") || err.status === 503;
+                        const is429 = err.message?.includes("429") || err.status === 429;
+                        
+                        if (is503 || is429) {
+                            console.warn(`⚠️ [${modelName}] saturado (${is503 ? '503' : '429'}). Intentando con el de respaldo...`);
+                            await new Promise(resolve => setTimeout(resolve, 2000)); // Esperar 2 segundos antes de intentar otro
+                        } else {
+                            throw err; // Es un error distinto (ej. API Key inválida)
+                        }
                     }
                 }
+
+                if (!success) {
+                    throw new Error("Todos los modelos de IA están saturados en este momento.");
+                }
+
+                // Convertir Markdown de Gemini (**) a Negritas de WhatsApp (*)
+                responseText = responseText.replace(/\*\*(.*?)\*\*/g, '*$1*');
+
+                // Actualizar historial de la IA con el nuevo mensaje
+                history.push({ role: "user", parts: [{ text: combinedMessage }] });
+                history.push({ role: "model", parts: [{ text: responseText }] });
+                memoryStore.set(senderNumber, history);
+
+                // Enviar respuesta por WhatsApp
+                await sock.sendMessage(senderNumber, { text: responseText });
+                console.log(`🤖 Respuesta enviada a ${senderNumber}`);
+                
+            } catch (error) {
+                console.error("❌ Error al procesar con IA:", error);
+                await sock.sendMessage(senderNumber, { text: "Disculpa, tuve un error técnico procesando tu mensaje. Por favor intenta de nuevo en unos minutos." });
             }
+        }, 4000);
 
-            if (!success) {
-                throw new Error("Todos los modelos de IA están saturados en este momento.");
-            }
-
-            // Convertir Markdown de Gemini (**) a Negritas de WhatsApp (*)
-            responseText = responseText.replace(/\*\*(.*?)\*\*/g, '*$1*');
-
-            // Actualizar historial de la IA con el nuevo mensaje
-            history.push({ role: "user", parts: [{ text: textMessage }] });
-            history.push({ role: "model", parts: [{ text: responseText }] });
-            memoryStore.set(senderNumber, history);
-
-            // Enviar respuesta por WhatsApp
-            await sock.sendMessage(senderNumber, { text: responseText });
-            console.log(`🤖 Respuesta enviada a ${senderNumber}`);
-            
-        } catch (error) {
-            console.error("❌ Error al procesar con IA:", error);
-            await sock.sendMessage(senderNumber, { text: "Disculpa, tuve un error técnico procesando tu mensaje. Por favor intenta de nuevo en unos minutos." });
-        }
+        bufferTimeouts.set(senderNumber, timeout);
     });
 }
 

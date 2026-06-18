@@ -25,6 +25,8 @@ export async function POST(req: Request) {
         email: body.email,
         date: new Date(body.date),
         time: body.time,
+        timezone: body.timezone || null,
+        clientTime: body.clientTime || null,
       },
     });
 

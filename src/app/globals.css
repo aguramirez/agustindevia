@@ -3,9 +3,10 @@
 @theme {
   --color-primary: #4b00ad;
   --color-background-light: #f7f5f8;
-  --color-background-dark: #180f23;
+  --color-background-dark: #0e0817;
   --color-text-dark: #130c1d;
   --color-text-light: #faf8fc;
+  --lp-bg: #0e0817;
   --font-display: Inter, sans-serif;
   --radius-DEFAULT: 0.25rem;
   --radius-lg: 0.5rem;

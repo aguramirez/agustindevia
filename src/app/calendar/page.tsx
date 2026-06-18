@@ -143,7 +143,13 @@ export default function AdminCalendar() {
                 </a>
               </p>
               <p><strong>Email:</strong> {selectedEvent.email}</p>
-              <p><strong>Fecha y Hora:</strong> {format(new Date(selectedEvent.date), "dd/MM/yyyy")} - {selectedEvent.time} hs</p>
+              <p><strong>Fecha y Hora (Argentina):</strong> {format(new Date(selectedEvent.date), "dd/MM/yyyy")} - {selectedEvent.time} hs</p>
+              {selectedEvent.timezone && selectedEvent.clientTime && (
+                <>
+                  <p><strong>Hora Cliente:</strong> {selectedEvent.clientTime} hs</p>
+                  <p><strong>Ubicación/Zona Horaria:</strong> {selectedEvent.timezone.split('/').pop()?.replace(/_/g, ' ')} ({selectedEvent.timezone})</p>
+                </>
+              )}
               <p>
                 <strong>Estado:</strong> 
                 <span className={`ml-2 px-2 py-1 rounded text-xs font-bold ${selectedEvent.status === 'CONFIRMED' ? 'bg-green-100 text-green-700' : selectedEvent.status === 'CANCELLED' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}`}>
