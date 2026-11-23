@@ -1,0 +1,135 @@
+import admin from 'firebase-admin';
+import prisma from './prisma';
+import fs from 'fs';
+import path from 'path';
+
+// Archivo de respaldo local para tokens en caso de que la DB aún no tenga la tabla migrada
+const TOKENS_FALLBACK_FILE = path.join(process.cwd(), '.device-tokens.json');
+
+// Inicializar Firebase Admin SDK si no ha sido inicializado
+function getFirebaseAdmin() {
+  if (admin.apps.length > 0) {
+    return admin.app();
+  }
+
+  // 1. Verificar si viene como variable de entorno (JSON string o base64)
+  const serviceAccountEnv = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+  if (serviceAccountEnv) {
+    try {
+      const decoded = serviceAccountEnv.startsWith('{')
+        ? JSON.parse(serviceAccountEnv)
+        : JSON.parse(Buffer.from(serviceAccountEnv, 'base64').toString('utf8'));
+
+      return admin.initializeApp({
+        credential: admin.credential.cert(decoded),
+      });
+    } catch (e) {
+      console.error('Error parseando FIREBASE_SERVICE_ACCOUNT_KEY de entorno:', e);
+    }
+  }
+
+  // 2. Verificar si existe archivo local firebase-service-account.json
+  const localFile = path.join(process.cwd(), 'firebase-service-account.json');
+  if (fs.existsSync(localFile)) {
+    try {
+      const serviceAccount = JSON.parse(fs.readFileSync(localFile, 'utf8'));
+      return admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+      });
+    } catch (e) {
+      console.error('Error leyendo firebase-service-account.json:', e);
+    }
+  }
+
+  return null;
+}
+
+// Guardar token en respaldo local
+export function saveTokenFallback(token: string) {
+  try {
+    let tokens: string[] = [];
+    if (fs.existsSync(TOKENS_FALLBACK_FILE)) {
+      tokens = JSON.parse(fs.readFileSync(TOKENS_FALLBACK_FILE, 'utf8'));
+    }
+    if (!tokens.includes(token)) {
+      tokens.push(token);
+      fs.writeFileSync(TOKENS_FALLBACK_FILE, JSON.stringify(tokens, null, 2));
+    }
+  } catch (err) {
+    console.error('Error guardando token en respaldo local:', err);
+  }
+}
+
+// Obtener todos los tokens registrados
+export async function getAllDeviceTokens(): Promise<string[]> {
+  const tokenSet = new Set<string>();
+
+  // 1. Intentar leer de Base de Datos
+  try {
+    const dbTokens = await (prisma as any).deviceToken?.findMany();
+    if (dbTokens && Array.isArray(dbTokens)) {
+      dbTokens.forEach((t: { token: string }) => tokenSet.add(t.token));
+    }
+  } catch {
+    // Si la tabla no existe aún en PostgreSQL, no pasa nada
+  }
+
+  // 2. Leer de respaldo local
+  try {
+    if (fs.existsSync(TOKENS_FALLBACK_FILE)) {
+      const localTokens = JSON.parse(fs.readFileSync(TOKENS_FALLBACK_FILE, 'utf8'));
+      if (Array.isArray(localTokens)) {
+        localTokens.forEach((t: string) => tokenSet.add(t));
+      }
+    }
+  } catch {}
+
+  return Array.from(tokenSet);
+}
+
+// Enviar notificación a todos los dispositivos registrados del admin
+export async function sendPushToAdmin(
+  title: string,
+  body: string,
+  data?: Record<string, string>
+) {
+  const app = getFirebaseAdmin();
+  if (!app) {
+    console.warn(
+      '⚠️ Firebase Admin no está inicializado. Para recibir notificaciones en tu celular, agrega tus credenciales en firebase-service-account.json o la variable de entorno FIREBASE_SERVICE_ACCOUNT_KEY.'
+    );
+    return { success: false, reason: 'Firebase not configured' };
+  }
+
+  const tokens = await getAllDeviceTokens();
+  if (tokens.length === 0) {
+    console.warn('⚠️ No hay tokens de dispositivos registrados aún. Abre la app en tu celular para registrarlo.');
+    return { success: false, reason: 'No registered tokens' };
+  }
+
+  const message: admin.messaging.MulticastMessage = {
+    tokens,
+    notification: {
+      title,
+      body,
+    },
+    data: data || {},
+    android: {
+      priority: 'high',
+      notification: {
+        sound: 'default',
+        channelId: 'agustindev_agenda',
+        priority: 'max',
+      },
+    },
+  };
+
+  try {
+    const response = await admin.messaging().sendEachForMulticast(message);
+    console.log(`✅ Push enviado: ${response.successCount} éxitos, ${response.failureCount} fallos.`);
+    return { success: true, response };
+  } catch (error) {
+    console.error('❌ Error enviando notificación push:', error);
+    return { success: false, error };
+  }
+}

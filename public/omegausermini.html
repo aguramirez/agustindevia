@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>OmegaFit - Mi Rutina (Paciente)</title>
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#ff6d00',
+            'primary-dark': '#e05300',
+            'background-dark': '#09090b',
+            'card-dark': '#141417',
+            'card-border': '#232328',
+          },
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overscroll-behavior-y: none;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: rgba(255, 109, 0, 0.25);
+      border-radius: 9999px;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+
+    .material-symbols-outlined.fill {
+      font-variation-settings: 'FILL' 1;
+    }
+
+    @keyframes confettiFall {
+      0% {
+        transform: translateY(-20px) rotate(0deg);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
+
+    .confetti-piece {
+      position: absolute;
+      width: 7px;
+      height: 7px;
+      border-radius: 2px;
+      animation: confettiFall 2.5s ease-out forwards;
+      pointer-events: none;
+      z-index: 100;
+    }
+  </style>
+</head>
+
+<body
+  class="bg-background-dark text-slate-100 antialiased h-[100dvh] w-full flex flex-col overflow-hidden relative selection:bg-primary/30">
+
+  <!-- Mobile App Wrapper -->
+  <div class="w-full h-full max-w-md mx-auto flex flex-col bg-background-dark relative overflow-hidden" id="appRoot">
+
+    <!-- Top Navigation Header -->
+    <header
+      class="h-14 border-b border-card-border/80 flex items-center justify-between px-3.5 bg-background-dark/95 backdrop-blur-md sticky top-0 z-30 shrink-0">
+      <div class="flex items-center gap-2.5">
+        <button id="btnOpenSidebar"
+          class="w-9 h-9 rounded-xl bg-white/[0.04] border border-card-border text-slate-300 hover:text-white hover:border-primary/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer"
+          aria-label="Abrir Menú">
+          <span class="material-symbols-outlined text-xl">menu</span>
+        </button>
+
+        <!-- Brand Logo Original Completo -->
+        <div class="flex items-center gap-2 cursor-pointer" onclick="scrollToTop()">
+          <svg class="w-6 h-6 text-primary shrink-0" viewBox="0 0 301 290" fill="currentColor"
+            xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd"
+              d="M138.921 0.595217C110.13 3.57122 84.6068 15.0392 63.7914 34.3522C32.5029 63.3812 17.8347 110.586 27.3667 151.576C33.4051 177.546 46.4068 200.337 67.7282 222.327C69.9944 224.665 71.8496 226.803 71.8496 227.077C71.8496 227.352 55.6834 227.576 35.9248 227.576H0V258.576V289.576L43.6586 289.568L87.3172 289.56L87.4858 284.318C87.5786 281.435 88.329 277.501 89.1533 275.576C92.7687 267.139 104.918 256.546 128.151 241.576C145.882 230.151 156.784 222.138 162.16 216.579C165.922 212.691 166.04 212.389 164.212 211.356C160.6 209.314 153.369 202.098 150.634 197.805L147.911 193.533L142.938 200.305C140.201 204.029 137.183 208.651 136.229 210.576C135.275 212.501 132.647 217.111 130.388 220.821C126.612 227.023 125.876 227.684 121.249 229.032C112.561 231.563 107.741 235.622 99.5326 247.319C92.0153 258.03 86.2923 264.33 82.144 266.458C80.6821 267.208 70.2439 267.576 50.4603 267.576H20.9561V258.076V248.576L34.1784 248.556C55.852 248.524 73.4223 245.36 85.3144 239.347C91.0024 236.471 98.7931 230.619 98.7931 229.222C98.7931 227.677 93.7906 220.587 86.3193 211.547C65.5448 186.408 55.2962 164.245 51.8714 137.056C49.3048 116.68 54.6426 93.5572 66.5267 73.5662C73.9681 61.0472 91.1631 45.4142 105.28 38.3322C117.246 32.3282 137.267 27.5902 150.684 27.5862C163.026 27.5822 180.028 31.5702 193.232 37.5672C217.619 48.6422 238.281 73.5662 245.753 100.922C247.689 108.01 247.981 111.528 247.981 127.837C247.981 142.132 248.269 146.488 249.191 146.133C252.181 144.982 264.485 136.217 269.824 131.433L275.701 126.168L275.121 115.622C274.781 109.451 273.49 100.974 272.01 95.1872C269.15 84.0082 268.749 82.9492 262.215 69.3472C240.569 24.2822 188.837 -4.56478 138.921 0.595217ZM169.645 10.7072C176.835 12.0442 191.541 17.0082 197.972 20.2672C205.12 23.8902 213.512 29.7752 217.046 33.6442L220.039 36.9212L215.393 34.2622C194.67 22.3992 180.195 17.9402 159.105 16.9212C124.091 15.2312 91.5453 28.5352 66.0088 54.9782C61.9722 59.1572 58.5264 62.5762 58.3508 62.5762C57.7102 62.5762 61.2847 55.9832 63.7725 52.5762C79.4436 31.1152 99.9337 17.7242 126.735 11.4292C138.416 8.68522 157.089 8.37122 169.645 10.7072ZM210.569 88.6842C206.641 91.5352 205.769 91.7582 199.989 91.3892C194.569 91.0432 193.858 91.1902 194.89 92.4412C196.917 94.8972 205.848 98.5512 210.06 98.6482L214.052 98.7392L210.562 100.261C207.072 101.783 200.244 101.673 196.089 100.028C194.097 99.2382 194.097 99.2402 196.078 101.499C198.707 104.495 201.101 105.725 206.882 107.046L211.687 108.144L209.34 110.682L206.993 113.219L209.308 114.969C210.582 115.932 212.797 118.497 214.232 120.67L216.841 124.62L218.73 121.507C220.126 119.207 221.065 118.585 222.325 119.126C223.263 119.529 225.267 120.072 226.778 120.331C229.17 120.743 229.721 120.336 231.033 117.19C231.861 115.202 233.095 113.577 233.773 113.578C234.68 113.58 234.92 111.421 234.679 105.458C234.479 100.532 234.773 96.9112 235.427 96.2562C236.02 95.6622 236.505 93.9742 236.505 92.5042C236.505 90.1752 236.009 89.7522 232.645 89.2132C230.522 88.8732 227.492 87.9182 225.909 87.0922C221.079 84.5672 215.432 85.1542 210.569 88.6842ZM162.16 112.523C158.867 112.966 155.376 113.662 154.4 114.07C151.521 115.272 147.845 122.614 142.004 138.831C133.712 161.846 133.805 161.417 136.591 163.678C137.878 164.722 139.952 165.576 141.2 165.576C144.2 165.576 146.558 161.839 145.617 158.576C144.053 153.154 144.701 150.42 149.131 143.751C158.937 128.987 161.722 125.077 162.424 125.089C162.828 125.096 165.853 126.155 169.146 127.443C172.882 128.904 178.229 129.986 183.366 130.321C187.894 130.616 191.599 131.004 191.599 131.183C191.599 132.337 183.271 146.54 178.21 154.018C174.265 159.847 169.849 164.85 165.53 168.386C157.142 175.253 154.254 180.127 154.943 186.249C156.158 197.06 172.168 208.07 194.094 213.17C197.936 214.064 203.1 215.334 205.57 215.993L210.06 217.191L206.069 219.113C200.681 221.706 194.852 227.729 190.133 235.576C182.02 249.069 176.316 255.325 169.367 258.351C165.267 260.137 165.087 262.026 168.414 268.361C170.065 271.504 172.221 277.564 173.207 281.826L175 289.576H237.645H300.291L300.325 258.576L300.36 227.576H264.44C244.685 227.576 228.521 227.277 228.521 226.911C228.521 226.545 230.67 224.182 233.296 221.661C245.47 209.973 257.345 192.969 263.664 178.177C265.801 173.172 267.997 168.259 268.543 167.261C269.088 166.263 265.229 168.392 259.968 171.991C254.707 175.591 246.938 180.148 242.705 182.116C238.472 184.085 234.367 186.035 233.584 186.449C232.801 186.863 230.408 190.099 228.267 193.639C226.126 197.179 223.425 201.096 222.266 202.343L220.158 204.61L216.606 201.252C209.223 194.271 201.392 188.659 193.148 184.439C188.458 182.039 184.62 179.842 184.618 179.556C184.615 179.27 187.869 177.037 191.848 174.594C201.822 168.471 209.856 160.617 212.641 154.267C218.823 140.173 212.367 121.545 199.036 115.009C194.164 112.621 192.275 112.311 180.873 112.03C173.874 111.857 165.454 112.079 162.16 112.523ZM222.035 144.332C222.035 150.472 221.498 154.391 220.231 157.492L218.426 161.908L225.193 168.742C229.123 172.711 232.809 175.576 233.983 175.575C237.158 175.574 248.108 170.003 256.454 164.143C260.643 161.202 266.849 157.389 270.246 155.671C276.182 152.668 276.421 152.4 276.421 148.753C276.421 143.074 274.766 141.456 270.441 142.907C267.952 143.742 266.366 145.219 264.892 148.076C262.452 152.806 257.846 155.308 244.797 158.99C239.988 160.347 236.017 161.372 235.97 161.267C233.719 156.146 225.029 139.443 223.777 137.832C222.082 135.647 222.035 135.821 222.035 144.332ZM279.203 257.826L278.916 267.076L229.2 267.335L179.483 267.595L180.165 265.335C181.17 261.999 187.161 254.473 191.316 251.326L194.948 248.576H237.219H279.49L279.203 257.826Z" />
+          </svg>
+          <span class="text-sm font-black tracking-tight text-white uppercase">
+            Omega<span class="text-primary">Fit</span>
+          </span>
+          <span
+            class="text-[9px] font-bold uppercase tracking-wider text-slate-500 bg-white/5 px-1.5 py-0.5 rounded">Paciente</span>
+        </div>
+      </div>
+
+      <!-- Right Header Actions -->
+      <div class="flex items-center gap-1.5">
+        <div
+          class="w-8 h-8 rounded-lg bg-primary/20 text-primary border border-primary/30 flex items-center justify-center font-bold text-xs shrink-0">
+          JP
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Area (Full height without bottom bar clutter) -->
+    <main class="flex-1 overflow-y-auto bg-background-dark text-slate-100 p-3.5 space-y-3.5 pb-6">
+
+      <!-- Patient Header Greeting -->
+      <section class="space-y-2.5">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-lg font-bold text-white tracking-tight leading-tight">Hola, Juan 👋</h1>
+            <p id="sessionSubtitle" class="text-[11px] text-slate-400">Rehabilitación Manguito Rotador</p>
+          </div>
+          <span
+            class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            En Tratamiento
+          </span>
+        </div>
+
+        <!-- Doctor Card -->
+        <div class="p-2.5 rounded-xl bg-white/[0.03] border border-card-border flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div
+              class="w-7 h-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold text-xs shrink-0">
+              OG
+            </div>
+            <div class="leading-tight">
+              <p class="text-xs font-bold text-white">Lic. Oscar Gomez</p>
+              <p class="text-[10px] text-slate-400">Kinesiólogo a cargo</p>
+            </div>
+          </div>
+          <button onclick="openTurnosDrawer()"
+            class="text-[11px] text-primary font-bold hover:underline cursor-pointer">
+            Mi Turno →
+          </button>
+        </div>
+
+        <!-- Session Progress Card -->
+        <div class="bg-card-dark p-3.5 rounded-2xl border border-card-border space-y-2">
+          <div class="flex justify-between items-center text-xs">
+            <span class="font-bold text-white flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-primary text-base">trending_up</span>
+              Progreso del Plan
+            </span>
+            <span id="sessionsCountLabel" class="font-extrabold text-primary font-mono">
+              7 / 10 sesiones
+            </span>
+          </div>
+
+          <div class="w-full bg-slate-800/80 h-2 rounded-full overflow-hidden">
+            <div id="sessionProgressBar"
+              class="bg-gradient-to-r from-primary to-orange-500 h-full rounded-full transition-all duration-700 ease-out"
+              style="width: 70%;"></div>
+          </div>
+
+          <p id="sessionsRemainingText" class="text-[10px] text-slate-400 flex items-center justify-between pt-0.5">
+            <span>Faltan 3 sesiones para el alta</span>
+            <span class="text-emerald-400 font-bold">70% completado</span>
+          </p>
+        </div>
+
+        <!-- Daily Wellness Banner -->
+        <div id="wellnessCard" onclick="openWellnessModal()"
+          class="p-3 bg-gradient-to-r from-primary/15 via-orange-500/10 to-amber-500/5 border border-primary/25 rounded-2xl cursor-pointer hover:border-primary/50 transition-all flex items-center justify-between group">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div
+              class="w-8 h-8 rounded-lg bg-primary/20 text-primary flex items-center justify-center font-bold shrink-0">
+              <span class="material-symbols-outlined text-base">self_improvement</span>
+            </div>
+            <div class="min-w-0">
+              <p
+                class="text-xs font-bold text-white group-hover:text-primary transition-colors flex items-center gap-1.5">
+                <span id="wellnessTitleText">Wellness Diario Pendiente</span>
+                <span id="wellnessPingDot" class="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span>
+              </p>
+              <p id="wellnessSubtitleText" class="text-[10px] text-slate-400 truncate">Completá cómo te sentís hoy antes
+                de entrenar</p>
+            </div>
+          </div>
+          <span id="wellnessBtnText"
+            class="px-2.5 py-1 bg-primary text-white text-[10px] font-bold rounded-lg shadow-sm shrink-0">
+            Responder
+          </span>
+        </div>
+
+        <!-- Quick Next Appointment Banner -->
+        <div onclick="openTurnosDrawer()"
+          class="p-3 rounded-2xl bg-card-dark border border-card-border hover:border-card-border/80 cursor-pointer flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <div
+              class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
+              <span class="material-symbols-outlined text-base">event_note</span>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-white">Próximo Turno Presencial</p>
+              <p class="text-[10px] text-slate-400" id="activeTurnoGlance">Jueves 26 Nov · 16:00 hs</p>
+            </div>
+          </div>
+          <span class="material-symbols-outlined text-slate-500 text-sm">chevron_right</span>
+        </div>
+      </section>
+
+      <!-- Routine & Exercises Section -->
+      <section class="space-y-3 pt-1">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-sm font-bold text-white">Tu Rutina de Rehabilitación</h2>
+            <p class="text-[10px] text-slate-400">Fase 2: Estabilización Escapular</p>
+          </div>
+          <span class="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-lg">
+            2 días · 5 ejercicios
+          </span>
+        </div>
+
+        <!-- Day Selector Tabs -->
+        <div class="flex gap-2 pb-0.5 no-scrollbar">
+          <button onclick="selectDay(1)" id="dayTab1"
+            class="flex-1 py-1.5 rounded-xl text-xs font-bold transition-all bg-primary text-white shadow-md shadow-primary/20 cursor-pointer text-center">
+            Día 1: Activación
+          </button>
+          <button onclick="selectDay(2)" id="dayTab2"
+            class="flex-1 py-1.5 rounded-xl text-xs font-bold transition-all bg-card-dark text-slate-400 border border-card-border hover:text-white cursor-pointer text-center">
+            Día 2: Fuerza Excéntrica
+          </button>
+        </div>
+
+        <!-- Exercise Cards List -->
+        <div class="space-y-2" id="patientExercisesList"></div>
+
+        <!-- Botón Integrado de Finalizar Sesión (En lugar de barra fija molesta) -->
+        <div class="pt-2">
+          <button id="btnFinishSession" onclick="handleFinishSession()"
+            class="w-full py-3 font-bold rounded-xl flex items-center justify-center gap-2 text-xs transition-all duration-300 bg-gradient-to-r from-primary to-orange-600 text-white shadow-lg shadow-primary/25 hover:shadow-primary/40 active:scale-[0.99] cursor-pointer">
+            <span class="material-symbols-outlined text-base" id="finishIcon">task_alt</span>
+            <span id="finishBtnText">Terminar Sesión de Hoy</span>
+          </button>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Sidebar Drawer: Menú Hamburguesa Paciente -->
+    <div id="sidebarOverlay" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-40 transition-opacity"></div>
+    <aside id="sidebarDrawer"
+      class="fixed top-0 bottom-0 left-0 w-64 bg-[#111114] border-r border-card-border z-50 transform -translate-x-full transition-transform duration-300 ease-out flex flex-col">
+      <!-- Drawer Header -->
+      <div class="p-4 border-b border-card-border flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <svg class="w-6 h-6 text-primary shrink-0" viewBox="0 0 301 290" fill="currentColor">
+            <path fill-rule="evenodd" clip-rule="evenodd"
+              d="M138.921 0.595217C110.13 3.57122 84.6068 15.0392 63.7914 34.3522C32.5029 63.3812 17.8347 110.586 27.3667 151.576C33.4051 177.546 46.4068 200.337 67.7282 222.327C69.9944 224.665 71.8496 226.803 71.8496 227.077C71.8496 227.352 55.6834 227.576 35.9248 227.576H0V258.576V289.576L43.6586 289.568L87.3172 289.56L87.4858 284.318C87.5786 281.435 88.329 277.501 89.1533 275.576C92.7687 267.139 104.918 256.546 128.151 241.576C145.882 230.151 156.784 222.138 162.16 216.579C165.922 212.691 166.04 212.389 164.212 211.356C160.6 209.314 153.369 202.098 150.634 197.805L147.911 193.533L142.938 200.305C140.201 204.029 137.183 208.651 136.229 210.576C135.275 212.501 132.647 217.111 130.388 220.821C126.612 227.023 125.876 227.684 121.249 229.032C112.561 231.563 107.741 235.622 99.5326 247.319C92.0153 258.03 86.2923 264.33 82.144 266.458C80.6821 267.208 70.2439 267.576 50.4603 267.576H20.9561V258.076V248.576L34.1784 248.556C55.852 248.524 73.4223 245.36 85.3144 239.347C91.0024 236.471 98.7931 230.619 98.7931 229.222C98.7931 227.677 93.7906 220.587 86.3193 211.547C65.5448 186.408 55.2962 164.245 51.8714 137.056C49.3048 116.68 54.6426 93.5572 66.5267 73.5662C73.9681 61.0472 91.1631 45.4142 105.28 38.3322C117.246 32.3282 137.267 27.5902 150.684 27.5862C163.026 27.5822 180.028 31.5702 193.232 37.5672C217.619 48.6422 238.281 73.5662 245.753 100.922C247.689 108.01 247.981 111.528 247.981 127.837C247.981 142.132 248.269 146.488 249.191 146.133C252.181 144.982 264.485 136.217 269.824 131.433L275.701 126.168L275.121 115.622C274.781 109.451 273.49 100.974 272.01 95.1872C269.15 84.0082 268.749 82.9492 262.215 69.3472C240.569 24.2822 188.837 -4.56478 138.921 0.595217Z" />
+          </svg>
+          <span class="text-sm font-black text-white uppercase">Omega<span class="text-primary">Fit</span></span>
+        </div>
+        <button id="btnCloseSidebar"
+          class="w-8 h-8 rounded-lg bg-white/5 text-slate-400 hover:text-white flex items-center justify-center cursor-pointer">
+          <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+      </div>
+
+      <!-- Patient Profile Pill -->
+      <div class="px-4 py-3 mx-3 my-3 rounded-xl bg-white/[0.03] border border-card-border flex items-center gap-2.5">
+        <div
+          class="w-8 h-8 rounded-lg bg-primary/20 text-primary font-bold flex items-center justify-center text-xs shrink-0">
+          JP
+        </div>
+        <div class="overflow-hidden leading-tight">
+          <h4 class="text-xs font-bold text-white truncate">Juan Pérez</h4>
+          <p class="text-[10px] text-primary">Paciente · DNI 11111111</p>
+        </div>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="flex-1 px-3 space-y-1 overflow-y-auto">
+        <button onclick="scrollToTop(); closeSidebar();"
+          class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-primary bg-primary/10 border border-primary/20 transition-all text-left cursor-pointer">
+          <span class="material-symbols-outlined text-lg">fitness_center</span>
+          <span>Mi Rutina Diaria</span>
+        </button>
+
+        <button onclick="openTurnosDrawer(); closeSidebar();"
+          class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-white/5 border border-transparent transition-all text-left cursor-pointer">
+          <span class="material-symbols-outlined text-lg">calendar_month</span>
+          <span>Mis Turnos</span>
+        </button>
+
+        <button onclick="openWellnessModal(); closeSidebar();"
+          class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-white/5 border border-transparent transition-all text-left cursor-pointer">
+          <span class="material-symbols-outlined text-lg">self_improvement</span>
+          <span>Wellness Diario</span>
+        </button>
+
+        <div class="pt-3 border-t border-card-border my-2"></div>
+
+        <a href="omegamini.html"
+          onclick="if(window.parent !== window){window.parent.postMessage({type:'SWITCH_OMEGA_VIEW',view:'admin'},'*'); return false;}"
+          class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold text-slate-300 bg-white/5 hover:bg-primary hover:text-white border border-card-border transition-all">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-base">medical_services</span>
+            <span>Vista Kinesiólogo</span>
+          </div>
+          <span class="material-symbols-outlined text-sm">arrow_forward</span>
+        </a>
+      </nav>
+
+      <!-- Sidebar Footer -->
+      <div class="p-3 border-t border-card-border">
+        <button onclick="handleLogout()"
+          class="w-full py-2 bg-white/5 hover:bg-white/10 text-slate-300 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer">
+          <span class="material-symbols-outlined text-sm">lock_reset</span>
+          <span>Reiniciar Demo</span>
+        </button>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- MODAL: CUESTIONARIO WELLNESS DIARIO -->
+  <div id="modalWellness"
+    class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+    <div class="bg-card-dark w-full max-w-sm rounded-2xl border border-card-border p-4 space-y-3.5 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-card-border pb-2.5">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary text-lg">self_improvement</span>
+          <h3 class="text-xs font-bold text-white">Wellness Pre-Entrenamiento</h3>
+        </div>
+        <button onclick="closeModal('modalWellness')" class="text-slate-400 hover:text-white cursor-pointer">
+          <span class="material-symbols-outlined text-base">close</span>
+        </button>
+      </div>
+
+      <!-- Dolor -->
+      <div class="space-y-1">
+        <div class="flex justify-between items-center text-xs">
+          <label class="font-bold text-slate-300 text-[11px]">Nivel de dolor hoy</label>
+          <span id="painScoreLabel" class="font-mono font-bold text-primary">2 / 10</span>
+        </div>
+        <input type="range" id="painRangeInput" min="0" max="10" value="2" oninput="updatePainLabel(this.value)"
+          class="w-full accent-primary h-1.5 bg-slate-800 rounded-lg cursor-pointer">
+      </div>
+
+      <!-- Descanso -->
+      <div class="space-y-1.5">
+        <label class="text-[11px] font-bold text-slate-300 block">Descanso anoche</label>
+        <div class="grid grid-cols-4 gap-1.5 text-center text-xs" id="sleepOptions">
+          <button type="button" onclick="selectSleep(1, this)"
+            class="py-1.5 rounded-lg bg-white/[0.02] border border-card-border text-[10px] text-slate-400 hover:border-primary">😴
+            Mala</button>
+          <button type="button" onclick="selectSleep(2, this)"
+            class="py-1.5 rounded-lg bg-white/[0.02] border border-card-border text-[10px] text-slate-400 hover:border-primary">😐
+            Regular</button>
+          <button type="button" onclick="selectSleep(3, this)"
+            class="py-1.5 rounded-lg bg-primary/20 border border-primary text-[10px] text-primary font-bold">😊
+            Buena</button>
+          <button type="button" onclick="selectSleep(4, this)"
+            class="py-1.5 rounded-lg bg-white/[0.02] border border-card-border text-[10px] text-slate-400 hover:border-primary">🔥
+            Óptima</button>
+        </div>
+      </div>
+
+      <!-- Comentario -->
+      <div>
+        <label class="text-[11px] font-bold text-slate-300 block mb-1">Nota para el Kinesiólogo</label>
+        <textarea id="wellnessNotes" rows="2" placeholder="Ej: Sin molestias en elevación lateral..."
+          class="w-full bg-background-dark border border-card-border rounded-xl p-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-primary"></textarea>
+      </div>
+
+      <button onclick="saveWellnessData()"
+        class="w-full py-2 bg-primary hover:bg-primary-dark text-white font-bold rounded-xl text-xs transition-all shadow-md cursor-pointer">
+        Guardar Wellness
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL: DETALLE DE EJERCICIO -->
+  <div id="modalPatientExercise"
+    class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4">
+    <div
+      class="bg-card-dark w-full max-w-sm rounded-2xl border border-card-border overflow-hidden shadow-2xl flex flex-col max-h-[88vh]">
+      <!-- Video Simulator -->
+      <div class="w-full aspect-video bg-black relative flex items-center justify-center overflow-hidden">
+        <div id="patientVideoBox"
+          class="w-full h-full bg-gradient-to-tr from-slate-950 via-neutral-900 to-orange-950/40 flex flex-col items-center justify-center relative">
+          <div
+            class="w-12 h-12 rounded-full border-2 border-primary/40 border-t-primary animate-spin mb-1.5 flex items-center justify-center">
+            <span class="material-symbols-outlined text-primary text-xl">sports_gymnastics</span>
+          </div>
+          <span class="text-[10px] font-bold text-orange-400 uppercase tracking-widest">Demostración Técnica</span>
+          <button id="btnPatientPlay" onclick="togglePatientPlay()"
+            class="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/10 transition-all cursor-pointer">
+            <div class="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center shadow-lg">
+              <span id="patientPlayIcon" class="material-symbols-outlined text-lg fill">play_arrow</span>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Exercise Body -->
+      <div class="p-3.5 space-y-2.5 flex-1 overflow-y-auto text-xs">
+        <div class="flex items-start justify-between">
+          <div>
+            <span id="modalEjBloque"
+              class="px-2 py-0.5 rounded text-[9px] font-bold text-orange-400 bg-orange-500/10">Activación</span>
+            <h3 id="modalEjName" class="text-xs font-bold text-white mt-0.5">Rotación externa con banda</h3>
+          </div>
+          <button onclick="closeModal('modalPatientExercise')" class="text-slate-400 hover:text-white cursor-pointer">
+            <span class="material-symbols-outlined text-base">close</span>
+          </button>
+        </div>
+
+        <div class="p-2.5 bg-white/[0.03] border border-card-border rounded-xl grid grid-cols-3 text-center">
+          <div>
+            <span class="text-[9px] text-slate-400 block font-medium">Series</span>
+            <span id="modalEjSets" class="text-xs font-bold text-white">3</span>
+          </div>
+          <div class="border-x border-card-border">
+            <span class="text-[9px] text-slate-400 block font-medium">Reps</span>
+            <span id="modalEjReps" class="text-xs font-bold text-primary">15</span>
+          </div>
+          <div>
+            <span class="text-[9px] text-slate-400 block font-medium">Descanso</span>
+            <span id="modalEjDescanso" class="text-xs font-bold text-emerald-400">45s</span>
+          </div>
+        </div>
+
+        <p id="modalEjDesc" class="text-slate-400 leading-relaxed text-[11px]"></p>
+
+        <!-- Registro de Carga Rápido -->
+        <div class="p-2.5 bg-background-dark rounded-xl border border-card-border space-y-1.5">
+          <span class="font-bold text-white text-[10px] block">Mi Registro de Carga</span>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="text-[9px] text-slate-400 block">Tensión / Carga</label>
+              <input type="text" id="logWeightInput"
+                class="w-full bg-card-dark border border-card-border rounded-lg px-2 py-1 text-white font-mono text-[10px]">
+            </div>
+            <div>
+              <label class="text-[9px] text-slate-400 block">RIR (Esfuerzo)</label>
+              <input type="text" id="logRirInput"
+                class="w-full bg-card-dark border border-card-border rounded-lg px-2 py-1 text-white font-mono text-[10px]">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-2.5 border-t border-card-border bg-background-dark/95">
+        <button onclick="savePatientExerciseLog()"
+          class="w-full py-2 bg-primary hover:bg-primary-dark text-white font-bold rounded-xl text-xs transition-all cursor-pointer">
+          Guardar Registro de Serie ✓
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DRAWER: MIS TURNOS -->
+  <div id="drawerMyTurno" class="hidden fixed inset-0 z-50 flex items-end justify-center bg-black/75 backdrop-blur-sm">
+    <div class="bg-card-dark w-full max-w-md rounded-t-2xl border-t border-card-border p-4 space-y-3 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-card-border pb-2">
+        <h3 class="text-xs font-bold text-white flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-emerald-400 text-base">event_available</span>
+          Mi Próximo Turno
+        </h3>
+        <button onclick="closeModal('drawerMyTurno')" class="text-slate-400 hover:text-white cursor-pointer">
+          <span class="material-symbols-outlined text-base">close</span>
+        </button>
+      </div>
+
+      <div class="p-3 bg-white/[0.02] border border-card-border rounded-xl space-y-1.5 text-xs">
+        <div class="flex items-center justify-between">
+          <span class="text-slate-400">Fecha y Hora</span>
+          <span id="activeTurnoDateTime" class="text-white font-bold font-mono">Jueves 26 Nov · 16:00 hs</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-slate-400">Kinesiólogo</span>
+          <span class="text-white font-bold">Lic. Oscar Gomez</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-slate-400">Estado</span>
+          <span
+            class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/10 text-emerald-400">Confirmado</span>
+        </div>
+      </div>
+
+      <button onclick="showToast('Turno confirmado ✓', 'success'); closeModal('drawerMyTurno');"
+        class="w-full py-2 bg-primary hover:bg-primary-dark text-white font-bold rounded-xl text-xs transition-all cursor-pointer">
+        Aceptar
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="patientToast"
+    class="hidden fixed top-3 left-1/2 -translate-x-1/2 z-50 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-white shadow-xl bg-emerald-600 transition-all pointer-events-none">
+    <span class="material-symbols-outlined text-sm" id="patientToastIcon">check_circle</span>
+    <span id="patientToastMsg">Listo</span>
+  </div>
+
+  <!-- Script Engine -->
+  <script>
+    const patientData = {
+      fullName: "Juan Pérez",
+      dni: "11111111",
+      sessionsCount: 7,
+      totalSessions: 10,
+      sessionDoneToday: false,
+      wellnessDone: false,
+      activeTurno: "Jueves 26 Nov · 16:00 hs",
+      selectedDay: 1,
+      exercises: {
+        1: [
+          {
+            id: "pe1",
+            name: "Rotación externa con banda elástica",
+            bloque: "Activación",
+            sets: 3,
+            reps: 15,
+            descanso: "45s",
+            peso: "Banda roja",
+            rir: "RIR 2",
+            desc: "Mantén el codo en 90° adosado al cuerpo. Controla la fase excéntrica en 3 segundos."
+          },
+          {
+            id: "pe2",
+            name: "Vuelos laterales en plano escapular",
+            bloque: "Activación",
+            sets: 3,
+            reps: 12,
+            descanso: "60s",
+            peso: "3 kg",
+            rir: "RIR 2",
+            desc: "Eleva los brazos a 30° respecto al plano coronal sin encoger hombros."
+          },
+          {
+            id: "pe3",
+            name: "Cat-Cow & Desbloqueo dorsal",
+            bloque: "Movilidad",
+            sets: 2,
+            reps: 10,
+            descanso: "30s",
+            peso: "Corporal",
+            rir: "N/A",
+            desc: "En cuadrupedia, arquea suavemente la columna hacia arriba y extiende sin forzar."
+          }
+        ],
+        2: [
+          {
+            id: "pe4",
+            name: "Press Pallof antirotacional",
+            bloque: "Estabilidad",
+            sets: 3,
+            reps: 12,
+            descanso: "60s",
+            peso: "Tensión media",
+            rir: "RIR 1",
+            desc: "Empuja la banda hacia adelante manteniendo el torso completamente firme."
+          },
+          {
+            id: "pe5",
+            name: "Y-T-W en Banco Inclinado",
+            bloque: "Fuerza Escapular",
+            sets: 3,
+            reps: 10,
+            descanso: "60s",
+            peso: "1.5 kg",
+            rir: "RIR 2",
+            desc: "En banco a 45°, realiza movimientos en Y, T y W activando trapecio inferior."
+          }
+        ]
+      }
+    };
+
+    let currentViewingExercise = null;
+    let isVideoPlaying = false;
+
+    // Toast
+    function showToast(msg, type = 'success') {
+      const toast = document.getElementById('patientToast');
+      const toastMsg = document.getElementById('patientToastMsg');
+      const toastIcon = document.getElementById('patientToastIcon');
+
+      toastMsg.innerText = msg;
+      if (type === 'success') {
+        toast.className = 'fixed top-3 left-1/2 -translate-x-1/2 z-50 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-white shadow-xl bg-emerald-600 transition-all pointer-events-none';
+        toastIcon.innerText = 'check_circle';
+      } else {
+        toast.className = 'fixed top-3 left-1/2 -translate-x-1/2 z-50 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-white shadow-xl bg-red-600 transition-all pointer-events-none';
+        toastIcon.innerText = 'error';
+      }
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 2500);
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    function scrollToTop() {
+      document.querySelector('main').scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Sidebar
+    const sidebarDrawer = document.getElementById('sidebarDrawer');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const btnOpenSidebar = document.getElementById('btnOpenSidebar');
+    const btnCloseSidebar = document.getElementById('btnCloseSidebar');
+
+    function openSidebar() {
+      sidebarDrawer.classList.remove('-translate-x-full');
+      sidebarOverlay.classList.remove('hidden');
+    }
+    function closeSidebar() {
+      sidebarDrawer.classList.add('-translate-x-full');
+      sidebarOverlay.classList.add('hidden');
+    }
+
+    btnOpenSidebar.addEventListener('click', openSidebar);
+    btnCloseSidebar.addEventListener('click', closeSidebar);
+    sidebarOverlay.addEventListener('click', closeSidebar);
+
+    // Render Exercises
+    function renderExercises() {
+      const listEl = document.getElementById('patientExercisesList');
+      listEl.innerHTML = '';
+      const dayExercises = patientData.exercises[patientData.selectedDay] || [];
+
+      dayExercises.forEach(ej => {
+        const item = document.createElement('div');
+        item.className = 'w-full flex items-center gap-2.5 p-2.5 bg-card-dark hover:bg-white/[0.02] border border-card-border rounded-xl text-left cursor-pointer transition-all';
+        item.onclick = () => openPatientExerciseModal(ej);
+
+        item.innerHTML = `
+          <div class="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-lg">play_circle</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-1.5">
+              <span class="text-[9px] font-bold text-orange-400 bg-orange-500/10 px-1 rounded">${ej.bloque}</span>
+              <span class="text-[10px] text-slate-400 font-mono">${ej.sets}x${ej.reps}</span>
+            </div>
+            <h4 class="text-xs font-bold text-white truncate mt-0.5">${ej.name}</h4>
+          </div>
+          <span class="material-symbols-outlined text-slate-500 text-sm">chevron_right</span>
+        `;
+        listEl.appendChild(item);
+      });
+    }
+
+    function selectDay(dayNumber) {
+      patientData.selectedDay = dayNumber;
+      if (dayNumber === 1) {
+        document.getElementById('dayTab1').className = 'flex-1 py-1.5 rounded-xl text-xs font-bold transition-all bg-primary text-white shadow-md shadow-primary/20 cursor-pointer text-center';
+        document.getElementById('dayTab2').className = 'flex-1 py-1.5 rounded-xl text-xs font-bold transition-all bg-card-dark text-slate-400 border border-card-border hover:text-white cursor-pointer text-center';
+      } else {
+        document.getElementById('dayTab2').className = 'flex-1 py-1.5 rounded-xl text-xs font-bold transition-all bg-primary text-white shadow-md shadow-primary/20 cursor-pointer text-center';
+        document.getElementById('dayTab1').className = 'flex-1 py-1.5 rounded-xl text-xs font-bold transition-all bg-card-dark text-slate-400 border border-card-border hover:text-white cursor-pointer text-center';
+      }
+      renderExercises();
+    }
+
+    function openPatientExerciseModal(ej) {
+      currentViewingExercise = ej;
+      document.getElementById('modalEjName').innerText = ej.name;
+      document.getElementById('modalEjBloque').innerText = ej.bloque;
+      document.getElementById('modalEjSets').innerText = ej.sets;
+      document.getElementById('modalEjReps').innerText = ej.reps;
+      document.getElementById('modalEjDescanso').innerText = ej.descanso;
+      document.getElementById('modalEjDesc').innerText = ej.desc;
+      document.getElementById('logWeightInput').value = ej.peso;
+      document.getElementById('logRirInput').value = ej.rir;
+
+      isVideoPlaying = false;
+      document.getElementById('patientPlayIcon').innerText = 'play_arrow';
+      document.getElementById('modalPatientExercise').classList.remove('hidden');
+    }
+
+    function togglePatientPlay() {
+      isVideoPlaying = !isVideoPlaying;
+      const icon = document.getElementById('patientPlayIcon');
+      if (isVideoPlaying) {
+        icon.innerText = 'pause';
+        showToast('Reproduciendo técnica...', 'success');
+      } else {
+        icon.innerText = 'play_arrow';
+      }
+    }
+
+    function savePatientExerciseLog() {
+      if (currentViewingExercise) {
+        currentViewingExercise.peso = document.getElementById('logWeightInput').value || currentViewingExercise.peso;
+        currentViewingExercise.rir = document.getElementById('logRirInput').value || currentViewingExercise.rir;
+        closeModal('modalPatientExercise');
+        showToast('Notas de serie registradas ✓', 'success');
+      }
+    }
+
+    // Wellness
+    function openWellnessModal() {
+      document.getElementById('modalWellness').classList.remove('hidden');
+    }
+
+    function updatePainLabel(val) {
+      document.getElementById('painScoreLabel').innerText = `${val} / 10`;
+    }
+
+    function selectSleep(val, btn) {
+      document.querySelectorAll('#sleepOptions button').forEach(b => {
+        b.className = 'py-1.5 rounded-lg bg-white/[0.02] border border-card-border text-[10px] text-slate-400 hover:border-primary';
+      });
+      btn.className = 'py-1.5 rounded-lg bg-primary/20 border border-primary text-[10px] text-primary font-bold';
+    }
+
+    function saveWellnessData() {
+      patientData.wellnessDone = true;
+      const card = document.getElementById('wellnessCard');
+      card.className = 'p-3 bg-emerald-500/10 border border-emerald-500/25 rounded-2xl cursor-pointer hover:bg-emerald-500/15 transition-all flex items-center justify-between group';
+      document.getElementById('wellnessTitleText').innerText = 'Wellness Diario Registrado';
+      document.getElementById('wellnessPingDot').classList.add('hidden');
+      document.getElementById('wellnessSubtitleText').innerHTML = 'Puntaje: <strong class="text-emerald-400">95%</strong> · Excelente';
+      document.getElementById('wellnessBtnText').innerText = 'Listo ✓';
+      document.getElementById('wellnessBtnText').className = 'px-2.5 py-1 bg-emerald-500 text-white text-[10px] font-bold rounded-lg';
+      closeModal('modalWellness');
+      showToast('Wellness registrado con éxito', 'success');
+    }
+
+    // Finish Session
+    function handleFinishSession() {
+      if (patientData.sessionDoneToday) {
+        showToast('Ya completaste tu sesión de hoy ✓', 'success');
+        return;
+      }
+
+      const btn = document.getElementById('btnFinishSession');
+      const icon = document.getElementById('finishIcon');
+      const txt = document.getElementById('finishBtnText');
+
+      btn.disabled = true;
+      txt.innerText = 'Registrando sesión...';
+      icon.innerText = 'hourglass_top';
+
+      setTimeout(() => {
+        patientData.sessionDoneToday = true;
+        patientData.sessionsCount += 1;
+
+        btn.disabled = false;
+        btn.className = 'w-full py-3 font-bold rounded-xl flex items-center justify-center gap-2 text-xs transition-all duration-300 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 cursor-default';
+        icon.innerText = 'check_circle';
+        txt.innerText = 'Sesión Completada ✓';
+
+        document.getElementById('sessionSubtitle').innerText = '¡Sesión de hoy completada exitosamente!';
+        document.getElementById('sessionsCountLabel').innerText = `${patientData.sessionsCount} / ${patientData.totalSessions} sesiones`;
+
+        const pct = Math.round((patientData.sessionsCount / patientData.totalSessions) * 100);
+        document.getElementById('sessionProgressBar').style.width = `${pct}%`;
+        document.getElementById('sessionsRemainingText').innerHTML = `
+          <span>Faltan ${patientData.totalSessions - patientData.sessionsCount} sesiones para el alta</span>
+          <span class="text-emerald-400 font-bold">${pct}% completado</span>
+        `;
+
+        triggerConfetti();
+        showToast('¡Felicitaciones! Sesión guardada 🎉', 'success');
+      }, 700);
+    }
+
+    function triggerConfetti() {
+      const colors = ['#ff6d00', '#10b981', '#3b82f6', '#f59e0b', '#ec4899'];
+      const root = document.getElementById('appRoot');
+
+      for (let i = 0; i < 35; i++) {
+        const conf = document.createElement('div');
+        conf.className = 'confetti-piece';
+        conf.style.left = `${Math.random() * 92}%`;
+        conf.style.top = `${Math.random() * 20}%`;
+        conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        conf.style.animationDelay = `${Math.random() * 0.4}s`;
+        root.appendChild(conf);
+        setTimeout(() => conf.remove(), 2600);
+      }
+    }
+
+    // Turnos
+    function openTurnosDrawer() {
+      document.getElementById('drawerMyTurno').classList.remove('hidden');
+    }
+
+    function handleLogout() {
+      showToast('Reiniciando demo...', 'success');
+      setTimeout(() => window.location.reload(), 600);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderExercises();
+    });
+  </script>
+</body>
+
+</html>

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import PushNotificationManager from "@/components/notifications/PushNotificationManager";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#ffffff",
+  themeColor: "#0e0817",
 };
 
 export default function RootLayout({
@@ -63,10 +64,11 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="AgustinDev" />
         <meta name="application-name" content="AgustinDev" />
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content="#0e0817" />
         <meta name="msapplication-TileColor" content="#4b00ad" />
       </head>
       <body className="bg-background-light dark:bg-background-dark font-display text-text-dark dark:text-text-light antialiased overflow-x-hidden min-h-full flex flex-col">
+        <PushNotificationManager />
         {children}
       </body>
     </html>

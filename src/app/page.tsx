@@ -5,6 +5,8 @@ import Image from "next/image";
 import ChatBox from "@/components/ai/ChatBox";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import BookingModal from "@/components/calendar/BookingModal";
+import OmegaFitMockup from "@/components/ui/OmegaFitMockup";
+import CracksAppMockup from "@/components/ui/CracksAppMockup";
 
 /* ─────────────── Logo SVG ─────────────── */
 const LogoSVG = ({ className = "w-full h-full" }: { className?: string }) => (
@@ -114,17 +116,17 @@ export default function Home() {
       {/* ══════════ NAVBAR ══════════ */}
       <header
         className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled
-            ? "py-3 bg-[#0e0817]/90 backdrop-blur-xl border-b border-white/5 shadow-xl shadow-black/30"
-            : "py-4 bg-transparent"
+          ? "py-3 bg-white/90 dark:bg-[#0e0817]/90 backdrop-blur-xl border-b border-black/15 dark:border-white/5 shadow-xl shadow-black/5 dark:shadow-black/30"
+          : "py-4 bg-transparent"
           } landscape-mobile:hidden`}
       >
         <div className="max-w-[1200px] mx-auto px-6 flex items-center justify-between gap-6">
           {/* Logo */}
-          <a href="/" className="flex items-center gap-3 text-white hover:opacity-80 transition-opacity flex-shrink-0">
-            <div className="size-7 text-violet-400">
+          <a href="/" className="flex items-center gap-3 text-neutral-900 dark:text-white hover:opacity-80 transition-opacity flex-shrink-0">
+            <div className="size-7 text-violet-600 dark:text-violet-400">
               <LogoSVG />
             </div>
-            <span className="text-base font-extrabold tracking-tight text-white">AgustinDev</span>
+            <span className="text-base font-extrabold tracking-tight text-neutral-900 dark:text-white">AgustinDev</span>
           </a>
 
           {/* Desktop Nav */}
@@ -138,28 +140,23 @@ export default function Home() {
               <a
                 key={l.href}
                 href={l.href}
-                className="text-sm font-medium text-white/60 hover:text-white transition-colors relative group"
+                className="text-sm font-medium text-neutral-600 hover:text-neutral-900 dark:text-white/60 dark:hover:text-white transition-colors relative group"
               >
                 {l.label}
-                <span className="absolute -bottom-0.5 left-0 w-0 h-px bg-violet-400 group-hover:w-full transition-all duration-300" />
+                <span className="absolute -bottom-0.5 left-0 w-0 h-px bg-violet-500 dark:bg-violet-400 group-hover:w-full transition-all duration-300" />
               </a>
             ))}
           </nav>
 
           {/* Desktop Right */}
           <div className="hidden min-[900px]:flex items-center gap-3">
-            <a href="https://wa.me/5493884791424" target="_blank" rel="noreferrer"
-              className="flex size-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-white/50 hover:text-white hover:border-white/30 hover:bg-white/10 transition-all"
-              aria-label="WhatsApp">
-              <WAIcon className="w-3.5 h-3.5" />
-            </a>
             <a href="https://www.instagram.com/agustindev/" target="_blank" rel="noreferrer"
-              className="flex size-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-white/50 hover:text-white hover:border-white/30 hover:bg-white/10 transition-all"
+              className="flex size-8 items-center justify-center rounded-lg border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 text-neutral-600 hover:text-neutral-900 dark:text-white/50 dark:hover:text-white hover:border-black/20 dark:hover:border-white/30 hover:bg-black/10 dark:hover:bg-white/10 transition-all"
               aria-label="Instagram">
               <IGIcon className="w-3.5 h-3.5" />
             </a>
             <a href="https://www.youtube.com/@AgustinDev58" target="_blank" rel="noreferrer"
-              className="flex size-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-white/50 hover:text-white hover:border-white/30 hover:bg-white/10 transition-all"
+              className="flex size-8 items-center justify-center rounded-lg border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 text-neutral-600 hover:text-neutral-900 dark:text-white/50 dark:hover:text-white hover:border-black/20 dark:hover:border-white/30 hover:bg-black/10 dark:hover:bg-white/10 transition-all"
               aria-label="YouTube">
               <YTIcon className="w-3.5 h-3.5" />
             </a>
@@ -173,7 +170,7 @@ export default function Home() {
           {/* Mobile Hamburger */}
           <button
             onClick={() => setMobileMenuOpen(true)}
-            className="min-[900px]:hidden p-2 text-white"
+            className="min-[900px]:hidden p-2 text-neutral-900 dark:text-white"
             aria-label="Abrir menú"
           >
             <span className="material-symbols-outlined text-3xl">menu</span>
@@ -194,12 +191,6 @@ export default function Home() {
 
             {/* Left – Text */}
             <div>
-              {/* Badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-violet-400/30 bg-violet-500/10 backdrop-blur mb-8">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-xs font-semibold text-violet-300 tracking-widest uppercase">Disponible para nuevos proyectos</span>
-              </div>
-
               {/* H1 */}
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-[1.05] tracking-tight text-white mb-6">
                 Una App para tu{" "}
@@ -240,11 +231,7 @@ export default function Home() {
                   <span className="material-symbols-outlined text-xl">calendar_month</span>
                   Agendar Llamada
                 </a>
-                <a href="https://wa.me/5493884791424" target="_blank" rel="noreferrer"
-                  className="group flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-[#25D366] hover:bg-[#1ebe5a] text-white font-bold text-base transition-all hover:-translate-y-0.5 shadow-xl shadow-green-900/40">
-                  <WAIcon className="w-5 h-5" />
-                  WhatsApp
-                </a>
+
                 <a href="#apps"
                   className="flex items-center justify-center px-8 py-4 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 backdrop-blur text-white font-semibold text-base transition-all">
                   Ver Proyectos
@@ -270,35 +257,7 @@ export default function Home() {
                     />
                   </div>
                 </div>
-                {/* Float badge – projects */}
-                {/* <div className="absolute -bottom-4 -left-8 bg-[#0e0817] border border-white/10 rounded-2xl px-5 py-4 shadow-2xl min-w-[140px] hidden sm:block"
-                  style={{ animation: "floatY 4s ease-in-out infinite" }}>
-                  <div className="text-3xl font-extrabold text-white tracking-tight leading-none">50+</div>
-                  <div className="text-xs text-white/50 mt-1 font-medium">Proyectos entregados</div>
-                </div> */}
-                {/* Float badge – call */}
-                <div className="absolute -top-4 -right-8 bg-violet-600 rounded-2xl px-5 py-4 shadow-2xl hidden sm:block"
-                  style={{ animation: "floatY 4s ease-in-out infinite 2s" }}>
-                  <div className="text-xl">☕</div>
-                  <div className="text-sm font-bold text-white mt-1">Llamada 1:1</div>
-                  <div className="text-xs text-white/60">30 min · Gratis</div>
-                </div>
               </div>
-            </div>
-          </div>
-
-          {/* Tech marquee */}
-          <div className="mt-20 border-t border-white/5 pt-8 overflow-hidden relative">
-            <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#0e0817] to-transparent z-10 pointer-events-none" />
-            <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#0e0817] to-transparent z-10 pointer-events-none" />
-            <div className="flex animate-infinite-scroll gap-12 items-center">
-              {[1, 2].map((g) => (
-                <div key={g} className="flex gap-12 items-center shrink-0">
-                  {["JavaScript", "TypeScript", "React", "Angular", "Next.js", "Node.js", "Java", "Spring Boot", "MySQL", "PostgreSQL", "MongoDB"].map((t) => (
-                    <span key={t} className="text-sm font-bold text-white/20 whitespace-nowrap tracking-tight hover:text-white/60 transition-colors cursor-default">{t}</span>
-                  ))}
-                </div>
-              ))}
             </div>
           </div>
         </div>
@@ -315,147 +274,104 @@ export default function Home() {
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10 anim-on-scroll opacity-0 translate-y-6 transition-all duration-700">
             <div>
-              <span className="text-xs font-bold tracking-widest uppercase text-violet-400 mb-3 block">Trabajo Seleccionado</span>
               <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight leading-tight">
-                Proyectos que <em className="font-light text-white/40 not-italic">generan resultados</em>
+                Trabajos realizados
               </h2>
             </div>
-            <a href="/agendar" className="self-start md:self-end flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 text-white text-sm font-semibold transition-all whitespace-nowrap">
+            {/* <a href="/agendar" className="self-start md:self-end flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 text-white text-sm font-semibold transition-all whitespace-nowrap">
               Ver todos →
-            </a>
+            </a> */}
           </div>
 
-          {/* Project cards – using magazine layout */}
-          <div className="flex flex-col gap-8">
+          {/* Project cards – 2 per row in desktop */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
 
             {/* Point App */}
-            <div className="anim-on-scroll opacity-0 translate-y-6 transition-all duration-700 group rounded-2xl overflow-hidden border border-white/8 bg-white/3 hover:border-violet-500/30 hover:bg-white/5 transition-all">
-              <div className="grid grid-cols-1 lg:grid-cols-12">
-                <div className="lg:col-span-5 h-52 lg:h-auto relative overflow-hidden">
-                  <Image src="/assets/recortadaapppuntos.png" alt="App de puntos – plataforma de fidelización" fill className="object-cover group-hover:scale-105 transition-transform duration-700" sizes="(max-width:1024px) 100vw, 42vw" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-[#0e0817]/80" />
-                </div>
-                <div className="lg:col-span-7 p-6 flex flex-col gap-4">
-                  <div>
-                    <div className="text-xs font-bold tracking-widest uppercase text-violet-400 mb-2">Loyalty / SaaS</div>
-                    <h3 className="text-xl font-extrabold text-white mb-2 tracking-tight">App de Puntos</h3>
-                    <p className="text-sm text-white/55 leading-relaxed mb-3">Plataforma de fidelización de clientes. Acumula puntos, canjea premios y fideliza a tus clientes con una app moderna.</p>
-                    <div className="flex gap-2 flex-wrap mb-3">
-                      {["Next.js", "PostgreSQL"].map(t => (
-                        <span key={t} className="px-2 py-0.5 rounded bg-violet-900/50 border border-violet-500/20 text-violet-300 text-xs font-bold">{t}</span>
-                      ))}
-                    </div>
+            {/* <div className="anim-on-scroll opacity-0 translate-y-6 transition-all duration-700 group rounded-3xl overflow-hidden border border-white/8 bg-white/3 hover:border-violet-500/30 hover:bg-white/5 transition-all flex flex-col justify-between">
+              <div className="h-52 sm:h-60 relative overflow-hidden">
+                <Image src="/assets/recortadaapppuntos.png" alt="App de puntos – plataforma de fidelización" fill className="object-cover group-hover:scale-105 transition-transform duration-700" sizes="(max-width:1024px) 100vw, 50vw" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+              </div>
+              <div className="p-6 flex flex-col justify-between flex-1 gap-4">
+                <div>
+                  <div className="text-xs font-bold tracking-widest uppercase text-violet-400 mb-2">Loyalty / SaaS</div>
+                  <h3 className="text-2xl font-extrabold text-white mb-2 tracking-tight">App de Puntos</h3>
+                  <p className="text-sm text-white/55 leading-relaxed mb-3">Plataforma de fidelización de clientes. Acumula puntos, canjea premios y fideliza a tus clientes con una app moderna.</p>
+                  <div className="flex gap-2 flex-wrap mb-3">
+                    {["Next.js", "PostgreSQL"].map(t => (
+                      <span key={t} className="px-2 py-0.5 rounded bg-violet-900/50 border border-violet-500/20 text-violet-300 text-xs font-bold">{t}</span>
+                    ))}
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-                    <a
-                      href="https://www.youtube.com/watch?v=6lerdQ_z1ek"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex items-center justify-center gap-2.5 w-full py-4 px-5 rounded-xl bg-[#FF0000]/10 hover:bg-[#FF0000]/20 border border-[#FF0000]/25 text-white font-bold text-sm transition-all duration-300 hover:-translate-y-0.5 shadow-md shadow-[#FF0000]/5"
-                    >
-                      <YTIcon className="w-5 h-5 text-[#FF0000]" />
-                      Ver video explicativo
-                    </a>
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-black/20 border border-white/8">
-                      <div className="size-14 bg-white rounded-lg shrink-0 relative overflow-hidden">
-                        <Image src="/assets/qr-pointsapp.png" alt="QR App de puntos" fill className="object-contain p-1" sizes="56px" />
-                      </div>
-                      <div>
-                        <p className="text-xs font-bold text-white">App Demo</p>
-                        <p className="text-[11px] text-white/40 mt-0.5">Escanea el QR</p>
-                        <a href="https://pointsapp-five.vercel.app/" target="_blank" rel="noreferrer" className="text-[11px] font-bold text-violet-400 hover:underline block mt-1">Ver demo →</a>
-                      </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center pt-2 border-t border-white/5">
+                  <a
+                    href="https://www.youtube.com/watch?v=6lerdQ_z1ek"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl bg-[#FF0000]/10 hover:bg-[#FF0000]/20 border border-[#FF0000]/25 text-white font-bold text-xs transition-all duration-300 hover:-translate-y-0.5"
+                  >
+                    <YTIcon className="w-4 h-4 text-[#FF0000]" />
+                    Ver video
+                  </a>
+                  <div className="flex items-center gap-3 p-2.5 rounded-xl bg-black/20 border border-white/8">
+                    <div className="size-12 bg-white rounded-lg shrink-0 relative overflow-hidden">
+                      <Image src="/assets/qr-pointsapp.png" alt="QR App de puntos" fill className="object-contain p-1" sizes="48px" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-white">App Demo</p>
+                      <a href="https://pointsapp-five.vercel.app/" target="_blank" rel="noreferrer" className="text-[11px] font-bold text-violet-400 hover:underline block mt-0.5">Ver demo →</a>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
 
-            {/* OMEGAFIT */}
-            <div className="anim-on-scroll opacity-0 translate-y-6 transition-all duration-700 group rounded-2xl overflow-hidden border border-white/8 bg-white/3 hover:border-violet-500/30 hover:bg-white/5 transition-all">
-              <div className="grid grid-cols-1 lg:grid-cols-12">
-                <div className="lg:col-span-7 p-6 flex flex-col gap-4 order-2 lg:order-1">
-                  <div>
-                    <div className="text-xs font-bold tracking-widest uppercase text-violet-400 mb-2">Health / SaaS</div>
-                    <h3 className="text-xl font-extrabold text-white mb-2 tracking-tight">OMEGAFIT</h3>
-                    <p className="text-sm text-white/55 leading-relaxed mb-3">Web app para seguimiento de pacientes de kinesiología. Gestión de pacientes, tratamientos y ejercicios. Credencial de prueba: DNI 11111111</p>
-                    <div className="flex gap-2 flex-wrap mb-3">
-                      {["Next.js", "PostgreSQL"].map(t => (
-                        <span key={t} className="px-2 py-0.5 rounded bg-violet-900/50 border border-violet-500/20 text-violet-300 text-xs font-bold">{t}</span>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-                    <a
-                      href="https://www.youtube.com/watch?v=OjyveSE8YDs"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex items-center justify-center gap-2.5 w-full py-4 px-5 rounded-xl bg-[#FF0000]/10 hover:bg-[#FF0000]/20 border border-[#FF0000]/25 text-white font-bold text-sm transition-all duration-300 hover:-translate-y-0.5 shadow-md shadow-[#FF0000]/5"
-                    >
-                      <YTIcon className="w-5 h-5 text-[#FF0000]" />
-                      Ver video explicativo
-                    </a>
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-black/20 border border-white/8">
-                      <div className="size-14 bg-white rounded-lg shrink-0 relative overflow-hidden">
-                        <Image src="/assets/qr-omega.png" alt="QR Omega Fit" fill className="object-contain p-1" sizes="56px" />
-                      </div>
-                      <div>
-                        <p className="text-xs font-bold text-white">App Vendida</p>
-                        <p className="text-[11px] text-white/40 mt-0.5">Escanea el QR</p>
-                        <a href="https://omegafit.agustindev.com.ar" target="_blank" rel="noreferrer" className="text-[11px] font-bold text-violet-400 hover:underline block mt-1">Ver app →</a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="lg:col-span-5 h-52 lg:h-auto relative overflow-hidden order-1 lg:order-2">
-                  <Image src="/assets/omegaimg.png" alt="OmegaFit – app kinesiología" fill className="object-cover group-hover:scale-105 transition-transform duration-700" sizes="(max-width:1024px) 100vw, 42vw" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent lg:bg-gradient-to-l lg:from-transparent lg:to-[#0e0817]/80" />
-                </div>
-              </div>
-            </div>
+            {/* OMEGAFIT INTERACTIVE SHOWCASE */}
+            <OmegaFitMockup />
+
+            {/* CRACKSAPP INTERACTIVE SHOWCASE (NATIVE ANDROID & MERCADO PAGO) */}
+            <CracksAppMockup />
 
             {/* Turnos Online */}
-            <div className="anim-on-scroll opacity-0 translate-y-6 transition-all duration-700 group rounded-2xl overflow-hidden border border-white/8 bg-white/3 hover:border-violet-500/30 hover:bg-white/5 transition-all">
-              <div className="grid grid-cols-1 lg:grid-cols-12">
-                <div className="lg:col-span-5 h-52 lg:h-auto relative overflow-hidden">
-                  <Image src="/assets/lumiereimg.png" alt="Turnos Online – Lumiere" fill className="object-cover group-hover:scale-105 transition-transform duration-700" sizes="(max-width:1024px) 100vw, 42vw" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-[#0e0817]/80" />
-                </div>
-                <div className="lg:col-span-7 p-6 flex flex-col gap-4">
-                  <div>
-                    <div className="text-xs font-bold tracking-widest uppercase text-violet-400 mb-2">Booking / SaaS</div>
-                    <h3 className="text-xl font-extrabold text-white mb-2 tracking-tight">Turnos Online</h3>
-                    <p className="text-sm text-white/55 leading-relaxed mb-3">Web app para que tus pacientes saquen turnos desde su celular, sin llamadas ni WhatsApp. Integra Mercado Pago para cobrar adelantos.</p>
-                    <div className="flex gap-2 flex-wrap mb-3">
-                      {["Next.js", "PostgreSQL"].map(t => (
-                        <span key={t} className="px-2 py-0.5 rounded bg-violet-900/50 border border-violet-500/20 text-violet-300 text-xs font-bold">{t}</span>
-                      ))}
-                    </div>
+            {/* <div className="anim-on-scroll opacity-0 translate-y-6 transition-all duration-700 group rounded-3xl overflow-hidden border border-white/8 bg-white/3 hover:border-violet-500/30 hover:bg-white/5 transition-all flex flex-col justify-between">
+              <div className="h-52 sm:h-64 relative overflow-hidden">
+                <Image src="/assets/lumiereimg.png" alt="Turnos Online – Lumiere" fill className="object-cover group-hover:scale-105 transition-transform duration-700" sizes="(max-width:1024px) 100vw, 50vw" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+              </div>
+              <div className="p-6 sm:p-7 flex flex-col justify-between flex-1 gap-5">
+                <div>
+                  <div className="text-xs font-bold tracking-widest uppercase text-violet-400 mb-2">Booking / SaaS</div>
+                  <h3 className="text-2xl font-extrabold text-white mb-2 tracking-tight">Turnos Online</h3>
+                  <p className="text-sm text-white/55 leading-relaxed mb-4">Web app para que tus pacientes saquen turnos desde su celular, sin llamadas ni WhatsApp. Integra Mercado Pago para cobrar adelantos.</p>
+                  <div className="flex gap-2 flex-wrap mb-4">
+                    {["Next.js", "PostgreSQL"].map(t => (
+                      <span key={t} className="px-2.5 py-0.5 rounded bg-violet-900/50 border border-violet-500/20 text-violet-300 text-xs font-bold">{t}</span>
+                    ))}
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-                    <a
-                      href="https://www.youtube.com/watch?v=W_8-Q9HA6sE"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex items-center justify-center gap-2.5 w-full py-4 px-5 rounded-xl bg-[#FF0000]/10 hover:bg-[#FF0000]/20 border border-[#FF0000]/25 text-white font-bold text-sm transition-all duration-300 hover:-translate-y-0.5 shadow-md shadow-[#FF0000]/5"
-                    >
-                      <YTIcon className="w-5 h-5 text-[#FF0000]" />
-                      Ver video explicativo
-                    </a>
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-black/20 border border-white/8">
-                      <div className="size-14 bg-white rounded-lg shrink-0 relative overflow-hidden">
-                        <Image src="/assets/qr-lumiere.png" alt="QR Lumiere" fill className="object-contain p-1" sizes="56px" />
-                      </div>
-                      <div>
-                        <p className="text-xs font-bold text-white">App Demo</p>
-                        <p className="text-[11px] text-white/40 mt-0.5">Escanea el QR</p>
-                        <a href="https://lumiere.agustindev.com.ar" target="_blank" rel="noreferrer" className="text-[11px] font-bold text-violet-400 hover:underline block mt-1">Ver demo →</a>
-                      </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center pt-3 border-t border-white/5">
+                  <a
+                    href="https://www.youtube.com/watch?v=W_8-Q9HA6sE"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl bg-[#FF0000]/10 hover:bg-[#FF0000]/20 border border-[#FF0000]/25 text-white font-bold text-xs sm:text-sm transition-all duration-300 hover:-translate-y-0.5 shadow-md shadow-[#FF0000]/5"
+                  >
+                    <YTIcon className="w-4 h-4 text-[#FF0000]" />
+                    Ver video explicativo
+                  </a>
+                  <div className="flex items-center gap-3 p-2.5 rounded-xl bg-black/20 border border-white/8">
+                    <div className="size-12 bg-white rounded-lg shrink-0 relative overflow-hidden">
+                      <Image src="/assets/qr-lumiere.png" alt="QR Lumiere" fill className="object-contain p-1" sizes="48px" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-white">App Demo</p>
+                      <p className="text-[11px] text-white/40 mt-0.5">Escanea el QR</p>
+                      <a href="https://lumiere.agustindev.com.ar" target="_blank" rel="noreferrer" className="text-[11px] font-bold text-violet-400 hover:underline block mt-0.5">Ver demo →</a>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
 
           </div>
         </div>
@@ -464,42 +380,71 @@ export default function Home() {
 
 
       {/* ══════════ PROCESS ══════════ */}
-      <section id="proceso" className="py-28 px-6">
+      <section id="proceso" className="py-24 px-6">
         <div className="max-w-[1200px] mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
-            {/* Left sticky */}
-            <div className="lg:sticky lg:top-28">
-              <span className="text-xs font-bold tracking-widest uppercase text-violet-400 mb-3 block">El Proceso</span>
-              <h2 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight mb-5">
-                ¿Cómo trabajamos<br />
-                <em className="font-light text-white/40 not-italic">juntos?</em>
+          {/* Header */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 anim-on-scroll opacity-0 translate-y-6 transition-all duration-700">
+            <div>
+              <span className="text-xs font-bold tracking-widest uppercase text-violet-400 mb-2 block">El Proceso</span>
+              <h2 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">
+                ¿Cómo trabajamos juntos?
               </h2>
-              <p className="text-base text-white/50 leading-relaxed mb-8 max-w-sm">
-                Un proceso claro y transparente para asegurar el éxito de tu proyecto digital. Sin sorpresas, sin retrasos.
-              </p>
-              <a href="/agendar"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-bold text-sm transition-all hover:-translate-y-0.5">
-                Empezar ahora →
-              </a>
+            </div>
+            <a
+              href="/agendar"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-bold text-sm transition-all hover:-translate-y-0.5 shadow-lg shadow-violet-900/30 whitespace-nowrap self-start md:self-auto"
+            >
+              <span>Agendar llamada</span>
+              <span>→</span>
+            </a>
+          </div>
+
+          {/* 3 Steps in 1 Row: 1. Llamada, 2. Presupuesto, 3. Contrato */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch">
+            {/* 1. Llamada */}
+            <div className="anim-on-scroll opacity-0 translate-y-6 transition-all duration-700 rounded-2xl lg:rounded-3xl overflow-hidden border border-white/10 bg-white/[0.03] hover:border-violet-500/50 hover:shadow-[0_0_35px_rgba(124,58,237,0.25)] hover:-translate-y-1.5 transition-all duration-500 group relative flex flex-col">
+              <div className="relative w-full aspect-[763/1024] overflow-hidden">
+                <Image
+                  src="/assets/proceso-llamada.jpg"
+                  alt="Paso 1: Llamada de Descubrimiento 1:1 con agustindev"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+                  priority
+                />
+              </div>
             </div>
 
-            {/* Right steps */}
-            <div className="flex flex-col gap-2">
-              {[
-                { num: "01 — Descubrimiento", title: "Llamada inicial gratuita", desc: "Una sesión de 30 min donde entiendo tu proyecto, objetivos y contexto. Sin compromiso. Al final sabés exactamente qué necesitás." },
-                { num: "02 — Propuesta", title: "Plan y presupuesto claro", desc: "Recibís una propuesta detallada con alcance, timeline y precio fijo. Sin sorpresas. Aprobás y arrancamos." },
-                { num: "03 — Ejecución", title: "Diseño y desarrollo", desc: "Trabajo iterativo con check-ins semanales. Ves el progreso en tiempo real y podés dar feedback en cada etapa." },
-                { num: "04 — Lanzamiento", title: "Entrega y soporte", desc: "Tu proyecto live. Incluye documentación, capacitación y 30 días de soporte post-lanzamiento." },
-              ].map((s, i) => (
-                <div key={s.num}
-                  className="anim-on-scroll opacity-0 translate-x-4 transition-all duration-700 group p-8 rounded-xl bg-white/3 border border-white/8 hover:border-violet-500/40 hover:translate-x-2 relative overflow-hidden"
-                  style={{ transitionDelay: `${i * 100}ms` }}>
-                  <div className="absolute left-0 top-0 bottom-0 w-0 bg-violet-500 group-hover:w-1 transition-all duration-500 rounded-l-xl" />
-                  <div className="text-xs font-bold text-white/30 mb-2 tracking-widest uppercase">{s.num}</div>
-                  <div className="text-lg font-bold text-white mb-2">{s.title}</div>
-                  <div className="text-sm text-white/45 leading-relaxed">{s.desc}</div>
-                </div>
-              ))}
+            {/* 2. Presupuesto */}
+            <div
+              className="anim-on-scroll opacity-0 translate-y-6 transition-all duration-700 rounded-2xl lg:rounded-3xl overflow-hidden border border-white/10 bg-white/[0.03] hover:border-violet-500/50 hover:shadow-[0_0_35px_rgba(124,58,237,0.25)] hover:-translate-y-1.5 transition-all duration-500 group relative flex flex-col"
+              style={{ transitionDelay: "150ms" }}
+            >
+              <div className="relative w-full aspect-[763/1024] overflow-hidden">
+                <Image
+                  src="/assets/proceso-presupuesto.jpg"
+                  alt="Paso 2: Presupuesto y Propuesta de Alcance con agustindev"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+                />
+              </div>
+            </div>
+
+            {/* 3. Contrato */}
+            <div
+              className="anim-on-scroll opacity-0 translate-y-6 transition-all duration-700 rounded-2xl lg:rounded-3xl overflow-hidden border border-white/10 bg-white/[0.03] hover:border-violet-500/50 hover:shadow-[0_0_35px_rgba(124,58,237,0.25)] hover:-translate-y-1.5 transition-all duration-500 group relative flex flex-col"
+              style={{ transitionDelay: "300ms" }}
+            >
+              <div className="relative w-full aspect-[763/1024] overflow-hidden">
+                <Image
+                  src="/assets/proceso-contrato.jpg"
+                  alt="Paso 3: Contrato, Acuerdo y Firma con agustindev"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+                />
+              </div>
             </div>
           </div>
         </div>

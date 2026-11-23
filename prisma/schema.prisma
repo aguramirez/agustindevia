@@ -33,3 +33,11 @@ model Settings {
   id           String @id @default("global")
   slotDuration Int    @default(60) // Duración del turno en minutos
 }
+
+model DeviceToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  platform  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

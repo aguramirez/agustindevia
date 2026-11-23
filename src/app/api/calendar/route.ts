@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { sendPushToAdmin } from '@/lib/notifications';
 
 export async function GET() {
   try {
@@ -30,14 +31,25 @@ export async function POST(req: Request) {
       },
     });
 
-    // Notificar al bot de WhatsApp (Express webhook)
-    // Cambia la URL por la URL de Railway cuando esté en producción
+    // 1. Notificar al bot de WhatsApp (Express webhook)
     const botUrl = process.env.BOT_WEBHOOK_URL || 'http://localhost:3001';
     fetch(`${botUrl}/webhook/new-appointment`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(appointment),
     }).catch(e => console.error("Error contactando al bot:", e));
+
+    // 2. Notificación Push a tu celular (Firebase Cloud Messaging / Capacitor)
+    const formattedDate = appointment.date.toLocaleDateString('es-AR', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+    });
+    sendPushToAdmin(
+      "📅 ¡Nueva llamada agendada!",
+      `${appointment.name} (${appointment.business || "Sin negocio"}) agendó para el ${formattedDate} a las ${appointment.time}`,
+      { url: "/calendar", id: appointment.id }
+    ).catch(e => console.error("Error enviando push notification:", e));
 
     return NextResponse.json(appointment, { status: 201 });
   } catch (error) {
