@@ -32,8 +32,9 @@ model Availability {
 }
 
 model Settings {
-  id           String @id @default("global")
-  slotDuration Int    @default(60) // Duración del turno en minutos
+  id           String  @id @default("global")
+  slotDuration Int     @default(60) // Duración del turno en minutos
+  meetUrl      String? // Enlace de Google Meet por defecto para las llamadas
 }
 
 model DeviceToken {

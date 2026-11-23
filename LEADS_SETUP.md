@@ -1,69 +1,34 @@
-# Guía de Configuración Webhook de Leads & Notificaciones Móviles
+# Guía Definitiva: Conexión con Google (Leads + Google Calendar + Emails a Clientes)
 
-Para habilitar que el "Paywall" (captura de datos) se envíe de manera automática a tu correo/móvil y a una base de datos, sigue este breve tutorial de configuración utilizando **Google Sheets** (100% gratuito).
+Tu aplicación de **Agustín Dev** utiliza un único Webhook de Google Apps Script conectado a tu cuenta de Google personal para realizar 3 tareas automáticas:
 
-## Paso 1: Configurar el Google Sheet
-1. Ve a [Google Sheets](https://sheets.google.com) y crea una **Nueva Hoja de Cálculo**.
-2. Nómbrala `AgustinDev - Leads AI` (o el nombre que gustes).
-3. Escribe en la primera fila (Fila 1) los encabezados de las columnas:
-   - A1: `Fecha`
-   - B1: `Nombre`
-   - C1: `Email`
-   - D1: `Teléfono`
+1. **Captura de Leads del Chat:** Guarda los datos en tu Google Sheet y te envía una alerta por email a ti.
+2. **Creación de Eventos en Google Calendar:** Cuando confirmas un turno, lo crea directamente en tu calendario de Google con la fecha, hora, link de Meet y datos del cliente.
+3. **Envío de Email Oficial al Cliente:** Envía un correo desde tu propio Gmail al cliente confirmando la reunión con el link de Google Meet.
 
-## Paso 2: Crear el Google Apps Script (El Webhook)
-1. En el menú superior de Google Sheets, ve a **Extensiones > Apps Script**.
-2. Se abrirá una nueva pestaña. Borra el código que aparezca y pega lo siguiente:
+---
 
-```javascript
-function doPost(e) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  
-  // Extraer los datos enviados desde Next.js
-  var nombre = e.parameter.nombre || "N/A";
-  var email = e.parameter.email || "N/A";
-  var telefono = e.parameter.telefono || "N/A";
-  
-  // Agregar fila a la hoja de cálculo
-  sheet.appendRow([new Date(), nombre, email, telefono]);
-  
-  // Para recibir un correo directo (Opcional, pero recomendado en lugar de reglas de notificacion de sheets):
-  var emailAddress = Session.getActiveUser().getEmail(); // O pon "tu@email.com" directamente
-  var subject = "🔥 NUEVO LEAD desde AgustinDev AI";
-  var message = "Obtuviste un nuevo lead desde el chat de IA.\n\n" +
-                "👤 Nombre: " + nombre + "\n" +
-                "✉️ Email: " + email + "\n" +
-                "📱 Teléfono: " + telefono + "\n\n" +
-                "Contactalo cuanto antes!";
-  MailApp.sendEmail(emailAddress, subject, message);
+## Paso 1: Abrir tu Google Apps Script
+1. Abre tu hoja de Google Sheets donde recibes los leads (ej. `AgustinDev - Leads AI`).
+2. En el menú superior, haz clic en **Extensiones > Apps Script**.
 
-  // Retornar respuesta
-  return ContentService.createTextOutput(JSON.stringify({ status: "success" }))
-    .setMimeType(ContentService.MimeType.JSON);
-}
-```
+## Paso 2: Reemplazar el código
+1. Borra todo el código que tengas en el editor.
+2. Abre el archivo local [GOOGLE_APPS_SCRIPT.js](file:///c:/Users/Agustin/Documents/agustindev/GOOGLE_APPS_SCRIPT.js), copia todo su contenido y pégalo en Apps Script.
+3. Haz clic en el ícono de **Guardar** (el disquete).
 
-3. Haz clic en el ícono de **Guardar** (disquete).
+## Paso 3: Desplegar la Nueva Versión
+> ⚠️ **MUY IMPORTANTE:** Para que los cambios surtan efecto en Google Apps Script, no alcanza con guardar, debes implementar una nueva versión:
 
-## Paso 3: Desplegar como Aplicación Web (URL)
-1. En la parte superior derecha de tu script, haz clic en el botón azul **Implementar > Nueva implementación**.
-2. Selecciona tipo: **Aplicación Web**.
-3. Descripción: `API Leads v1`.
-4. Ejecutar como: **Yo**.
-5. Quién tiene acceso: **Cualquier persona**. *(IMPORTANTE: debe ser "Cualquier persona")*
-6. Haz clic en **Implementar**.
-7. *Nota: Te pedirá autorizar accesos (Google advertirá que "No es seguro"). Ve a Opciones Avanzadas > Ir al script (Inseguro) y Acepta.*
-8. Copia la **URL de la aplicación web**. Nos la proporciona al finalizar.
-https://script.google.com/macros/s/AKfycbxgALKiut3q7LLDcv_vA2PWXl0IYc5e0sq_o_SD3Li1smQGLKmS2nSlqTgLzVUdVZt_/exec
-## Paso 4: Añadir la URL al proyecto
-Ve a tu proyecto (Next.js) y en `.env` (si lo tienes configurado localmente) o en las variables de entorno de **Vercel**, debes agregar la llave:
-`NEXT_PUBLIC_GOOGLE_SCRIPT_URL="https://script.google.com/macros/s/AKfycbxgALKiut3q7LLDcv_vA2PWXl0IYc5e0sq_o_SD3Li1smQGLKmS2nSlqTgLzVUdVZt_/exec"`
+1. Arriba a la derecha, haz clic en el botón azul **Implementar > Administrar implementaciones** (o *Nueva implementación*).
+2. Haz clic en el ícono del **Lápiz** (Editar) en tu implementación activa.
+3. En **Versión**, selecciona **Nueva versión**.
+4. Asegúrate de que:
+   - *Ejecutar como:* **Yo**
+   - *Quién tiene acceso:* **Cualquier persona**
+5. Haz clic en **Implementar**.
+6. Si te pide autorizar permisos (de Google Calendar y Gmail), acéptalos (*Opciones Avanzadas > Ir al proyecto (inseguro)*).
 
-## Paso 5: Cómo habilitar Notificaciones Instantáneas (VIP) en el Celular
-Al usar `MailApp.sendEmail` en el script anterior, ya vas a recibir el correo instantáneo. Pero para que tu iPhone/Android **suene de inmediato** y no se pierda entre correos de promociones:
-
-**En Android o iOS (Gmail):**
-1. Ve al buzón de entrada.
-2. Abre un correo que haya llegado del Apps Script (el generador de alerta) o crea un filtro en Gmail Web.
-3. Asegúrate de configurar ese remitente como "VIP" (Apple Mail) o "Importante/High Priority" (Notificaciones personalizadas en Android app de Gmail). 
-4. Si quieres que además lo envíe por WhatsApp, necesitarás un bot integrado, pero el "Notificador de Correo VIP" activará tu pantalla apenas el cliente haga click en "Continuar".
+¡Listo! Tu URL de script seguirá siendo la misma que ya tienes en Vercel (`NEXT_PUBLIC_GOOGLE_SCRIPT_URL`). A partir de ese momento, cada vez que confirmes un turno:
+- Se creará el evento en tu Google Calendar real.
+- Google y tu Gmail le enviarán el correo con el link de Meet al cliente.

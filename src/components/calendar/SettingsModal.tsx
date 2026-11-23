@@ -14,6 +14,7 @@ const DAYS = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "
 
 export default function SettingsModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const [slotDuration, setSlotDuration] = useState(60);
+  const [meetUrl, setMeetUrl] = useState("");
   const [availabilities, setAvailabilities] = useState<Availability[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -24,7 +25,10 @@ export default function SettingsModal({ isOpen, onClose }: { isOpen: boolean; on
       fetch('/api/calendar/settings')
         .then(res => res.json())
         .then(data => {
-          if (data.settings) setSlotDuration(data.settings.slotDuration);
+          if (data.settings) {
+            setSlotDuration(data.settings.slotDuration || 60);
+            setMeetUrl(data.settings.meetUrl || "");
+          }
           if (data.availability) setAvailabilities(data.availability);
           setLoading(false);
         })
@@ -38,7 +42,7 @@ export default function SettingsModal({ isOpen, onClose }: { isOpen: boolean; on
       await fetch('/api/calendar/settings', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slotDuration, availability: availabilities })
+        body: JSON.stringify({ slotDuration, availability: availabilities, meetUrl })
       });
       alert("Configuración guardada exitosamente");
       onClose();
@@ -59,12 +63,12 @@ export default function SettingsModal({ isOpen, onClose }: { isOpen: boolean; on
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="bg-white dark:bg-background-dark rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="bg-white dark:bg-[#130d22] rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh] border border-gray-200 dark:border-white/10">
         
-        <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-white/10 bg-primary/10 dark:bg-violet-500/20">
+        <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-white/10 bg-violet-500/10">
           <h2 className="text-xl font-bold text-text-dark dark:text-text-light flex items-center gap-2">
-            <span className="material-symbols-outlined text-primary dark:text-violet-300">settings</span>
-            Configuraciones del Calendario
+            <span className="material-symbols-outlined text-violet-400">settings</span>
+            Configuraciones del Calendario & Meet
           </h2>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-800 dark:hover:text-white">
             <span className="material-symbols-outlined">close</span>
@@ -76,6 +80,36 @@ export default function SettingsModal({ isOpen, onClose }: { isOpen: boolean; on
             <div className="text-center py-10">Cargando...</div>
           ) : (
             <>
+              {/* Enlace Fijo de Google Meet */}
+              <div className="bg-gray-50 dark:bg-white/5 p-4 rounded-xl border border-gray-200 dark:border-white/10">
+                <h3 className="font-bold mb-1 flex items-center gap-2 text-violet-400">
+                  <span className="material-symbols-outlined text-[20px]">videocam</span>
+                  Tu Enlace de Google Meet (Sala de Reuniones)
+                </h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
+                  Pega aquí el enlace permanente de Google Meet para tus llamadas (ej: <span className="font-mono text-violet-300">https://meet.google.com/xxx-yyyy-zzz</span>). Este enlace real se le enviará automáticamente a tus clientes en el mail y WhatsApp.
+                </p>
+                <div className="flex gap-2">
+                  <input
+                    type="url"
+                    placeholder="https://meet.google.com/tu-sala-aqui"
+                    value={meetUrl}
+                    onChange={e => setMeetUrl(e.target.value)}
+                    className="flex-1 p-2.5 text-sm border rounded-lg dark:bg-black/30 dark:border-white/20 font-mono focus:outline-none focus:border-violet-500"
+                  />
+                  {meetUrl && (
+                    <a
+                      href={meetUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="px-3 py-2 bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 text-xs font-bold rounded-lg flex items-center gap-1 border border-blue-500/30"
+                    >
+                      Probar
+                    </a>
+                  )}
+                </div>
+              </div>
+
               {/* Duración de turnos */}
               <div className="bg-gray-50 dark:bg-white/5 p-4 rounded-xl border border-gray-200 dark:border-white/10">
                 <h3 className="font-bold mb-2">Duración de cada turno</h3>
@@ -143,7 +177,7 @@ export default function SettingsModal({ isOpen, onClose }: { isOpen: boolean; on
           <button onClick={onClose} className="px-4 py-2 font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10 rounded transition-colors">
             Cancelar
           </button>
-          <button onClick={handleSave} disabled={saving || loading} className="px-6 py-2 bg-primary text-white rounded font-bold hover:bg-primary/90 disabled:opacity-50 transition-colors">
+          <button onClick={handleSave} disabled={saving || loading} className="px-6 py-2 bg-primary dark:bg-violet-600 text-white rounded font-bold hover:bg-primary/90 disabled:opacity-50 transition-colors">
             {saving ? "Guardando..." : "Guardar Cambios"}
           </button>
         </div>

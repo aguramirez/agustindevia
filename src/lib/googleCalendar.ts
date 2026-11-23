@@ -1,10 +1,10 @@
 import { google } from 'googleapis';
 import fs from 'fs';
 import path from 'path';
+import prisma from './prisma';
 
 // Obtener credenciales de la Service Account
 function getGoogleCredentials() {
-  // 1. Variable de entorno en Vercel/Producción
   const envKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
   if (envKey) {
     try {
@@ -16,7 +16,6 @@ function getGoogleCredentials() {
     }
   }
 
-  // 2. Archivo local de desarrollo
   const localFile = path.join(
     process.cwd(),
     'notes-app-7ab34-firebase-adminsdk-fbsvc-d6aea71868.json'
@@ -45,27 +44,33 @@ export type AppointmentData = {
   meetUrl?: string | null;
 };
 
-// Generador de código aleatorio estilo Google Meet (xxx-yyyy-zzz)
-function generateMeetRoomCode(): string {
-  const letters = 'abcdefghijklmnopqrstuvwxyz';
-  const rand = (n: number) =>
-    Array.from({ length: n }, () => letters[Math.floor(Math.random() * letters.length)]).join('');
-  return `${rand(3)}-${rand(4)}-${rand(3)}`;
+// Obtener la URL de Google Meet configurada por Agustín en Settings o en .env
+export async function getEffectiveMeetUrl(): Promise<string> {
+  try {
+    const settings = await prisma.settings.findUnique({ where: { id: 'global' } });
+    if (settings?.meetUrl && settings.meetUrl.trim().length > 0) {
+      return settings.meetUrl.trim();
+    }
+  } catch {}
+
+  return (
+    process.env.ADMIN_MEET_URL ||
+    process.env.GOOGLE_MEET_URL ||
+    'https://meet.google.com/new'
+  );
 }
 
 export async function createGoogleMeetEvent(appointment: AppointmentData): Promise<{
   meetUrl: string;
   eventId?: string;
 }> {
-  // 1. Determinar el enlace de Google Meet
-  // Si tienes una sala fija configurada en variables de entorno, la usamos; de lo contrario generamos una sala única
-  const defaultMeet =
-    process.env.ADMIN_MEET_URL || `https://meet.google.com/${generateMeetRoomCode()}`;
+  // 1. Obtener el enlace real de Google Meet
+  const meetUrl = appointment.meetUrl || (await getEffectiveMeetUrl());
 
   const credentials = getGoogleCredentials();
   if (!credentials) {
-    console.warn('⚠️ Credenciales de Google no encontradas. Usando enlace de Meet generado.');
-    return { meetUrl: defaultMeet };
+    console.warn('⚠️ Credenciales de Google no encontradas. Usando enlace de Meet configurado.');
+    return { meetUrl };
   }
 
   try {
@@ -80,7 +85,7 @@ export async function createGoogleMeetEvent(appointment: AppointmentData): Promi
 
     const calendar = google.calendar({ version: 'v3', auth });
 
-    // ID del calendario
+    // ID del calendario: El email de Google de Agustín si lo configuró, o 'primary'
     const calendarId =
       process.env.GOOGLE_CALENDAR_ID ||
       process.env.ADMIN_EMAIL ||
@@ -110,7 +115,7 @@ export async function createGoogleMeetEvent(appointment: AppointmentData): Promi
           ? `🕒 Hora del cliente: ${appointment.clientTime} (${appointment.timezone || 'Local'})`
           : '',
         '',
-        `👉 Enlace de Google Meet: ${defaultMeet}`,
+        `👉 Enlace de Google Meet: ${meetUrl}`,
       ]
         .filter(Boolean)
         .join('\n'),
@@ -122,8 +127,6 @@ export async function createGoogleMeetEvent(appointment: AppointmentData): Promi
         dateTime: endIso,
         timeZone: 'America/Argentina/Buenos_Aires',
       },
-      // NOTA CRÍTICA: No incluir 'attendees' ni 'sendUpdates: all' porque las Service Accounts de Google Cloud
-      // no tienen Domain-Wide Delegation en cuentas estándar y devuelven HTTP 403 Forbidden.
       reminders: {
         useDefault: false,
         overrides: [
@@ -138,25 +141,23 @@ export async function createGoogleMeetEvent(appointment: AppointmentData): Promi
       requestBody: event,
     });
 
-    console.log('✅ Evento en Google Calendar agendado:', {
+    console.log('✅ Evento agendado en Google Calendar:', {
       eventId: response.data.id,
-      meetUrl: defaultMeet,
+      meetUrl,
       calendarId,
     });
 
     return {
-      meetUrl: defaultMeet,
+      meetUrl,
       eventId: response.data.id || undefined,
     };
   } catch (error) {
     console.error('Error insertando evento en Google Calendar:', error);
-    return {
-      meetUrl: defaultMeet,
-    };
+    return { meetUrl };
   }
 }
 
-// Intentar enviar notificación por email al cliente mediante Google Apps Script o Resend
+// Enviar notificación por email al cliente y registrar en Google Calendar vía Google Apps Script
 export async function sendEmailToClient(appointment: AppointmentData, meetUrl: string) {
   const formattedDate = new Date(appointment.date).toLocaleDateString('es-AR', {
     weekday: 'long',
@@ -164,6 +165,13 @@ export async function sendEmailToClient(appointment: AppointmentData, meetUrl: s
     month: 'long',
     year: 'numeric',
   });
+
+  const [hours, minutes] = appointment.time.split(':').map(Number);
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const dateObj = new Date(appointment.date);
+  const dateStr = dateObj.toISOString().split('T')[0];
+  const startIso = `${dateStr}T${pad(hours)}:${pad(minutes)}:00-03:00`;
+  const endIso = `${dateStr}T${pad(hours + 1)}:${pad(minutes)}:00-03:00`;
 
   const subject = `Confirmación de Llamada 1:1 - Agustín Dev`;
   const bodyText = `¡Hola ${appointment.name}!
@@ -173,7 +181,7 @@ Tu llamada 1:1 de asesoramiento con Agustín Dev ha sido confirmada.
 📅 Fecha: ${formattedDate}
 🕒 Hora: ${appointment.time} hs (Hora de Argentina)
 ${appointment.clientTime ? `🕒 Tu hora local: ${appointment.clientTime} hs (${appointment.timezone || ''})\n` : ''}
-📍 Enlace de Google Meet:
+📍 Enlace de Google Meet para ingresar:
 ${meetUrl}
 
 Por favor guarda este enlace para ingresar a la reunión a la hora pactada.
@@ -182,7 +190,7 @@ Por favor guarda este enlace para ingresar a la reunión a la hora pactada.
 Agustín Dev
 https://www.agustindev.com.ar`;
 
-  // 1. Intentar mediante Google Apps Script (si está disponible)
+  // 1. Enviar a Google Apps Script (que corre con la cuenta personal de Agustín y envía desde su Gmail y a su Calendario)
   const scriptUrl = process.env.NEXT_PUBLIC_GOOGLE_SCRIPT_URL;
   if (scriptUrl) {
     try {
@@ -190,18 +198,22 @@ https://www.agustindev.com.ar`;
       params.append('action', 'appointment_confirmation');
       params.append('to', appointment.email);
       params.append('name', appointment.name);
+      params.append('business', appointment.business || '');
+      params.append('whatsapp', appointment.whatsapp);
       params.append('subject', subject);
       params.append('body', bodyText);
       params.append('meetUrl', meetUrl);
       params.append('date', formattedDate);
       params.append('time', appointment.time);
+      params.append('startIso', startIso);
+      params.append('endIso', endIso);
 
-      await fetch(scriptUrl, {
+      const resp = await fetch(scriptUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: params.toString(),
       });
-      console.log('📧 Petición de email enviada a Google Apps Script');
+      console.log('📧 Petición enviada a Google Apps Script con status:', resp.status);
     } catch (e) {
       console.error('Error enviando email vía Google Apps Script:', e);
     }

@@ -5,7 +5,13 @@ import prisma from '@/lib/prisma';
 async function initSettings() {
   let settings = await prisma.settings.findUnique({ where: { id: "global" } });
   if (!settings) {
-    settings = await prisma.settings.create({ data: { id: "global", slotDuration: 60 } });
+    settings = await prisma.settings.create({ 
+      data: { 
+        id: "global", 
+        slotDuration: 60,
+        meetUrl: process.env.ADMIN_MEET_URL || process.env.GOOGLE_MEET_URL || null,
+      } 
+    });
   }
   
   const availabilities = await prisma.availability.findMany();
@@ -33,12 +39,20 @@ export async function GET() {
 
 export async function PUT(req: Request) {
   try {
-    const { slotDuration, availability } = await req.json();
+    const { slotDuration, availability, meetUrl } = await req.json();
     
-    if (slotDuration) {
+    const updateData: { slotDuration?: number; meetUrl?: string | null } = {};
+    if (slotDuration !== undefined) {
+      updateData.slotDuration = Number(slotDuration);
+    }
+    if (meetUrl !== undefined) {
+      updateData.meetUrl = meetUrl ? meetUrl.trim() : null;
+    }
+
+    if (Object.keys(updateData).length > 0) {
       await prisma.settings.update({
         where: { id: "global" },
-        data: { slotDuration: Number(slotDuration) }
+        data: updateData
       });
     }
 
