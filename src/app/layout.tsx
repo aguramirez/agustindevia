@@ -59,6 +59,11 @@ export default function RootLayout({
         {/* Explicit fallback tags for maximum browser compatibility */}
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.svg" />
+        {/* Preload/prefetch prototype HTMLs for instant showcase display */}
+        <link rel="prefetch" href="/omegamini.html" as="document" />
+        <link rel="prefetch" href="/omegausermini.html" as="document" />
+        <link rel="prefetch" href="/cracksmini.html" as="document" />
+        <link rel="prefetch" href="/kalonmini.html" as="document" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />

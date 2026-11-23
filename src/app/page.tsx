@@ -7,6 +7,7 @@ import ThemeToggle from "@/components/ui/ThemeToggle";
 import BookingModal from "@/components/calendar/BookingModal";
 import OmegaFitMockup from "@/components/ui/OmegaFitMockup";
 import CracksAppMockup from "@/components/ui/CracksAppMockup";
+import KalonAppMockup from "@/components/ui/KalonAppMockup";
 
 /* ─────────────── Logo SVG ─────────────── */
 const LogoSVG = ({ className = "w-full h-full" }: { className?: string }) => (
@@ -270,7 +271,7 @@ export default function Home() {
 
       {/* ══════════ PROJECTS ══════════ */}
       <section id="apps" className="py-16 px-6">
-        <div className="max-w-[1200px] mx-auto">
+        <div className="max-w-[1280px] mx-auto">
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10 anim-on-scroll opacity-0 translate-y-6 transition-all duration-700">
             <div>
@@ -278,53 +279,10 @@ export default function Home() {
                 Trabajos realizados
               </h2>
             </div>
-            {/* <a href="/agendar" className="self-start md:self-end flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 text-white text-sm font-semibold transition-all whitespace-nowrap">
-              Ver todos →
-            </a> */}
           </div>
 
-          {/* Project cards – 2 per row in desktop */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-
-            {/* Point App */}
-            {/* <div className="anim-on-scroll opacity-0 translate-y-6 transition-all duration-700 group rounded-3xl overflow-hidden border border-white/8 bg-white/3 hover:border-violet-500/30 hover:bg-white/5 transition-all flex flex-col justify-between">
-              <div className="h-52 sm:h-60 relative overflow-hidden">
-                <Image src="/assets/recortadaapppuntos.png" alt="App de puntos – plataforma de fidelización" fill className="object-cover group-hover:scale-105 transition-transform duration-700" sizes="(max-width:1024px) 100vw, 50vw" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-              </div>
-              <div className="p-6 flex flex-col justify-between flex-1 gap-4">
-                <div>
-                  <div className="text-xs font-bold tracking-widest uppercase text-violet-400 mb-2">Loyalty / SaaS</div>
-                  <h3 className="text-2xl font-extrabold text-white mb-2 tracking-tight">App de Puntos</h3>
-                  <p className="text-sm text-white/55 leading-relaxed mb-3">Plataforma de fidelización de clientes. Acumula puntos, canjea premios y fideliza a tus clientes con una app moderna.</p>
-                  <div className="flex gap-2 flex-wrap mb-3">
-                    {["Next.js", "PostgreSQL"].map(t => (
-                      <span key={t} className="px-2 py-0.5 rounded bg-violet-900/50 border border-violet-500/20 text-violet-300 text-xs font-bold">{t}</span>
-                    ))}
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center pt-2 border-t border-white/5">
-                  <a
-                    href="https://www.youtube.com/watch?v=6lerdQ_z1ek"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl bg-[#FF0000]/10 hover:bg-[#FF0000]/20 border border-[#FF0000]/25 text-white font-bold text-xs transition-all duration-300 hover:-translate-y-0.5"
-                  >
-                    <YTIcon className="w-4 h-4 text-[#FF0000]" />
-                    Ver video
-                  </a>
-                  <div className="flex items-center gap-3 p-2.5 rounded-xl bg-black/20 border border-white/8">
-                    <div className="size-12 bg-white rounded-lg shrink-0 relative overflow-hidden">
-                      <Image src="/assets/qr-pointsapp.png" alt="QR App de puntos" fill className="object-contain p-1" sizes="48px" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold text-white">App Demo</p>
-                      <a href="https://pointsapp-five.vercel.app/" target="_blank" rel="noreferrer" className="text-[11px] font-bold text-violet-400 hover:underline block mt-0.5">Ver demo →</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div> */}
+          {/* Project cards – 3 interactive mockups */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-6 justify-items-center items-start">
 
             {/* OMEGAFIT INTERACTIVE SHOWCASE */}
             <OmegaFitMockup />
@@ -332,46 +290,8 @@ export default function Home() {
             {/* CRACKSAPP INTERACTIVE SHOWCASE (NATIVE ANDROID & MERCADO PAGO) */}
             <CracksAppMockup />
 
-            {/* Turnos Online */}
-            {/* <div className="anim-on-scroll opacity-0 translate-y-6 transition-all duration-700 group rounded-3xl overflow-hidden border border-white/8 bg-white/3 hover:border-violet-500/30 hover:bg-white/5 transition-all flex flex-col justify-between">
-              <div className="h-52 sm:h-64 relative overflow-hidden">
-                <Image src="/assets/lumiereimg.png" alt="Turnos Online – Lumiere" fill className="object-cover group-hover:scale-105 transition-transform duration-700" sizes="(max-width:1024px) 100vw, 50vw" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-              </div>
-              <div className="p-6 sm:p-7 flex flex-col justify-between flex-1 gap-5">
-                <div>
-                  <div className="text-xs font-bold tracking-widest uppercase text-violet-400 mb-2">Booking / SaaS</div>
-                  <h3 className="text-2xl font-extrabold text-white mb-2 tracking-tight">Turnos Online</h3>
-                  <p className="text-sm text-white/55 leading-relaxed mb-4">Web app para que tus pacientes saquen turnos desde su celular, sin llamadas ni WhatsApp. Integra Mercado Pago para cobrar adelantos.</p>
-                  <div className="flex gap-2 flex-wrap mb-4">
-                    {["Next.js", "PostgreSQL"].map(t => (
-                      <span key={t} className="px-2.5 py-0.5 rounded bg-violet-900/50 border border-violet-500/20 text-violet-300 text-xs font-bold">{t}</span>
-                    ))}
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center pt-3 border-t border-white/5">
-                  <a
-                    href="https://www.youtube.com/watch?v=W_8-Q9HA6sE"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl bg-[#FF0000]/10 hover:bg-[#FF0000]/20 border border-[#FF0000]/25 text-white font-bold text-xs sm:text-sm transition-all duration-300 hover:-translate-y-0.5 shadow-md shadow-[#FF0000]/5"
-                  >
-                    <YTIcon className="w-4 h-4 text-[#FF0000]" />
-                    Ver video explicativo
-                  </a>
-                  <div className="flex items-center gap-3 p-2.5 rounded-xl bg-black/20 border border-white/8">
-                    <div className="size-12 bg-white rounded-lg shrink-0 relative overflow-hidden">
-                      <Image src="/assets/qr-lumiere.png" alt="QR Lumiere" fill className="object-contain p-1" sizes="48px" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold text-white">App Demo</p>
-                      <p className="text-[11px] text-white/40 mt-0.5">Escanea el QR</p>
-                      <a href="https://lumiere.agustindev.com.ar" target="_blank" rel="noreferrer" className="text-[11px] font-bold text-violet-400 hover:underline block mt-0.5">Ver demo →</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div> */}
+            {/* KALON INTERACTIVE SHOWCASE (NUTRITION & MACROS) */}
+            <KalonAppMockup />
 
           </div>
         </div>
@@ -474,10 +394,11 @@ export default function Home() {
             <div className="anim-on-scroll opacity-0 translate-y-6 transition-all duration-700 border-t border-white/10">
               {[
                 { q: "¿Cómo funciona la llamada 1:1 gratuita?", a: "Es una sesión de 30 minutos por videollamada donde analizamos tu proyecto, objetivos y desafíos. Sin compromiso. Al terminar tenés claridad sobre los próximos pasos, la uses para contratarme o no." },
+                { q: "¿Trabajas solo?", a: "Actualmente somos un equipo de 2 programadores, mediante se vayan acumulando trabajos iremos aumentando el personal y servicios." },
                 { q: "¿Cuánto cuesta un proyecto?", a: "Cada proyecto es único. Los precios dependen del alcance, complejidad y timeline. Después de la llamada inicial recibís una propuesta detallada con precio fijo, sin costos ocultos." },
                 { q: "¿Cuánto tiempo toma un proyecto web?", a: "Una landing page puede estar lista en 1-2 semanas. Un sitio completo con funcionalidades, 3-6 semanas. Trabajamos con cronogramas claros y check-ins semanales." },
                 { q: "¿Qué pasa después de que entregás el proyecto?", a: "Incluyo 30 días de soporte post-lanzamiento, documentación completa y capacitación para que puedas gestionar tu sitio de forma autónoma. También ofrezco planes de mantenimiento mensual." },
-                { q: "¿Trabajás con clientes fuera de Argentina?", a: "Sí, trabajo con clientes de toda Latinoamérica y España. Todo el proceso es 100% remoto y las videollamadas se adaptan a tu zona horaria." },
+                { q: "¿Trabajás con clientes fuera de Argentina?", a: "Sí, trabajo con clientes de todo el mundo. Todo el proceso es 100% remoto y las videollamadas se adaptan a tu zona horaria." },
               ].map((item) => (
                 <FAQItem key={item.q} q={item.q} a={item.a} />
               ))}
@@ -525,15 +446,15 @@ export default function Home() {
             {/* Right – Contact card */}
             <div className="anim-on-scroll opacity-0 translate-y-6 transition-all duration-700 bg-white/4 border border-white/10 rounded-2xl p-8 lg:p-10 backdrop-blur-sm">
               <h3 className="text-xl font-bold text-white mb-1">¡Hablemos ahora!</h3>
-              <p className="text-sm text-white/50 mb-8">Contáctame por WhatsApp o agenda una llamada directamente.</p>
+              <p className="text-sm text-white/50 mb-8">Contáctame por Instagram o agenda una llamada directamente.</p>
 
               <div className="flex flex-col gap-4">
-                <a href="https://wa.me/5493884791424" target="_blank" rel="noreferrer"
+                {/* <a href="https://wa.me/5493884791424" target="_blank" rel="noreferrer"
                   className="group relative flex items-center justify-center gap-3 w-full bg-gradient-to-r from-[#25D366] to-[#128C7E] text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden shadow-lg shadow-green-900/30">
                   <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
                   <WAIcon className="w-6 h-6 relative z-10 group-hover:scale-110 transition-transform" />
                   <span className="text-lg relative z-10">WhatsApp</span>
-                </a>
+                </a> */}
 
                 <a href="/agendar"
                   className="group relative flex items-center justify-center gap-3 w-full bg-violet-600 hover:bg-violet-500 text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 hover:-translate-y-1 shadow-lg shadow-violet-900/40">
@@ -562,9 +483,9 @@ export default function Home() {
           </a>
           <p className="text-xs text-white/30">© 2026 AgustinDev. Todos los derechos reservados.</p>
           <div className="flex items-center gap-3">
-            <a href="https://wa.me/5493884791424" target="_blank" rel="noreferrer"
+            {/* <a href="https://wa.me/5493884791424" target="_blank" rel="noreferrer"
               className="w-8 h-8 flex items-center justify-center rounded-lg border border-white/10 bg-white/5 text-white/40 hover:text-white hover:border-white/30 transition-all"
-              aria-label="WhatsApp"><WAIcon className="w-3.5 h-3.5" /></a>
+              aria-label="WhatsApp"><WAIcon className="w-3.5 h-3.5" /></a> */}
             <a href="https://www.instagram.com/agustindev/" target="_blank" rel="noreferrer"
               className="w-8 h-8 flex items-center justify-center rounded-lg border border-white/10 bg-white/5 text-white/40 hover:text-white hover:border-white/30 transition-all"
               aria-label="Instagram"><IGIcon className="w-3.5 h-3.5" /></a>
@@ -601,10 +522,10 @@ export default function Home() {
             Agendar →
           </a>
           <div className="flex items-center gap-5 mt-2">
-            <a href="https://wa.me/5493884791424" target="_blank" rel="noreferrer"
+            {/* <a href="https://wa.me/5493884791424" target="_blank" rel="noreferrer"
               className="flex size-12 items-center justify-center rounded-xl bg-[#25D366] text-white shadow-md" aria-label="WhatsApp">
               <WAIcon className="w-6 h-6" />
-            </a>
+            </a> */}
             <a href="https://www.instagram.com/agustindev/" target="_blank" rel="noreferrer"
               className="flex size-12 items-center justify-center rounded-xl bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white shadow-md" aria-label="Instagram">
               <IGIcon className="w-6 h-6" />

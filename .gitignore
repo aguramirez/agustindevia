@@ -43,3 +43,14 @@ next-env.d.ts
 whatsapp-bot/node_modules
 whatsapp-bot/auth_info_baileys
 /src/generated/prisma
+
+# Firebase & Secrets
+*firebase-adminsdk*.json
+firebase-service-account*.json
+.device-tokens.json
+
+# Android binaries and local config
+*.apk
+android/local.properties
+android/.gradle/
+android/app/build/

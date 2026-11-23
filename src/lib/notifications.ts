@@ -28,16 +28,31 @@ function getFirebaseAdmin() {
     }
   }
 
-  // 2. Verificar si existe archivo local firebase-service-account.json
-  const localFile = path.join(process.cwd(), 'firebase-service-account.json');
-  if (fs.existsSync(localFile)) {
-    try {
-      const serviceAccount = JSON.parse(fs.readFileSync(localFile, 'utf8'));
-      return admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
-      });
-    } catch (e) {
-      console.error('Error leyendo firebase-service-account.json:', e);
+  // 2. Verificar si existe archivo local de clave de servicio
+  const possibleFiles = [
+    path.join(process.cwd(), 'notes-app-7ab34-firebase-adminsdk-fbsvc-d6aea71868.json'),
+    path.join(process.cwd(), 'firebase-service-account.json'),
+  ];
+
+  // Buscar también dinámicamente cualquier archivo que contenga firebase-adminsdk en la raíz
+  try {
+    const rootFiles = fs.readdirSync(process.cwd());
+    const adminSdkFile = rootFiles.find(f => f.includes('firebase-adminsdk') && f.endsWith('.json'));
+    if (adminSdkFile) {
+      possibleFiles.unshift(path.join(process.cwd(), adminSdkFile));
+    }
+  } catch {}
+
+  for (const localFile of possibleFiles) {
+    if (fs.existsSync(localFile)) {
+      try {
+        const serviceAccount = JSON.parse(fs.readFileSync(localFile, 'utf8'));
+        return admin.initializeApp({
+          credential: admin.credential.cert(serviceAccount),
+        });
+      } catch (e) {
+        console.error(`Error leyendo ${path.basename(localFile)}:`, e);
+      }
     }
   }
 

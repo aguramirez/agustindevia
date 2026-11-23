@@ -23,7 +23,7 @@ export default function CracksAppMockup() {
         );
       } else {
         iframeRef.current.contentWindow.postMessage(
-          { type: "SWITCH_CRACKS_TAB", tab: "dashboard" },
+          { type: "SWITCH_CRACKS_TAB", tab: "home" },
           "*"
         );
       }
@@ -42,6 +42,40 @@ export default function CracksAppMockup() {
 
   return (
     <div className="anim-on-scroll opacity-0 translate-y-6 transition-all duration-700 w-full flex flex-col items-center justify-between">
+
+      {/* ── App Store Header Badge ── */}
+      <div className="w-full max-w-[340px] mb-3.5 px-1">
+        <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-neutral-900/80 border border-neutral-800 shadow-lg backdrop-blur-md">
+          {/* App Icon */}
+          <div className="relative w-12 h-12 rounded-[14px] overflow-hidden shadow-md shadow-black/50 border border-white/10 shrink-0 bg-[#0f1423]">
+            <Image
+              src="/assets/logo-cracks.png"
+              alt="Cracks Logo"
+              fill
+              className="object-cover"
+              sizes="48px"
+              priority
+            />
+          </div>
+          {/* Details */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center justify-between gap-1">
+              <h3 className="text-sm font-extrabold text-white truncate tracking-tight">Cracks</h3>
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shrink-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                +100 usuarios diarios
+              </span>
+            </div>
+            <p className="text-[11px] text-neutral-400 truncate mt-0.5">Torneos, Fixtures & Mercado Pago</p>
+            <div className="flex items-center gap-1.5 mt-0.5 text-[10px] text-amber-400 font-semibold">
+              {/* <span>★ 5.0</span> */}
+              <span className="text-neutral-600">•</span>
+              <span className="text-neutral-400 font-normal">Deportes & Torneos</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Selector Flotante de Vistas con Sliding Pill */}
       <div className="flex flex-col items-center gap-1.5 mb-3 w-full max-w-[340px]">
         <div className="relative inline-flex w-full p-1 bg-neutral-900/90 border border-neutral-800 rounded-2xl shadow-xl backdrop-blur-md overflow-hidden">
@@ -60,10 +94,7 @@ export default function CracksAppMockup() {
             className={`relative z-10 flex-1 py-2 text-xs font-bold rounded-xl transition-colors duration-200 flex items-center justify-center gap-1.5 cursor-pointer ${activeTab === "dashboard" ? "text-neutral-950 font-black" : "text-neutral-400 hover:text-white"
               }`}
           >
-            <div className="relative w-4 h-4 rounded overflow-hidden shrink-0">
-              <Image src="/assets/crackslogo.png" alt="CracksApp" fill className="object-cover" sizes="16px" />
-            </div>
-            <span>Torneos & Fixture</span>
+            <span>🏆 Torneos & Fixture</span>
           </button>
           <button
             id="btnCracksPagos"
@@ -91,11 +122,11 @@ export default function CracksAppMockup() {
           <iframe
             ref={iframeRef}
             id="phoneIframeCracks"
-            src="/api/cracks/cracksmini.html"
+            src="/cracksmini.html"
             className="w-full h-full border-0 absolute inset-0 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] opacity-100 scale-100 pointer-events-auto"
             title="CracksApp - Gestión Deportiva y Mercado Pago"
             scrolling="yes"
-            loading="lazy"
+            loading="eager"
             style={{ overscrollBehavior: "contain" }}
           />
         </div>

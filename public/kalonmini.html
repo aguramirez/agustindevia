@@ -1,0 +1,2046 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>KALON — Prototipo Mobile-First Interactivo</title>
+  
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  
+  <!-- Google Material Symbols Outlined -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+          },
+          colors: {
+            kalon: {
+              bg: '#000000',
+              card: '#0c0c0e',
+              hover: '#141417',
+              border: '#202024',
+              muted: '#71717a',
+              subtle: '#27272a',
+            },
+            macro: {
+              protein: '#fb923c', // Naranja pastel
+              fat: '#facc15',     // Amarillo pastel
+              carbs: '#4ade80',   // Verde pastel
+              calories: '#60a5fa',// Azul pastel
+            }
+          },
+          boxShadow: {
+            'glow-protein': '0 0 20px -3px rgba(251, 146, 60, 0.25)',
+            'glow-carbs': '0 0 20px -3px rgba(74, 222, 128, 0.25)',
+            'glow-fat': '0 0 20px -3px rgba(250, 204, 21, 0.25)',
+            'glow-blue': '0 0 20px -3px rgba(96, 165, 250, 0.25)',
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* Reset & iOS scroll experience */
+    * {
+      -webkit-tap-highlight-color: transparent;
+      outline: none;
+      box-sizing: border-box;
+    }
+    
+    /* Scrollbars invisibles pero con scroll fluido nativo */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none !important;
+      width: 0px !important;
+      height: 0px !important;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none !important;
+      scrollbar-width: none !important;
+    }
+
+    body {
+      background-color: #050507;
+      color: #ffffff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* Estilo para los iconos de Material Symbols */
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-outlined.fill {
+      font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+    }
+
+    /* Animaciones suaves nativas tipo iOS */
+    .screen-enter {
+      animation: iosSlideIn 0.32s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+    }
+    @keyframes iosSlideIn {
+      from {
+        opacity: 0.7;
+        transform: translateY(12px) scale(0.99);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* Animación de apertura de Modales (Lateral Push iOS / Bottom Sheet) */
+    .modal-push-enter {
+      animation: modalPush 0.35s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+    }
+    .modal-push-exit {
+      animation: modalPushExit 0.28s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+    }
+    @keyframes modalPush {
+      from { transform: translateX(100%); }
+      to { transform: translateX(0); }
+    }
+    @keyframes modalPushExit {
+      from { transform: translateX(0); }
+      to { transform: translateX(100%); }
+    }
+
+    /* Animación de Toast Notification */
+    @keyframes toastFade {
+      0% { opacity: 0; transform: translateY(-20px) scale(0.95); }
+      15% { opacity: 1; transform: translateY(0) scale(1); }
+      85% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-20px) scale(0.95); }
+    }
+    .toast-anim {
+      animation: toastFade 2.6s ease-in-out forwards;
+    }
+
+    /* Smartphone Frame Lighting on Desktop */
+    .phone-outer-shadow {
+      box-shadow: 0 25px 70px -10px rgba(0, 0, 0, 0.9), 0 0 0 12px #18181b, 0 0 0 14px #27272a;
+    }
+    
+    /* Range input styling */
+    input[type=range] {
+      -webkit-appearance: none;
+      background: #27272a;
+      border-radius: 9999px;
+      height: 6px;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 20px;
+      width: 20px;
+      border-radius: 50%;
+      background: #ffffff;
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(255,255,255,0.4);
+      transition: transform 0.15s ease;
+    }
+    input[type=range]::-webkit-slider-thumb:active {
+      transform: scale(1.2);
+    }
+  </style>
+</head>
+
+<body class="h-[100dvh] w-screen overflow-hidden flex items-center justify-center bg-[#070709] text-white">
+
+  <!-- ========================================== -->
+  <!-- PORTFOLIO DESKTOP SURROUNDING CONTROLS     -->
+  <!-- ========================================== -->
+  <aside class="hidden lg:flex fixed left-8 top-8 flex-col gap-3 z-40 max-w-xs text-xs text-zinc-400">
+    <div class="flex items-center gap-2">
+      <span class="text-xl">🦦</span>
+      <div>
+        <h2 class="text-sm font-extrabold text-white tracking-widest">KALON</h2>
+        <p class="text-[11px] text-zinc-500">Interactive Product Showcase</p>
+      </div>
+    </div>
+    <div class="p-3.5 rounded-2xl bg-zinc-900/80 border border-zinc-800/80 backdrop-blur-md space-y-2.5">
+      <div class="text-[11px] font-semibold text-zinc-300 flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        Mobile-First Prototype
+      </div>
+      <p class="text-zinc-400 leading-relaxed text-[11px]">
+        Prototipo interactivo de alta fidelidad construido para portfolio web. Replica al 100% el diseño, flujo y microinteracciones de KALON.
+      </p>
+      <div class="pt-1 border-t border-zinc-800 text-[10px] text-zinc-500 space-y-1">
+        <div>• <strong>Filosofía:</strong> Adherence-neutral (MacroFactor inspired)</div>
+        <div>• <strong>Vistas:</strong> Dashboard, Workout, Foods, Log, Strategy, Social</div>
+        <div>• <strong>Tokens:</strong> Dark Matte + Pasteles funcionales</div>
+      </div>
+    </div>
+    
+    <!-- Phone Bezel Toggle Button -->
+    <button id="toggleFrameBtn" onclick="toggleDeviceFrame()" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-zinc-900/70 border border-zinc-800 hover:border-zinc-600 text-zinc-300 hover:text-white transition-all text-[11px] cursor-pointer">
+      <span class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-sm">devices</span>
+        <span>Modo Vista Mockup</span>
+      </span>
+      <span id="frameStatusText" class="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-800 text-zinc-300">Encuadre iPhone</span>
+    </button>
+  </aside>
+
+  <!-- ========================================== -->
+  <!-- SMARTPHONE CONTAINER / APP VIEWPORT        -->
+  <!-- ========================================== -->
+  <main id="phoneContainer" class="relative w-full h-[100dvh] max-w-md bg-black overflow-hidden flex flex-col sm:h-[844px] sm:max-h-[92vh] sm:rounded-[48px] phone-outer-shadow transition-all duration-300">
+    
+    <!-- TOP STATUS BAR (Mockup iOS Style) -->
+    <header class="shrink-0 h-11 w-full flex items-center justify-between px-7 pt-2 select-none z-30 bg-transparent text-white text-[12px] font-semibold tracking-tight">
+      <span id="liveClock" class="font-medium tracking-normal text-xs">09:41</span>
+      
+      <!-- Dynamic Island / Notch Mockup Pill -->
+      <div class="w-24 h-4 bg-zinc-950 rounded-full flex items-center justify-end px-2 border border-zinc-900 shadow-inner">
+        <div class="w-2 h-2 rounded-full bg-zinc-800"></div>
+      </div>
+
+      <div class="flex items-center gap-1.5 text-zinc-300 text-xs">
+        <span class="material-symbols-outlined text-[15px]">signal_cellular_alt</span>
+        <span class="material-symbols-outlined text-[15px]">wifi</span>
+        <span class="material-symbols-outlined text-[17px]">battery_full</span>
+      </div>
+    </header>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toastContainer" class="fixed top-14 left-0 right-0 z-50 pointer-events-none flex justify-center px-4"></div>
+
+    <!-- ========================================== -->
+    <!-- VIEWS CONTAINER (SCROLL INTERNO SUAVE)      -->
+    <!-- ========================================== -->
+    <section id="screensWrapper" class="relative flex-1 w-full overflow-hidden">
+
+      <!-- ======================================== -->
+      <!-- VIEW 1: DASHBOARD (NUTRITION & WORKOUT)  -->
+      <!-- ======================================== -->
+      <article id="screenDashboard" class="screen-view h-full w-full overflow-y-auto no-scrollbar pb-24 px-4 space-y-4">
+        
+        <!-- Header: KALON logo & Mode Pill Switch (Nutrición / Workout) -->
+        <div class="flex items-center justify-between pt-2">
+          <div class="flex items-center gap-1.5">
+            <span class="text-2xl">🦦</span>
+            <h1 class="text-2xl font-black tracking-widest text-white">KALON</h1>
+          </div>
+
+          <!-- Mode Switch (Nutrición / Workout) -->
+          <div class="relative flex items-center rounded-full border border-zinc-800 bg-[#141417] p-1 shadow-inner">
+            <!-- Sliding background pill -->
+            <div id="modeSliderPill" class="absolute top-1 bottom-1 w-7 rounded-full bg-white shadow-sm transition-transform duration-300 ease-out translate-x-0"></div>
+            
+            <button type="button" onclick="switchDashboardMode('nutrition')" id="btnModeNutrition" class="relative z-10 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full text-black font-bold transition-colors" title="Modo Nutrición">
+              <span class="material-symbols-outlined text-[18px]">nutrition</span>
+            </button>
+            <button type="button" onclick="switchDashboardMode('workout')" id="btnModeWorkout" class="relative z-10 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full text-zinc-500 hover:text-zinc-300 transition-colors" title="Modo Workout">
+              <span class="material-symbols-outlined text-[18px]">fitness_center</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ---------------------------------------- -->
+        <!-- SUB-VIEW A: NUTRITION MODE               -->
+        <!-- ---------------------------------------- -->
+        <div id="nutritionModeContent" class="space-y-4 screen-enter">
+          
+          <!-- TODAY ENERGY & MACRO CARD SLIDER -->
+          <div class="space-y-2">
+            <!-- Slider Header: Consumed / Remaining Switch + Day Label -->
+            <div class="flex items-center justify-between px-0.5">
+              <!-- Switch Consumido / Restante -->
+              <div class="flex items-center rounded-lg border border-kalon-border bg-kalon-card p-0.5">
+                <button type="button" onclick="setMacroFrameMode('consumed')" id="btnModeConsumed" class="rounded-md px-2.5 py-1 text-[11px] font-bold bg-white text-black transition-all">
+                  Consumido
+                </button>
+                <button type="button" onclick="setMacroFrameMode('remaining')" id="btnModeRemaining" class="rounded-md px-2.5 py-1 text-[11px] font-medium text-zinc-400 hover:text-white transition-all">
+                  Restante
+                </button>
+              </div>
+
+              <!-- Day & Strategy Goal -->
+              <div class="flex items-center gap-2">
+                <span class="font-mono text-xs font-bold tracking-wider text-zinc-400 uppercase">Hoy</span>
+                <span class="text-[10px] font-medium text-zinc-500 bg-zinc-900 border border-zinc-800/80 px-2 py-0.5 rounded-full">Déficit (-400)</span>
+              </div>
+            </div>
+
+            <!-- Energy Card (Blue calories + 3 pastel macros) -->
+            <div class="rounded-2xl border border-kalon-border bg-kalon-card p-4 shadow-sm space-y-3">
+              <!-- Top Row: Calories -->
+              <div class="flex items-center justify-between">
+                <div>
+                  <span id="calorieFrameLabel" class="font-mono text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">
+                    Calorías Consumidas
+                  </span>
+                  <div class="mt-0.5 flex items-baseline gap-1.5">
+                    <span id="calorieDisplayValue" class="text-3xl font-black tracking-tight text-white">1,840</span>
+                    <span class="font-mono text-xs text-zinc-500">/ 2,240 kcal</span>
+                  </div>
+                </div>
+                <span id="caloriePercentBadge" class="rounded-lg bg-[#60a5fa]/15 px-2.5 py-1 font-mono text-xs font-bold text-[#60a5fa] border border-[#60a5fa]/20">
+                  82%
+                </span>
+              </div>
+
+              <!-- Animated Total Energy Bar -->
+              <div class="h-2 w-full overflow-hidden rounded-full bg-zinc-900">
+                <div id="calorieProgressBar" class="h-full rounded-full bg-[#60a5fa] transition-all duration-700 ease-out shadow-glow-blue" style="width: 82%"></div>
+              </div>
+
+              <!-- 3 Macro Cards (Pastel Orange, Pastel Green, Pastel Yellow) -->
+              <div class="grid grid-cols-3 gap-2 text-center pt-1">
+                <!-- Protein (Orange #fb923c) -->
+                <div class="rounded-xl border border-kalon-border bg-kalon-hover p-2.5 flex flex-col justify-between">
+                  <div class="flex items-center justify-between text-[11px]">
+                    <span class="font-extrabold text-macro-protein">P</span>
+                    <span id="proteinVal" class="font-mono text-zinc-200 font-semibold">165g</span>
+                  </div>
+                  <div class="my-1.5 h-1.5 w-full overflow-hidden rounded-full bg-zinc-900">
+                    <div id="proteinBar" class="h-full rounded-full bg-macro-protein transition-all duration-700 ease-out" style="width: 91%"></div>
+                  </div>
+                  <div class="flex justify-between items-center font-mono text-[9px] text-zinc-500">
+                    <span>Meta: 180g</span>
+                    <span id="proteinPct" class="text-zinc-400">91%</span>
+                  </div>
+                </div>
+
+                <!-- Carbs (Green #4ade80) -->
+                <div class="rounded-xl border border-kalon-border bg-kalon-hover p-2.5 flex flex-col justify-between">
+                  <div class="flex items-center justify-between text-[11px]">
+                    <span class="font-extrabold text-macro-carbs">C</span>
+                    <span id="carbsVal" class="font-mono text-zinc-200 font-semibold">185g</span>
+                  </div>
+                  <div class="my-1.5 h-1.5 w-full overflow-hidden rounded-full bg-zinc-900">
+                    <div id="carbsBar" class="h-full rounded-full bg-macro-carbs transition-all duration-700 ease-out" style="width: 84%"></div>
+                  </div>
+                  <div class="flex justify-between items-center font-mono text-[9px] text-zinc-500">
+                    <span>Meta: 220g</span>
+                    <span id="carbsPct" class="text-zinc-400">84%</span>
+                  </div>
+                </div>
+
+                <!-- Fat (Yellow #facc15) -->
+                <div class="rounded-xl border border-kalon-border bg-kalon-hover p-2.5 flex flex-col justify-between">
+                  <div class="flex items-center justify-between text-[11px]">
+                    <span class="font-extrabold text-macro-fat">G</span>
+                    <span id="fatVal" class="font-mono text-zinc-200 font-semibold">48g</span>
+                  </div>
+                  <div class="my-1.5 h-1.5 w-full overflow-hidden rounded-full bg-zinc-900">
+                    <div id="fatBar" class="h-full rounded-full bg-macro-fat transition-all duration-700 ease-out" style="width: 80%"></div>
+                  </div>
+                  <div class="flex justify-between items-center font-mono text-[9px] text-zinc-500">
+                    <span>Meta: 60g</span>
+                    <span id="fatPct" class="text-zinc-400">80%</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Quick Cardio / Synergy Engine Banner -->
+              <div class="mt-2 flex items-center justify-between rounded-xl bg-gradient-to-r from-blue-950/30 to-purple-950/20 border border-blue-900/30 p-2.5 text-xs">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-blue-400 text-sm">sync</span>
+                  <span class="text-[11px] text-zinc-300">Synergy Engine: <strong>+120 kcal</strong> recuperadas por sesión de fuerza</span>
+                </div>
+                <span class="text-[10px] text-blue-400 font-mono font-bold">Activo</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- WEEKLY ADHERENCE STRIP (7 DAYS - MacroFactor Adherence Neutral) -->
+          <div class="rounded-2xl border border-kalon-border bg-kalon-card p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-xs font-bold text-white uppercase tracking-wider font-mono">Tendencia Semanal</h3>
+                <p class="text-[10px] text-zinc-500">Neutralidad de adherencia (sin culpas)</p>
+              </div>
+              <span class="text-[10px] font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                Cumplimiento 94%
+              </span>
+            </div>
+
+            <!-- 7 Days Bar Chart Strip -->
+            <div class="grid grid-cols-7 gap-1.5 pt-2">
+              <!-- Lun -->
+              <button onclick="selectDayAdherence('Lun', 2190, 98)" class="flex flex-col items-center gap-1.5 group cursor-pointer">
+                <span class="text-[10px] font-mono text-zinc-500">L</span>
+                <div class="h-16 w-full rounded-md bg-zinc-900 p-0.5 flex flex-col justify-end">
+                  <div class="w-full rounded bg-macro-carbs/80 transition-all" style="height: 98%"></div>
+                </div>
+                <span class="text-[9px] font-mono text-zinc-400">2.1k</span>
+              </button>
+
+              <!-- Mar -->
+              <button onclick="selectDayAdherence('Mar', 2280, 101)" class="flex flex-col items-center gap-1.5 group cursor-pointer">
+                <span class="text-[10px] font-mono text-zinc-500">M</span>
+                <div class="h-16 w-full rounded-md bg-zinc-900 p-0.5 flex flex-col justify-end">
+                  <div class="w-full rounded bg-macro-calories/80 transition-all" style="height: 100%"></div>
+                </div>
+                <span class="text-[9px] font-mono text-zinc-400">2.2k</span>
+              </button>
+
+              <!-- Mié -->
+              <button onclick="selectDayAdherence('Mié', 2150, 96)" class="flex flex-col items-center gap-1.5 group cursor-pointer">
+                <span class="text-[10px] font-mono text-zinc-500">X</span>
+                <div class="h-16 w-full rounded-md bg-zinc-900 p-0.5 flex flex-col justify-end">
+                  <div class="w-full rounded bg-macro-carbs/80 transition-all" style="height: 96%"></div>
+                </div>
+                <span class="text-[9px] font-mono text-zinc-400">2.1k</span>
+              </button>
+
+              <!-- Jue -->
+              <button onclick="selectDayAdherence('Jue', 2310, 103)" class="flex flex-col items-center gap-1.5 group cursor-pointer">
+                <span class="text-[10px] font-mono text-zinc-500">J</span>
+                <div class="h-16 w-full rounded-md bg-zinc-900 p-0.5 flex flex-col justify-end">
+                  <div class="w-full rounded bg-macro-fat/80 transition-all" style="height: 100%"></div>
+                </div>
+                <span class="text-[9px] font-mono text-zinc-400">2.3k</span>
+              </button>
+
+              <!-- Vie -->
+              <button onclick="selectDayAdherence('Vie', 2220, 99)" class="flex flex-col items-center gap-1.5 group cursor-pointer">
+                <span class="text-[10px] font-mono text-zinc-500">V</span>
+                <div class="h-16 w-full rounded-md bg-zinc-900 p-0.5 flex flex-col justify-end">
+                  <div class="w-full rounded bg-macro-carbs/80 transition-all" style="height: 99%"></div>
+                </div>
+                <span class="text-[9px] font-mono text-zinc-400">2.2k</span>
+              </button>
+
+              <!-- Sáb -->
+              <button onclick="selectDayAdherence('Sáb', 2410, 107)" class="flex flex-col items-center gap-1.5 group cursor-pointer">
+                <span class="text-[10px] font-mono text-zinc-500">S</span>
+                <div class="h-16 w-full rounded-md bg-zinc-900 p-0.5 flex flex-col justify-end">
+                  <div class="w-full rounded bg-macro-protein/80 transition-all" style="height: 100%"></div>
+                </div>
+                <span class="text-[9px] font-mono text-zinc-400">2.4k</span>
+              </button>
+
+              <!-- Hoy Dom (Selected) -->
+              <button onclick="selectDayAdherence('Hoy', 1840, 82)" class="flex flex-col items-center gap-1.5 group cursor-pointer">
+                <span class="text-[10px] font-mono font-bold text-white bg-white/10 px-1 rounded">Hoy</span>
+                <div class="h-16 w-full rounded-md bg-zinc-900 p-0.5 flex flex-col justify-end ring-1 ring-white/30">
+                  <div class="w-full rounded bg-macro-calories transition-all shadow-glow-blue" style="height: 82%"></div>
+                </div>
+                <span class="text-[9px] font-mono font-bold text-macro-calories">1.8k</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- WEIGHT & DYNAMIC TDEE TREND (TradingView Sparkline Style) -->
+          <div class="rounded-2xl border border-kalon-border bg-kalon-card p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="font-mono text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">Peso & Gasto Dinámico (TDEE)</span>
+                <div class="flex items-baseline gap-2 mt-0.5">
+                  <span id="currentWeightDisplay" class="text-2xl font-black text-white">76.1</span>
+                  <span class="text-xs text-zinc-400 font-mono">kg actual</span>
+                  <span class="text-[11px] font-mono text-emerald-400 font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded ml-1">
+                    -0.35 kg/sem
+                  </span>
+                </div>
+              </div>
+              <button onclick="openModal('modalWeightLog')" class="flex items-center gap-1 rounded-xl bg-white text-black px-3 py-1.5 text-xs font-bold hover:bg-zinc-200 transition-all shadow-sm cursor-pointer">
+                <span class="material-symbols-outlined text-sm">add</span>
+                <span>Pesaje</span>
+              </button>
+            </div>
+
+            <!-- Mini SVG Sparkline Chart -->
+            <div class="h-20 w-full relative pt-2">
+              <svg class="w-full h-full overflow-visible" viewBox="0 0 320 60" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="weightGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#4ade80" stop-opacity="0.3" />
+                    <stop offset="100%" stop-color="#4ade80" stop-opacity="0.0" />
+                  </linearGradient>
+                </defs>
+                <!-- Area -->
+                <path d="M0,45 Q50,42 100,38 T200,28 T320,18 L320,60 L0,60 Z" fill="url(#weightGrad)"></path>
+                <!-- Line -->
+                <path d="M0,45 Q50,42 100,38 T200,28 T320,18" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round"></path>
+                <!-- Current point dot -->
+                <circle cx="320" cy="18" r="4.5" fill="#ffffff" stroke="#4ade80" stroke-width="2.5"></circle>
+              </svg>
+            </div>
+
+            <!-- Metric stats row -->
+            <div class="grid grid-cols-2 gap-2 pt-1 border-t border-kalon-border/60">
+              <div class="bg-kalon-hover p-2 rounded-xl flex items-center justify-between">
+                <div>
+                  <span class="text-[10px] text-zinc-500 font-mono block">Media Móvil (7d)</span>
+                  <span class="text-xs font-bold text-zinc-200 font-mono">76.4 kg</span>
+                </div>
+                <span class="material-symbols-outlined text-zinc-500 text-sm">trending_down</span>
+              </div>
+              <div class="bg-kalon-hover p-2 rounded-xl flex items-center justify-between">
+                <div>
+                  <span class="text-[10px] text-zinc-500 font-mono block">TDEE Calculado</span>
+                  <span class="text-xs font-bold text-macro-calories font-mono">2,640 kcal</span>
+                </div>
+                <span class="material-symbols-outlined text-macro-calories text-sm">local_fire_department</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ACTIVITY & STEPS CARD -->
+          <div class="rounded-2xl border border-kalon-border bg-kalon-card p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                  <span class="material-symbols-outlined text-lg">footprint</span>
+                </div>
+                <div>
+                  <h4 class="text-xs font-bold text-white">Pasos Diarios</h4>
+                  <span class="text-[10px] text-zinc-500 font-mono">8,450 / 10,000 pasos</span>
+                </div>
+              </div>
+              <span class="font-mono text-xs font-bold text-emerald-400 bg-emerald-500/15 px-2 py-0.5 rounded-lg">
+                84%
+              </span>
+            </div>
+            <div class="h-2 w-full overflow-hidden rounded-full bg-zinc-900">
+              <div class="h-full rounded-full bg-emerald-400 transition-all duration-700 ease-out" style="width: 84%"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ---------------------------------------- -->
+        <!-- SUB-VIEW B: WORKOUT EVOLUTION MODE       -->
+        <!-- ---------------------------------------- -->
+        <div id="workoutModeContent" class="space-y-4 hidden screen-enter">
+          
+          <!-- WORKOUT HERO STATS -->
+          <div class="rounded-2xl border border-kalon-border bg-kalon-card p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="font-mono text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">Evolución de Fuerza & 1RM</span>
+                <h3 class="text-lg font-black text-white">Sobrecarga Progresiva</h3>
+              </div>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/10 text-white border border-white/20">
+                Fase: Hipertrofia
+              </span>
+            </div>
+
+            <!-- Stats Banner -->
+            <div class="grid grid-cols-3 gap-2 text-center pt-1">
+              <div class="p-2.5 rounded-xl bg-kalon-hover border border-kalon-border">
+                <span class="block text-[10px] text-zinc-500 font-mono">Sesiones</span>
+                <span class="text-base font-black text-white font-mono">42</span>
+              </div>
+              <div class="p-2.5 rounded-xl bg-kalon-hover border border-kalon-border">
+                <span class="block text-[10px] text-zinc-500 font-mono">Récords PR</span>
+                <span class="text-base font-black text-macro-fat font-mono">8 🏆</span>
+              </div>
+              <div class="p-2.5 rounded-xl bg-kalon-hover border border-kalon-border">
+                <span class="block text-[10px] text-zinc-500 font-mono">Vol. Semanal</span>
+                <span class="text-base font-black text-macro-calories font-mono">18.4t</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- EXERCISES LIST WITH PR & 1RM ESTIMATE -->
+          <div class="space-y-2.5">
+            <div class="flex items-center justify-between px-1">
+              <span class="text-xs font-bold text-zinc-400 font-mono uppercase">Historial de Ejercicios</span>
+              <button onclick="openModal('modalExercisePicker')" class="text-xs text-white font-semibold flex items-center gap-1 hover:underline cursor-pointer">
+                <span class="material-symbols-outlined text-sm">add</span>
+                <span>Nuevo Ejercicio</span>
+              </button>
+            </div>
+
+            <!-- Exercise Card 1: Press de Banca Plano -->
+            <div onclick="showExerciseDetail('Press de Banca Plano', 'Pectoral Mayor', 110, '+2.5 kg', 'Sentí buen control escapular con RPE 8.5')" class="p-3.5 rounded-2xl border border-kalon-border bg-kalon-card hover:bg-kalon-hover/60 transition-all cursor-pointer space-y-2">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-9 h-9 rounded-xl bg-macro-protein/15 border border-macro-protein/25 flex items-center justify-center text-macro-protein">
+                    <span class="material-symbols-outlined text-xl">fitness_center</span>
+                  </div>
+                  <div>
+                    <h4 class="text-xs font-bold text-white">Press de Banca con Barra</h4>
+                    <span class="text-[10px] text-zinc-500">Pectoral • 4 series efectivas</span>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <span class="text-sm font-black text-white font-mono">110 kg</span>
+                  <span class="block text-[9px] text-macro-fat font-bold font-mono">PR Actual 🏆</span>
+                </div>
+              </div>
+              <!-- Progress bar indicator -->
+              <div class="flex items-center justify-between pt-1 border-t border-kalon-border/60 text-[10px] text-zinc-400 font-mono">
+                <span>Último: 4 x 8 @ 92.5 kg (RPE 8.5)</span>
+                <span class="text-emerald-400 font-bold">+2.5 kg este mes</span>
+              </div>
+            </div>
+
+            <!-- Exercise Card 2: Sentadilla Libre -->
+            <div onclick="showExerciseDetail('Sentadilla Libre Trasera', 'Cuádriceps & Glúteo', 145, '+5.0 kg', 'Gran profundidad. RPE 9.0')" class="p-3.5 rounded-2xl border border-kalon-border bg-kalon-card hover:bg-kalon-hover/60 transition-all cursor-pointer space-y-2">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-9 h-9 rounded-xl bg-macro-carbs/15 border border-macro-carbs/25 flex items-center justify-center text-macro-carbs">
+                    <span class="material-symbols-outlined text-xl">directions_walk</span>
+                  </div>
+                  <div>
+                    <h4 class="text-xs font-bold text-white">Sentadilla Libre Trasera</h4>
+                    <span class="text-[10px] text-zinc-500">Piernas • 3 series efectivas</span>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <span class="text-sm font-black text-white font-mono">145 kg</span>
+                  <span class="block text-[9px] text-macro-carbs font-bold font-mono">1RM Est.</span>
+                </div>
+              </div>
+              <div class="flex items-center justify-between pt-1 border-t border-kalon-border/60 text-[10px] text-zinc-400 font-mono">
+                <span>Último: 3 x 6 @ 125 kg (RPE 8)</span>
+                <span class="text-emerald-400 font-bold">+5 kg vs ciclo ant.</span>
+              </div>
+            </div>
+
+            <!-- Exercise Card 3: Jalón al Pecho Agarre Neutro -->
+            <div onclick="showExerciseDetail('Jalón al Pecho Neutro', 'Dorsal Ancho', 85, '+2.5 kg', 'Tirón limpio con contracción isométrica 1s')" class="p-3.5 rounded-2xl border border-kalon-border bg-kalon-card hover:bg-kalon-hover/60 transition-all cursor-pointer space-y-2">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-9 h-9 rounded-xl bg-macro-calories/15 border border-macro-calories/25 flex items-center justify-center text-macro-calories">
+                    <span class="material-symbols-outlined text-xl">vertical_align_bottom</span>
+                  </div>
+                  <div>
+                    <h4 class="text-xs font-bold text-white">Jalón al Pecho (Neutro)</h4>
+                    <span class="text-[10px] text-zinc-500">Espalda • 4 series</span>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <span class="text-sm font-black text-white font-mono">85 kg</span>
+                  <span class="block text-[9px] text-macro-calories font-bold font-mono">1RM Est.</span>
+                </div>
+              </div>
+              <div class="flex items-center justify-between pt-1 border-t border-kalon-border/60 text-[10px] text-zinc-400 font-mono">
+                <span>Último: 4 x 10 @ 70 kg</span>
+                <span class="text-zinc-400 font-mono">Sobrecarga constante</span>
+              </div>
+            </div>
+
+            <!-- Exercise Card 4: Peso Muerto Rumano con Mancuernas -->
+            <div onclick="showExerciseDetail('Peso Muerto Rumano', 'Isquios & Glúteos', 95, '+5.0 kg', 'Cadena posterior estirada al máximo sin flexión lumbar')" class="p-3.5 rounded-2xl border border-kalon-border bg-kalon-card hover:bg-kalon-hover/60 transition-all cursor-pointer space-y-2">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-9 h-9 rounded-xl bg-macro-fat/15 border border-macro-fat/25 flex items-center justify-center text-macro-fat">
+                    <span class="material-symbols-outlined text-xl">accessibility_new</span>
+                  </div>
+                  <div>
+                    <h4 class="text-xs font-bold text-white">Peso Muerto Rumano</h4>
+                    <span class="text-[10px] text-zinc-500">Isquiosurales • 3 series</span>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <span class="text-sm font-black text-white font-mono">95 kg</span>
+                  <span class="block text-[9px] text-macro-fat font-bold font-mono">Récord</span>
+                </div>
+              </div>
+              <div class="flex items-center justify-between pt-1 border-t border-kalon-border/60 text-[10px] text-zinc-400 font-mono">
+                <span>Último: 3 x 8 @ 80 kg</span>
+                <span class="text-emerald-400 font-bold">RPE 8.0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Coach Sustitución Inteligente Banner -->
+          <div class="p-3.5 rounded-2xl bg-gradient-to-br from-zinc-900 to-[#141417] border border-zinc-800 text-xs space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-white flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-yellow-400 text-base">psychology</span>
+                <span>Asistente Biomecánico Kalon</span>
+              </span>
+              <span class="text-[10px] text-zinc-500">Offline-first</span>
+            </div>
+            <p class="text-[11px] text-zinc-400 leading-relaxed">
+              ¿Máquina ocupada o molestia articular? Kalon sugiere sustitutos equivalentes en patrón de movimiento sin perder estímulo neuromuscular.
+            </p>
+          </div>
+
+        </div>
+
+      </article>
+
+      <!-- ======================================== -->
+      <!-- VIEW 2: FOODS (CATÁLOGO & FAVORITOS)     -->
+      <!-- ======================================== -->
+      <article id="screenFoods" class="screen-view h-full w-full overflow-y-auto no-scrollbar pb-24 px-4 space-y-4 hidden">
+        
+        <!-- Header -->
+        <div class="pt-2 space-y-1">
+          <div class="flex items-center justify-between">
+            <h2 class="text-2xl font-black text-white">Alimentos</h2>
+            <button onclick="openModal('modalAddCustomFood')" class="flex items-center gap-1 rounded-xl bg-white text-black px-3 py-1.5 text-xs font-bold hover:bg-zinc-200 transition-all cursor-pointer">
+              <span class="material-symbols-outlined text-sm">add</span>
+              <span>Crear</span>
+            </button>
+          </div>
+          <p class="text-xs text-zinc-400">Base verificada de ingredientes y platos regionales LATAM.</p>
+        </div>
+
+        <!-- Search Bar with Instant Filter -->
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-3.5 top-3 text-zinc-500 text-lg">search</span>
+          <input type="text" id="foodSearchInput" oninput="filterFoodsList()" placeholder="Buscar alimento, pollo, avena, bife..." class="w-full bg-kalon-card border border-kalon-border rounded-xl py-2.5 pl-10 pr-4 text-xs text-white placeholder-zinc-500 focus:border-zinc-500 transition-colors" />
+        </div>
+
+        <!-- Tabs: Ingredientes / Platos / Favoritos -->
+        <div class="flex rounded-xl bg-kalon-card p-1 border border-kalon-border text-xs">
+          <button onclick="switchFoodTab('all')" id="tabFoodAll" class="flex-1 py-1.5 rounded-lg font-bold bg-white text-black transition-all">Todos</button>
+          <button onclick="switchFoodTab('favorites')" id="tabFoodFav" class="flex-1 py-1.5 rounded-lg font-medium text-zinc-400 hover:text-white transition-all">Favoritos ⭐</button>
+          <button onclick="switchFoodTab('regional')" id="tabFoodRegional" class="flex-1 py-1.5 rounded-lg font-medium text-zinc-400 hover:text-white transition-all">Regional 🇦🇷</button>
+        </div>
+
+        <!-- Foods List Container -->
+        <div id="foodsListContainer" class="space-y-2">
+          <!-- Dynamically populated via JavaScript for real search & filtering -->
+        </div>
+
+      </article>
+
+      <!-- ======================================== -->
+      <!-- VIEW 3: REGISTRAR (LOG DIARIO & SOLVER)  -->
+      <!-- ======================================== -->
+      <article id="screenLog" class="screen-view h-full w-full overflow-y-auto no-scrollbar pb-24 px-4 space-y-4 hidden">
+        
+        <!-- Header -->
+        <div class="pt-2 flex items-center justify-between">
+          <div>
+            <h2 class="text-2xl font-black text-white">Registro Diario</h2>
+            <span class="text-xs text-zinc-400 font-mono">Línea de tiempo de comidas</span>
+          </div>
+
+          <!-- Quick solver action trigger -->
+          <button onclick="openModal('modalDietSolver')" class="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-3 py-1.5 text-xs font-bold hover:brightness-110 transition-all shadow-md shadow-blue-900/30 cursor-pointer">
+            <span class="material-symbols-outlined text-sm">auto_fix_high</span>
+            <span>Diet Solver</span>
+          </button>
+        </div>
+
+        <!-- Day Macro Summary Strip in Log -->
+        <div class="p-3.5 rounded-2xl bg-kalon-card border border-kalon-border flex items-center justify-between text-xs font-mono">
+          <div>
+            <span class="text-zinc-500 text-[10px] block">Total Ingerido</span>
+            <span class="text-sm font-bold text-white">1,840 kcal</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <div>
+              <span class="text-macro-protein font-bold">P</span>
+              <span class="text-zinc-300"> 165g</span>
+            </div>
+            <div>
+              <span class="text-macro-carbs font-bold">C</span>
+              <span class="text-zinc-300"> 185g</span>
+            </div>
+            <div>
+              <span class="text-macro-fat font-bold">G</span>
+              <span class="text-zinc-300"> 48g</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hourly Timeline Slots -->
+        <div class="space-y-3" id="timelineContainer">
+          
+          <!-- Slot 1: Desayuno 08:30 -->
+          <div class="rounded-2xl border border-kalon-border bg-kalon-card p-3.5 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-amber-400 text-sm">wb_twilight</span>
+                <span class="text-xs font-bold text-white">Desayuno</span>
+                <span class="text-[10px] text-zinc-500 font-mono">08:30</span>
+              </div>
+              <span class="text-xs font-bold text-macro-calories font-mono">485 kcal</span>
+            </div>
+            
+            <!-- Items in Breakfast -->
+            <div class="space-y-1.5 text-xs">
+              <div class="flex items-center justify-between p-2 rounded-xl bg-kalon-hover">
+                <div>
+                  <span class="font-medium text-white block">Huevos revueltos enteros (3 u)</span>
+                  <span class="text-[10px] text-zinc-400 font-mono">P: 21g • C: 2g • G: 15g</span>
+                </div>
+                <span class="font-mono text-zinc-300 text-xs">225 kcal</span>
+              </div>
+              <div class="flex items-center justify-between p-2 rounded-xl bg-kalon-hover">
+                <div>
+                  <span class="font-medium text-white block">Avena con leche descremada (60g)</span>
+                  <span class="text-[10px] text-zinc-400 font-mono">P: 14g • C: 42g • G: 4g</span>
+                </div>
+                <span class="font-mono text-zinc-300 text-xs">260 kcal</span>
+              </div>
+            </div>
+
+            <button onclick="openModal('modalAddFoodItem', 'Desayuno')" class="w-full py-1.5 rounded-lg border border-dashed border-zinc-800 text-[11px] font-medium text-zinc-400 hover:text-white hover:border-zinc-600 transition-all flex items-center justify-center gap-1 cursor-pointer">
+              <span class="material-symbols-outlined text-xs">add</span>
+              <span>Añadir alimento a Desayuno</span>
+            </button>
+          </div>
+
+          <!-- Slot 2: Almuerzo 13:15 -->
+          <div class="rounded-2xl border border-kalon-border bg-kalon-card p-3.5 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-yellow-400 text-sm">sunny</span>
+                <span class="text-xs font-bold text-white">Almuerzo</span>
+                <span class="text-[10px] text-zinc-500 font-mono">13:15</span>
+              </div>
+              <span class="text-xs font-bold text-macro-calories font-mono">680 kcal</span>
+            </div>
+            
+            <div class="space-y-1.5 text-xs">
+              <div class="flex items-center justify-between p-2 rounded-xl bg-kalon-hover">
+                <div>
+                  <span class="font-medium text-white block">Pechuga de pollo grillada (200g)</span>
+                  <span class="text-[10px] text-zinc-400 font-mono">P: 62g • C: 0g • G: 7g</span>
+                </div>
+                <span class="font-mono text-zinc-300 text-xs">330 kcal</span>
+              </div>
+              <div class="flex items-center justify-between p-2 rounded-xl bg-kalon-hover">
+                <div>
+                  <span class="font-medium text-white block">Arroz blanco al vapor (200g cocido)</span>
+                  <span class="text-[10px] text-zinc-400 font-mono">P: 5g • C: 56g • G: 1g</span>
+                </div>
+                <span class="font-mono text-zinc-300 text-xs">260 kcal</span>
+              </div>
+              <div class="flex items-center justify-between p-2 rounded-xl bg-kalon-hover">
+                <div>
+                  <span class="font-medium text-white block">Aceite de oliva virgen extra (10g)</span>
+                  <span class="text-[10px] text-zinc-400 font-mono">P: 0g • C: 0g • G: 10g</span>
+                </div>
+                <span class="font-mono text-zinc-300 text-xs">90 kcal</span>
+              </div>
+            </div>
+
+            <button onclick="openModal('modalAddFoodItem', 'Almuerzo')" class="w-full py-1.5 rounded-lg border border-dashed border-zinc-800 text-[11px] font-medium text-zinc-400 hover:text-white hover:border-zinc-600 transition-all flex items-center justify-center gap-1 cursor-pointer">
+              <span class="material-symbols-outlined text-xs">add</span>
+              <span>Añadir alimento a Almuerzo</span>
+            </button>
+          </div>
+
+          <!-- Slot 3: Merienda / Pre-Entreno 17:00 -->
+          <div class="rounded-2xl border border-kalon-border bg-kalon-card p-3.5 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-orange-400 text-sm">bolt</span>
+                <span class="text-xs font-bold text-white">Merienda & Pre-Workout</span>
+                <span class="text-[10px] text-zinc-500 font-mono">17:00</span>
+              </div>
+              <span class="text-xs font-bold text-macro-calories font-mono">315 kcal</span>
+            </div>
+            
+            <div class="space-y-1.5 text-xs">
+              <div class="flex items-center justify-between p-2 rounded-xl bg-kalon-hover">
+                <div>
+                  <span class="font-medium text-white block">Proteína Whey Isolate (1 scoop 30g)</span>
+                  <span class="text-[10px] text-zinc-400 font-mono">P: 25g • C: 2g • G: 1g</span>
+                </div>
+                <span class="font-mono text-zinc-300 text-xs">120 kcal</span>
+              </div>
+              <div class="flex items-center justify-between p-2 rounded-xl bg-kalon-hover">
+                <div>
+                  <span class="font-medium text-white block">Banana madura (150g)</span>
+                  <span class="text-[10px] text-zinc-400 font-mono">P: 2g • C: 35g • G: 0g</span>
+                </div>
+                <span class="font-mono text-zinc-300 text-xs">135 kcal</span>
+              </div>
+            </div>
+
+            <button onclick="openModal('modalAddFoodItem', 'Merienda')" class="w-full py-1.5 rounded-lg border border-dashed border-zinc-800 text-[11px] font-medium text-zinc-400 hover:text-white hover:border-zinc-600 transition-all flex items-center justify-center gap-1 cursor-pointer">
+              <span class="material-symbols-outlined text-xs">add</span>
+              <span>Añadir alimento a Merienda</span>
+            </button>
+          </div>
+
+          <!-- Slot 4: Cena 21:30 (Pendiente o Ajustable con Solver) -->
+          <div class="rounded-2xl border border-kalon-border bg-kalon-card p-3.5 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-indigo-400 text-sm">nights_stay</span>
+                <span class="text-xs font-bold text-white">Cena Planificada</span>
+                <span class="text-[10px] text-zinc-500 font-mono">21:30</span>
+              </div>
+              <span class="text-xs font-bold text-zinc-400 font-mono">360 kcal disp.</span>
+            </div>
+            
+            <div class="p-3 rounded-xl bg-blue-950/20 border border-blue-900/30 text-xs text-zinc-300 flex items-center justify-between">
+              <span>Restan <strong>400 kcal</strong> para clavar el objetivo exacto.</span>
+              <button onclick="openModal('modalDietSolver')" class="text-xs font-bold text-blue-400 underline cursor-pointer">Calcular</button>
+            </div>
+
+            <button onclick="openModal('modalAddFoodItem', 'Cena')" class="w-full py-1.5 rounded-lg border border-dashed border-zinc-800 text-[11px] font-medium text-zinc-400 hover:text-white hover:border-zinc-600 transition-all flex items-center justify-center gap-1 cursor-pointer">
+              <span class="material-symbols-outlined text-xs">add</span>
+              <span>Añadir alimento a Cena</span>
+            </button>
+          </div>
+
+        </div>
+
+      </article>
+
+      <!-- ======================================== -->
+      <!-- VIEW 4: STRATEGY (OBJETIVOS & MACROS)    -->
+      <!-- ======================================== -->
+      <article id="screenStrategy" class="screen-view h-full w-full overflow-y-auto no-scrollbar pb-24 px-4 space-y-4 hidden">
+        
+        <!-- Header -->
+        <div class="pt-2 flex items-center justify-between">
+          <div>
+            <h2 class="text-2xl font-black text-white">Estrategia</h2>
+            <span class="text-xs text-zinc-400 font-mono">Balance energético & macronutrientes</span>
+          </div>
+          <span class="material-symbols-outlined text-zinc-500 text-xl">explore</span>
+        </div>
+
+        <!-- Objetivo Seleccionado -->
+        <div class="rounded-2xl border border-kalon-border bg-kalon-card p-4 space-y-3">
+          <span class="text-[10px] font-mono text-zinc-500 uppercase tracking-wider font-semibold">Meta de Composición Corporal</span>
+          
+          <div class="grid grid-cols-3 gap-2 text-xs">
+            <button onclick="setStrategyGoal('CUT')" id="goalCutBtn" class="p-2.5 rounded-xl border border-white bg-white text-black font-bold text-center transition-all">
+              Déficit
+              <span class="block text-[9px] font-normal opacity-80">-400 kcal</span>
+            </button>
+            <button onclick="setStrategyGoal('MAINTAIN')" id="goalMaintainBtn" class="p-2.5 rounded-xl border border-kalon-border bg-kalon-hover text-zinc-400 font-semibold text-center transition-all">
+              Mantener
+              <span class="block text-[9px] text-zinc-500">Neutro</span>
+            </button>
+            <button onclick="setStrategyGoal('BULK')" id="goalBulkBtn" class="p-2.5 rounded-xl border border-kalon-border bg-kalon-hover text-zinc-400 font-semibold text-center transition-all">
+              Superávit
+              <span class="block text-[9px] text-zinc-500">+250 kcal</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Balanceador Matemático Determinístico -->
+        <div class="rounded-2xl border border-kalon-border bg-kalon-card p-4 space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-white uppercase font-mono tracking-wider">Ajuste de Macronutrientes</span>
+            <span class="text-[10px] font-mono text-macro-carbs bg-macro-carbs/10 px-2 py-0.5 rounded border border-macro-carbs/20">Balance 100% Determinista</span>
+          </div>
+
+          <!-- Total Daily Calories Slider -->
+          <div class="space-y-1.5">
+            <div class="flex justify-between items-center text-xs">
+              <span class="text-zinc-400">Meta Calórica Diaria</span>
+              <span id="sliderKcalVal" class="font-mono font-black text-white text-base">2,240 kcal</span>
+            </div>
+            <input type="range" id="strategyKcalRange" min="1500" max="3500" step="20" value="2240" oninput="updateMacroMath()" class="w-full" />
+          </div>
+
+          <!-- Protein Slider -->
+          <div class="space-y-1.5 pt-1">
+            <div class="flex justify-between items-center text-xs">
+              <span class="text-macro-protein font-semibold flex items-center gap-1">
+                <span>Proteínas (4 kcal/g)</span>
+              </span>
+              <span id="sliderProteinVal" class="font-mono font-bold text-white">180g <span class="text-zinc-500 font-normal">(720 kcal)</span></span>
+            </div>
+            <input type="range" id="strategyProteinRange" min="100" max="250" step="5" value="180" oninput="updateMacroMath()" class="w-full accent-orange-400" />
+          </div>
+
+          <!-- Fat Slider -->
+          <div class="space-y-1.5 pt-1">
+            <div class="flex justify-between items-center text-xs">
+              <span class="text-macro-fat font-semibold flex items-center gap-1">
+                <span>Grasas (9 kcal/g)</span>
+              </span>
+              <span id="sliderFatVal" class="font-mono font-bold text-white">60g <span class="text-zinc-500 font-normal">(540 kcal)</span></span>
+            </div>
+            <input type="range" id="strategyFatRange" min="30" max="120" step="2" value="60" oninput="updateMacroMath()" class="w-full accent-yellow-400" />
+          </div>
+
+          <!-- Carbs Auto-calculated Output -->
+          <div class="p-3 rounded-xl bg-kalon-hover border border-kalon-border flex items-center justify-between text-xs">
+            <div>
+              <span class="font-semibold text-macro-carbs block">Carbohidratos Calculados</span>
+              <span class="text-[10px] text-zinc-500">C = (Kcal - P×4 - G×9) ÷ 4</span>
+            </div>
+            <span id="calculatedCarbsVal" class="font-mono font-black text-white text-base">245g</span>
+          </div>
+
+          <!-- Steps Goal -->
+          <div class="space-y-1.5 pt-1">
+            <div class="flex justify-between items-center text-xs">
+              <span class="text-zinc-400">Meta Pasos Diarios</span>
+              <span id="sliderStepsVal" class="font-mono font-bold text-white">10,000</span>
+            </div>
+            <input type="range" id="strategyStepsRange" min="5000" max="20000" step="500" value="10000" oninput="document.getElementById('sliderStepsVal').innerText = Number(this.value).toLocaleString()" class="w-full accent-emerald-400" />
+          </div>
+
+          <!-- Save Button -->
+          <button onclick="saveStrategy()" class="w-full py-3 rounded-xl bg-white text-black font-extrabold text-xs hover:bg-zinc-200 transition-all shadow-md cursor-pointer flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined text-base">check_circle</span>
+            <span>Guardar Nueva Estrategia</span>
+          </button>
+        </div>
+
+        <!-- Synergy Engine Explanation -->
+        <div class="p-4 rounded-2xl bg-zinc-950 border border-zinc-800 text-xs space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-blue-400 text-base">bolt</span>
+            <span class="font-bold text-white">Filosofía Synergy Engine</span>
+          </div>
+          <p class="text-zinc-400 text-[11px] leading-relaxed">
+            Kalon no te castiga por entrenar duro. Las calorías gastadas en sobrecarga progresiva se amortizan protegiendo tu masa muscular magra sin romper el déficit calórico semanal promedio.
+          </p>
+        </div>
+
+      </article>
+
+      <!-- ======================================== -->
+      <!-- VIEW 5: SOCIAL HUB & PROFILE             -->
+      <!-- ======================================== -->
+      <article id="screenSocial" class="screen-view h-full w-full overflow-y-auto no-scrollbar pb-24 px-4 space-y-4 hidden">
+        
+        <!-- Header -->
+        <div class="pt-2 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-2xl text-white">group</span>
+            <div>
+              <h2 class="text-2xl font-black text-white">Social Hub</h2>
+              <span class="text-xs text-zinc-400">Comunidad, profesionales y logros</span>
+            </div>
+          </div>
+          <button onclick="showToast('Ajustes de cuenta abiertos')" class="p-2 rounded-xl border border-kalon-border bg-kalon-card hover:bg-kalon-hover text-zinc-400 hover:text-white cursor-pointer">
+            <span class="material-symbols-outlined text-sm">settings</span>
+          </button>
+        </div>
+
+        <!-- User Profile Card -->
+        <div class="rounded-2xl border border-kalon-border bg-kalon-card p-4 space-y-3">
+          <div class="flex items-center gap-3.5">
+            <!-- Avatar -->
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-zinc-800 to-zinc-700 border border-zinc-600 flex items-center justify-center text-xl font-black text-white shadow-inner">
+              AK
+            </div>
+            <div>
+              <div class="flex items-center gap-1.5">
+                <h3 class="text-base font-extrabold text-white">Agustín Kalon</h3>
+                <span title="Atleta Kalon">🦦</span>
+              </div>
+              <span class="text-xs text-zinc-400">agustin@kalon.app</span>
+              <div class="mt-1 flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-white/10 text-white border border-white/20">
+                  Atleta PRO
+                </span>
+                <span class="text-[10px] text-zinc-500 font-mono">Nivel 14 • Racha 28d</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Professional Link Status (B2B2C Feature) -->
+          <div class="pt-2 border-t border-kalon-border/80 space-y-2">
+            <span class="text-[10px] font-mono uppercase text-zinc-500 font-semibold">Equipo Profesional Vinculado</span>
+            
+            <div class="flex items-center justify-between p-2 rounded-xl bg-kalon-hover">
+              <div class="flex items-center gap-2">
+                <span class="text-sm">🥗</span>
+                <div>
+                  <span class="text-xs font-semibold text-white block">Lic. Sofía Valenzuela</span>
+                  <span class="text-[10px] text-zinc-400">Nutricionista Deportiva • Plan Activo</span>
+                </div>
+              </div>
+              <span class="text-[10px] text-emerald-400 font-mono font-bold">Conectada</span>
+            </div>
+
+            <div class="flex items-center justify-between p-2 rounded-xl bg-kalon-hover">
+              <div class="flex items-center gap-2">
+                <span class="text-sm">🏋️</span>
+                <div>
+                  <span class="text-xs font-semibold text-white block">Marcos Benítez</span>
+                  <span class="text-[10px] text-zinc-400">Personal Trainer • Rutina PPL</span>
+                </div>
+              </div>
+              <span class="text-[10px] text-emerald-400 font-mono font-bold">Conectado</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Badges & Medals Catalog -->
+        <div class="rounded-2xl border border-kalon-border bg-kalon-card p-4 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-white uppercase font-mono tracking-wider">Logros Desbloqueados</span>
+            <span class="text-xs font-mono text-macro-fat font-bold">4 / 12</span>
+          </div>
+
+          <div class="grid grid-cols-4 gap-2 text-center">
+            <!-- Badge 1 -->
+            <div class="p-2 rounded-xl bg-kalon-hover border border-kalon-border flex flex-col items-center gap-1">
+              <span class="text-xl">🛡️</span>
+              <span class="text-[9px] font-bold text-white line-clamp-1">Titanio</span>
+              <span class="text-[8px] text-zinc-500">14d meta</span>
+            </div>
+            <!-- Badge 2 -->
+            <div class="p-2 rounded-xl bg-kalon-hover border border-kalon-border flex flex-col items-center gap-1">
+              <span class="text-xl">🏋️</span>
+              <span class="text-[9px] font-bold text-white line-clamp-1">Club 100</span>
+              <span class="text-[8px] text-zinc-500">Bench PR</span>
+            </div>
+            <!-- Badge 3 -->
+            <div class="p-2 rounded-xl bg-kalon-hover border border-kalon-border flex flex-col items-center gap-1">
+              <span class="text-xl">⚡</span>
+              <span class="text-[9px] font-bold text-white line-clamp-1">Precisión</span>
+              <span class="text-[8px] text-zinc-500">±20 kcal</span>
+            </div>
+            <!-- Badge 4 -->
+            <div class="p-2 rounded-xl bg-kalon-hover border border-kalon-border flex flex-col items-center gap-1">
+              <span class="text-xl">🦦</span>
+              <span class="text-[9px] font-bold text-white line-clamp-1">Kalon</span>
+              <span class="text-[8px] text-zinc-500">Pionero</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Community Feed Activity -->
+        <div class="space-y-2.5">
+          <span class="text-xs font-bold text-zinc-400 font-mono uppercase px-1">Actividad de la Comunidad</span>
+          
+          <!-- Post 1 -->
+          <div class="p-3.5 rounded-2xl border border-kalon-border bg-kalon-card space-y-2.5">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center font-bold text-xs text-white">
+                  FC
+                </div>
+                <div>
+                  <span class="text-xs font-bold text-white block">Franco Calderón</span>
+                  <span class="text-[10px] text-zinc-500">Hace 45 min • Gimnasio</span>
+                </div>
+              </div>
+              <span class="text-[10px] text-macro-fat font-bold font-mono">Nuevo Récord 🏆</span>
+            </div>
+            <p class="text-xs text-zinc-300">
+              ¡Rompí la barrera de 140kg en Sentadilla Profunda! Siguiendo el TDEE dinámico de Kalon, la energía se mantuvo al 100%.
+            </p>
+            <div class="flex items-center gap-4 pt-1 border-t border-kalon-border/60 text-xs text-zinc-400">
+              <button onclick="toggleLike(this)" class="flex items-center gap-1 hover:text-white cursor-pointer">
+                <span class="material-symbols-outlined text-sm">thumb_up</span>
+                <span class="text-[11px]">24</span>
+              </button>
+              <button class="flex items-center gap-1 hover:text-white cursor-pointer">
+                <span class="material-symbols-outlined text-sm">chat_bubble</span>
+                <span class="text-[11px]">6</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Post 2 -->
+          <div class="p-3.5 rounded-2xl border border-kalon-border bg-kalon-card space-y-2.5">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center font-bold text-xs text-white">
+                  ML
+                </div>
+                <div>
+                  <span class="text-xs font-bold text-white block">Mariana López</span>
+                  <span class="text-[10px] text-zinc-500">Hace 2 horas • Nutrición</span>
+                </div>
+              </div>
+              <span class="text-[10px] text-emerald-400 font-bold font-mono">7 Días Adherencia</span>
+            </div>
+            <p class="text-xs text-zinc-300">
+              El Diet Solver me resolvió la cena en 2 segundos: 180g de salmón y batata al horno para cerrar el día en números exactos.
+            </p>
+            <div class="flex items-center gap-4 pt-1 border-t border-kalon-border/60 text-xs text-zinc-400">
+              <button onclick="toggleLike(this)" class="flex items-center gap-1 hover:text-white cursor-pointer">
+                <span class="material-symbols-outlined text-sm">thumb_up</span>
+                <span class="text-[11px]">18</span>
+              </button>
+              <button class="flex items-center gap-1 hover:text-white cursor-pointer">
+                <span class="material-symbols-outlined text-sm">chat_bubble</span>
+                <span class="text-[11px]">3</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </article>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- FIXED BOTTOM NAVIGATION BAR                -->
+    <!-- ========================================== -->
+    <nav class="absolute bottom-0 left-0 right-0 z-40 border-t border-kalon-border bg-black/95 pb-[env(safe-area-inset-bottom,0px)] shadow-2xl backdrop-blur-2xl">
+      <div class="flex h-16 w-full items-center justify-around px-2">
+        
+        <!-- Tab 1: Dashboard (Activity) -->
+        <button onclick="switchTab('dashboard')" id="navBtnDashboard" class="flex flex-col items-center justify-center space-y-0.5 px-3 py-1 transition-colors text-white cursor-pointer">
+          <span class="material-symbols-outlined text-xl">vital_signs</span>
+          <span class="text-[9px] font-bold tracking-tight">Dashboard</span>
+        </button>
+
+        <!-- Tab 2: Foods (Nutrition Catalog) -->
+        <button onclick="switchTab('foods')" id="navBtnFoods" class="flex flex-col items-center justify-center space-y-0.5 px-3 py-1 transition-colors text-zinc-500 hover:text-zinc-300 cursor-pointer">
+          <span class="material-symbols-outlined text-xl">nutrition</span>
+          <span class="text-[9px] font-medium tracking-tight">Foods</span>
+        </button>
+
+        <!-- Tab 3: Central Floating Action Button (Registrar) -->
+        <button onclick="switchTab('log')" id="navBtnLog" class="group relative -top-3.5 flex flex-col items-center cursor-pointer">
+          <div class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-black shadow-lg shadow-white/20 transition-transform group-hover:scale-105 active:scale-95">
+            <span class="material-symbols-outlined text-2xl font-bold">add</span>
+          </div>
+          <span class="mt-0.5 text-[9px] font-semibold text-zinc-400">Registrar</span>
+        </button>
+
+        <!-- Tab 4: Strategy (Compass) -->
+        <button onclick="switchTab('strategy')" id="navBtnStrategy" class="flex flex-col items-center justify-center space-y-0.5 px-3 py-1 transition-colors text-zinc-500 hover:text-zinc-300 cursor-pointer">
+          <span class="material-symbols-outlined text-xl">explore</span>
+          <span class="text-[9px] font-medium tracking-tight">Strategy</span>
+        </button>
+
+        <!-- Tab 5: Social (Users) -->
+        <button onclick="switchTab('social')" id="navBtnSocial" class="flex flex-col items-center justify-center space-y-0.5 px-3 py-1 transition-colors text-zinc-500 hover:text-zinc-300 cursor-pointer">
+          <span class="material-symbols-outlined text-xl">group</span>
+          <span class="text-[9px] font-medium tracking-tight">Social</span>
+        </button>
+
+      </div>
+
+      <!-- iOS Home Indicator Bar -->
+      <div class="w-full flex justify-center pb-1">
+        <div class="w-32 h-1 bg-zinc-700/80 rounded-full"></div>
+      </div>
+    </nav>
+
+    <!-- ========================================== -->
+    <!-- INTERACTIVE MODALS (FULL SCREEN / PUSH)    -->
+    <!-- ========================================== -->
+
+    <!-- MODAL 1: ADD FOOD ITEM TO LOG -->
+    <div id="modalAddFoodItem" class="fixed inset-0 z-50 bg-black text-white hidden flex-col modal-push-enter">
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between p-4 border-b border-kalon-border bg-kalon-card">
+        <button onclick="closeModal('modalAddFoodItem')" class="flex items-center gap-1 text-xs text-zinc-400 hover:text-white cursor-pointer">
+          <span class="material-symbols-outlined text-lg">arrow_back</span>
+          <span>Volver</span>
+        </button>
+        <span id="modalAddFoodTitle" class="text-xs font-bold text-white uppercase font-mono">Registrar Alimento</span>
+        <div class="w-8"></div>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-4 space-y-4 overflow-y-auto flex-1 no-scrollbar">
+        <div class="space-y-1">
+          <label class="text-[11px] font-semibold text-zinc-400">Seleccionar Alimento</label>
+          <select id="modalFoodSelect" onchange="updateFoodPortionCalc()" class="w-full bg-kalon-hover border border-kalon-border rounded-xl p-3 text-xs text-white">
+            <option value="pechuga">Pechuga de Pollo (165 kcal / 31g P por 100g)</option>
+            <option value="huevos">Huevos Enteros (155 kcal / 13g P por 100g)</option>
+            <option value="arroz">Arroz Blanco Cocido (130 kcal / 28g C por 100g)</option>
+            <option value="avena">Avena Instantánea (370 kcal / 13g P / 60g C por 100g)</option>
+            <option value="bife">Bife de Lomo Magro (140 kcal / 26g P por 100g)</option>
+            <option value="palta">Palta / Aguacate (160 kcal / 15g G por 100g)</option>
+            <option value="whey">Proteína Whey Isolate (380 kcal / 85g P por 100g)</option>
+          </select>
+        </div>
+
+        <div class="space-y-1">
+          <div class="flex justify-between text-xs">
+            <label class="text-[11px] font-semibold text-zinc-400">Cantidad (gramos)</label>
+            <span id="modalGramsDisplay" class="font-mono font-bold text-white">150 g</span>
+          </div>
+          <input type="range" id="modalGramsRange" min="10" max="500" step="5" value="150" oninput="updateFoodPortionCalc()" class="w-full accent-white" />
+        </div>
+
+        <!-- Calculated Macro Breakdown Card -->
+        <div class="p-4 rounded-2xl bg-kalon-card border border-kalon-border space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs text-zinc-400 font-mono">Energía Total</span>
+            <span id="modalCalcKcal" class="text-xl font-black text-white font-mono">248 kcal</span>
+          </div>
+          <div class="grid grid-cols-3 gap-2 text-center text-xs pt-1">
+            <div class="p-2 rounded-xl bg-kalon-hover">
+              <span class="text-macro-protein font-bold block">Proteína</span>
+              <span id="modalCalcP" class="font-mono font-bold text-white">46.5g</span>
+            </div>
+            <div class="p-2 rounded-xl bg-kalon-hover">
+              <span class="text-macro-carbs font-bold block">Carbos</span>
+              <span id="modalCalcC" class="font-mono font-bold text-white">0.0g</span>
+            </div>
+            <div class="p-2 rounded-xl bg-kalon-hover">
+              <span class="text-macro-fat font-bold block">Grasas</span>
+              <span id="modalCalcF" class="font-mono font-bold text-white">5.4g</span>
+            </div>
+          </div>
+        </div>
+
+        <button onclick="confirmAddFood()" class="w-full py-3.5 rounded-xl bg-white text-black font-extrabold text-xs hover:bg-zinc-200 transition-all shadow-md cursor-pointer flex items-center justify-center gap-1.5">
+          <span class="material-symbols-outlined text-sm font-bold">check</span>
+          <span>Registrar en Diario</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- MODAL 2: DIET SOLVER (RESOLVER PLATO CON IA) -->
+    <div id="modalDietSolver" class="fixed inset-0 z-50 bg-black text-white hidden flex-col modal-push-enter">
+      <div class="flex items-center justify-between p-4 border-b border-kalon-border bg-kalon-card">
+        <button onclick="closeModal('modalDietSolver')" class="flex items-center gap-1 text-xs text-zinc-400 hover:text-white cursor-pointer">
+          <span class="material-symbols-outlined text-lg">arrow_back</span>
+          <span>Volver</span>
+        </button>
+        <span class="text-xs font-bold text-white uppercase font-mono flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm text-blue-400">auto_fix_high</span>
+          <span>Diet Solver Kalon</span>
+        </span>
+        <div class="w-8"></div>
+      </div>
+
+      <div class="p-4 space-y-4 overflow-y-auto flex-1 no-scrollbar">
+        <div class="p-3.5 rounded-2xl bg-gradient-to-r from-blue-950/40 to-indigo-950/40 border border-blue-900/50 space-y-1">
+          <span class="text-xs font-bold text-white flex items-center gap-1.5">
+            <span>Optimización Matemática de Macros</span>
+          </span>
+          <p class="text-[11px] text-zinc-400 leading-relaxed">
+            Kalon analiza tus macros restantes del día y ajusta de forma exacta las porciones de los alimentos que elijas para clavar tu objetivo al gramo.
+          </p>
+        </div>
+
+        <!-- Remaining to Hit Target -->
+        <div class="p-3.5 rounded-2xl bg-kalon-card border border-kalon-border space-y-2">
+          <span class="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block">Macros Restantes de Hoy</span>
+          <div class="flex justify-between items-center text-xs font-mono">
+            <span class="text-zinc-300">Calorías: <strong class="text-macro-calories font-bold">400 kcal</strong></span>
+            <span class="text-zinc-300">P: <strong class="text-macro-protein font-bold">15g</strong></span>
+            <span class="text-zinc-300">C: <strong class="text-macro-carbs font-bold">35g</strong></span>
+            <span class="text-zinc-300">G: <strong class="text-macro-fat font-bold">12g</strong></span>
+          </div>
+        </div>
+
+        <!-- Solver Candidate Choices -->
+        <div class="space-y-2">
+          <span class="text-xs font-bold text-white">Alimentos para Resolver la Cena:</span>
+          
+          <div class="p-3 rounded-xl bg-kalon-hover border border-kalon-border flex items-center justify-between text-xs">
+            <div>
+              <span class="font-bold text-white block">Pechuga de Pollo</span>
+              <span class="text-[10px] text-zinc-400">Fuente pura de proteína</span>
+            </div>
+            <span class="font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded">65g sugeridos</span>
+          </div>
+
+          <div class="p-3 rounded-xl bg-kalon-hover border border-kalon-border flex items-center justify-between text-xs">
+            <div>
+              <span class="font-bold text-white block">Batata Asada al Horno</span>
+              <span class="text-[10px] text-zinc-400">Carbohidratos complejos</span>
+            </div>
+            <span class="font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded">140g sugeridos</span>
+          </div>
+
+          <div class="p-3 rounded-xl bg-kalon-hover border border-kalon-border flex items-center justify-between text-xs">
+            <div>
+              <span class="font-bold text-white block">Aceite de Oliva Extra</span>
+              <span class="text-[10px] text-zinc-400">Grasas saludables</span>
+            </div>
+            <span class="font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded">10g sugeridos</span>
+          </div>
+        </div>
+
+        <button onclick="applyDietSolver()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-extrabold text-xs hover:brightness-110 transition-all shadow-lg shadow-blue-900/30 cursor-pointer flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-sm">bolt</span>
+          <span>Aplicar Plato Óptimo a la Cena</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- MODAL 3: EXERCISE DETAIL & 1RM PROGRESSION -->
+    <div id="modalExerciseDetail" class="fixed inset-0 z-50 bg-black text-white hidden flex-col modal-push-enter">
+      <div class="flex items-center justify-between p-4 border-b border-kalon-border bg-kalon-card">
+        <button onclick="closeModal('modalExerciseDetail')" class="flex items-center gap-1 text-xs text-zinc-400 hover:text-white cursor-pointer">
+          <span class="material-symbols-outlined text-lg">arrow_back</span>
+          <span>Volver</span>
+        </button>
+        <span class="text-xs font-bold text-white uppercase font-mono">Detalle del Ejercicio</span>
+        <div class="w-8"></div>
+      </div>
+
+      <div class="p-4 space-y-4 overflow-y-auto flex-1 no-scrollbar">
+        <div>
+          <span id="detailMuscleGroup" class="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block">Pectoral Mayor</span>
+          <h3 id="detailExerciseName" class="text-xl font-black text-white">Press de Banca Plano</h3>
+        </div>
+
+        <!-- 1RM Record Box -->
+        <div class="p-4 rounded-2xl bg-kalon-card border border-kalon-border flex items-center justify-between">
+          <div>
+            <span class="text-zinc-500 text-[10px] font-mono block">Récord 1RM Calculado</span>
+            <span id="detail1RMValue" class="text-2xl font-black text-white font-mono">110 kg</span>
+          </div>
+          <span id="detailMonthlyGain" class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold text-macro-fat bg-macro-fat/15 border border-macro-fat/25">
+            +2.5 kg este mes
+          </span>
+        </div>
+
+        <!-- Notes & Biomechanical Cues -->
+        <div class="p-3.5 rounded-2xl bg-kalon-card border border-kalon-border space-y-2">
+          <span class="text-xs font-bold text-white flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-sm text-yellow-400">tips_and_updates</span>
+            <span>Consejo Técnico del Coach</span>
+          </span>
+          <p id="detailNotes" class="text-xs text-zinc-400 leading-relaxed">
+            Sentí buen control escapular con RPE 8.5. Retracción y depresión mantenidas en todo el recorrido.
+          </p>
+        </div>
+
+        <!-- Alternative Machine / Exercise Substitution -->
+        <div class="p-3.5 rounded-2xl bg-zinc-950 border border-zinc-800 space-y-2">
+          <span class="text-xs font-bold text-zinc-300">Sustitutos Biomecánicos Recomendados</span>
+          <div class="space-y-1.5 text-xs">
+            <div class="p-2 rounded-xl bg-zinc-900 flex justify-between items-center text-zinc-300">
+              <span>Press con Mancuernas en Banco Plano</span>
+              <span class="text-[10px] text-zinc-500 font-mono">98% sim.</span>
+            </div>
+            <div class="p-2 rounded-xl bg-zinc-900 flex justify-between items-center text-zinc-300">
+              <span>Press en Máquina Convergente Chest</span>
+              <span class="text-[10px] text-zinc-500 font-mono">95% sim.</span>
+            </div>
+          </div>
+        </div>
+
+        <button onclick="closeModal('modalExerciseDetail')" class="w-full py-3.5 rounded-xl bg-white text-black font-extrabold text-xs hover:bg-zinc-200 transition-all cursor-pointer">
+          Cerrar Detalle
+        </button>
+      </div>
+    </div>
+
+    <!-- MODAL 4: QUICK WEIGHT LOG -->
+    <div id="modalWeightLog" class="fixed inset-0 z-50 bg-black text-white hidden flex-col modal-push-enter">
+      <div class="flex items-center justify-between p-4 border-b border-kalon-border bg-kalon-card">
+        <button onclick="closeModal('modalWeightLog')" class="flex items-center gap-1 text-xs text-zinc-400 hover:text-white cursor-pointer">
+          <span class="material-symbols-outlined text-lg">arrow_back</span>
+          <span>Volver</span>
+        </button>
+        <span class="text-xs font-bold text-white uppercase font-mono">Registrar Pesaje</span>
+        <div class="w-8"></div>
+      </div>
+
+      <div class="p-4 space-y-4 overflow-y-auto flex-1 no-scrollbar">
+        <div class="text-center py-6 space-y-2">
+          <span class="text-[10px] font-mono uppercase text-zinc-500 tracking-wider">Peso en Balanza (Ayunas)</span>
+          <div class="flex items-center justify-center gap-2">
+            <button onclick="adjustWeightInput(-0.1)" class="w-10 h-10 rounded-full bg-kalon-hover border border-kalon-border flex items-center justify-center text-xl font-bold cursor-pointer hover:bg-zinc-800">-</button>
+            <input type="number" id="weightInputVal" step="0.1" value="76.1" class="text-4xl font-black text-center w-36 bg-transparent text-white font-mono focus:outline-none" />
+            <button onclick="adjustWeightInput(0.1)" class="w-10 h-10 rounded-full bg-kalon-hover border border-kalon-border flex items-center justify-center text-xl font-bold cursor-pointer hover:bg-zinc-800">+</button>
+          </div>
+          <span class="text-xs text-zinc-500 font-mono">Kilogramos (kg)</span>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-kalon-card border border-kalon-border text-xs text-zinc-400 space-y-1">
+          <span class="font-bold text-white block">Filtro de Ruido Kalon (Medias Ponderadas)</span>
+          <p class="text-[11px] leading-relaxed">
+            Las fluctuaciones de agua o sodio no afectarán tu TDEE. El algoritmo de MacroFactor integrado suaviza la curva automáticamente.
+          </p>
+        </div>
+
+        <button onclick="confirmWeightLog()" class="w-full py-3.5 rounded-xl bg-white text-black font-extrabold text-xs hover:bg-zinc-200 transition-all shadow-md cursor-pointer flex items-center justify-center gap-1.5">
+          <span class="material-symbols-outlined text-sm font-bold">check</span>
+          <span>Guardar Pesaje de Hoy</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- MODAL 5: ADD CUSTOM FOOD -->
+    <div id="modalAddCustomFood" class="fixed inset-0 z-50 bg-black text-white hidden flex-col modal-push-enter">
+      <div class="flex items-center justify-between p-4 border-b border-kalon-border bg-kalon-card">
+        <button onclick="closeModal('modalAddCustomFood')" class="flex items-center gap-1 text-xs text-zinc-400 hover:text-white cursor-pointer">
+          <span class="material-symbols-outlined text-lg">arrow_back</span>
+          <span>Volver</span>
+        </button>
+        <span class="text-xs font-bold text-white uppercase font-mono">Crear Alimento Personalizado</span>
+        <div class="w-8"></div>
+      </div>
+
+      <div class="p-4 space-y-3.5 overflow-y-auto flex-1 no-scrollbar">
+        <div class="space-y-1">
+          <label class="text-[11px] font-semibold text-zinc-400">Nombre del Alimento o Plato</label>
+          <input type="text" id="newFoodName" placeholder="Ej. Tarta de Atún y Huevo" class="w-full bg-kalon-hover border border-kalon-border rounded-xl p-3 text-xs text-white" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div class="space-y-1">
+            <label class="text-[10px] text-zinc-400">Calorías (por 100g)</label>
+            <input type="number" id="newFoodKcal" placeholder="210" class="w-full bg-kalon-hover border border-kalon-border rounded-xl p-2.5 text-xs text-white font-mono" />
+          </div>
+          <div class="space-y-1">
+            <label class="text-[10px] text-macro-protein font-semibold">Proteína (g)</label>
+            <input type="number" id="newFoodP" placeholder="18" class="w-full bg-kalon-hover border border-kalon-border rounded-xl p-2.5 text-xs text-white font-mono" />
+          </div>
+          <div class="space-y-1">
+            <label class="text-[10px] text-macro-carbs font-semibold">Carbohidratos (g)</label>
+            <input type="number" id="newFoodC" placeholder="14" class="w-full bg-kalon-hover border border-kalon-border rounded-xl p-2.5 text-xs text-white font-mono" />
+          </div>
+          <div class="space-y-1">
+            <label class="text-[10px] text-macro-fat font-semibold">Grasas (g)</label>
+            <input type="number" id="newFoodF" placeholder="6" class="w-full bg-kalon-hover border border-kalon-border rounded-xl p-2.5 text-xs text-white font-mono" />
+          </div>
+        </div>
+
+        <button onclick="saveCustomFoodItem()" class="w-full py-3.5 rounded-xl bg-white text-black font-extrabold text-xs hover:bg-zinc-200 transition-all shadow-md cursor-pointer">
+          Guardar en Biblioteca
+        </button>
+      </div>
+    </div>
+
+    <!-- MODAL 6: EXERCISE PICKER -->
+    <div id="modalExercisePicker" class="fixed inset-0 z-50 bg-black text-white hidden flex-col modal-push-enter">
+      <div class="flex items-center justify-between p-4 border-b border-kalon-border bg-kalon-card">
+        <button onclick="closeModal('modalExercisePicker')" class="flex items-center gap-1 text-xs text-zinc-400 hover:text-white cursor-pointer">
+          <span class="material-symbols-outlined text-lg">arrow_back</span>
+          <span>Volver</span>
+        </button>
+        <span class="text-xs font-bold text-white uppercase font-mono">Seleccionar Ejercicio</span>
+        <div class="w-8"></div>
+      </div>
+
+      <div class="p-4 space-y-3 overflow-y-auto flex-1 no-scrollbar">
+        <div class="p-3 rounded-xl bg-kalon-hover border border-kalon-border flex justify-between items-center cursor-pointer hover:bg-zinc-800" onclick="addExerciseToTracker('Press Militar con Barra')">
+          <div>
+            <span class="text-xs font-bold text-white block">Press Militar con Barra</span>
+            <span class="text-[10px] text-zinc-500">Deltoides & Tríceps</span>
+          </div>
+          <span class="material-symbols-outlined text-zinc-500 text-sm">add_circle</span>
+        </div>
+        <div class="p-3 rounded-xl bg-kalon-hover border border-kalon-border flex justify-between items-center cursor-pointer hover:bg-zinc-800" onclick="addExerciseToTracker('Elevaciones Laterales con Mancuerna')">
+          <div>
+            <span class="text-xs font-bold text-white block">Elevaciones Laterales</span>
+            <span class="text-[10px] text-zinc-500">Deltoides Lateral</span>
+          </div>
+          <span class="material-symbols-outlined text-zinc-500 text-sm">add_circle</span>
+        </div>
+        <div class="p-3 rounded-xl bg-kalon-hover border border-kalon-border flex justify-between items-center cursor-pointer hover:bg-zinc-800" onclick="addExerciseToTracker('Curl de Bíceps en Banco Inclinado')">
+          <div>
+            <span class="text-xs font-bold text-white block">Curl de Bíceps Inclinado</span>
+            <span class="text-[10px] text-zinc-500">Bíceps Braquial</span>
+          </div>
+          <span class="material-symbols-outlined text-zinc-500 text-sm">add_circle</span>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- JAVASCRIPT STATE ENGINE & CONTROLLER       -->
+  <!-- ========================================== -->
+  <script>
+    // --------------------------------------------
+    // 1. STATE STORE (MOCK DATA VERIFIED KALON)
+    // --------------------------------------------
+    const state = {
+      activeTab: 'dashboard',
+      dashboardMode: 'nutrition', // 'nutrition' | 'workout'
+      macroFrameMode: 'consumed',  // 'consumed' | 'remaining'
+      targets: {
+        kcal: 2240,
+        protein: 180,
+        carbs: 220,
+        fat: 60,
+        steps: 10000
+      },
+      consumed: {
+        kcal: 1840,
+        protein: 165,
+        carbs: 185,
+        fat: 48,
+        steps: 8450
+      },
+      currentWeight: 76.1,
+      selectedDayAdherence: 'Hoy',
+      foods: [
+        { id: 1, name: 'Pechuga de Pollo', desc: 'Grillada sin piel', kcal: 165, p: 31, c: 0, f: 3.6, fav: true, regional: false },
+        { id: 2, name: 'Huevos Enteros', desc: 'Frescos de granja', kcal: 155, p: 13, c: 1.1, f: 11, fav: true, regional: false },
+        { id: 3, name: 'Arroz Blanco', desc: 'Cocido al vapor', kcal: 130, p: 2.7, c: 28, f: 0.3, fav: false, regional: false },
+        { id: 4, name: 'Avena Instantánea', desc: 'Copos tradicionales', kcal: 370, p: 13.5, c: 60, f: 7, fav: true, regional: false },
+        { id: 5, name: 'Palta / Aguacate Hass', desc: 'Grasas monoinsaturadas', kcal: 160, p: 2, c: 9, f: 15, fav: true, regional: true },
+        { id: 6, name: 'Bife de Lomo Vacuno', desc: 'Corte magro argentino', kcal: 140, p: 26, c: 0, f: 4, fav: true, regional: true },
+        { id: 7, name: 'Empanada de Carne Magra', desc: 'Al horno tradicional', kcal: 240, p: 14, c: 24, f: 9, fav: false, regional: true },
+        { id: 8, name: 'Proteína Whey Isolate', desc: 'Suplemento en polvo', kcal: 380, p: 85, c: 3, f: 2, fav: true, regional: false },
+        { id: 9, name: 'Dulce de Leche Light', desc: 'Tradicional argentino 0% azúcar añadida', kcal: 190, p: 6, c: 42, f: 1.5, fav: false, regional: true },
+        { id: 10, name: 'Yogur Griego Natural', desc: 'Alto en caseína y proteína', kcal: 95, p: 10, c: 4, f: 4, fav: true, regional: false }
+      ],
+      currentFoodTab: 'all'
+    };
+
+    // --------------------------------------------
+    // 2. LIVE CLOCK (iOS STATUS BAR)
+    // --------------------------------------------
+    function updateLiveClock() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const el = document.getElementById('liveClock');
+      if (el) el.innerText = `${hours}:${minutes}`;
+    }
+    updateLiveClock();
+    setInterval(updateLiveClock, 10000);
+
+    // --------------------------------------------
+    // 3. TOAST NOTIFICATION UTILITY
+    // --------------------------------------------
+    function showToast(message) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast-anim px-4 py-2 rounded-2xl bg-zinc-900/95 border border-zinc-700/80 text-white text-xs font-semibold shadow-2xl backdrop-blur-xl flex items-center gap-2';
+      toast.innerHTML = `<span class="text-emerald-400">✓</span> <span>${message}</span>`;
+      container.innerHTML = '';
+      container.appendChild(toast);
+      setTimeout(() => {
+        if (toast.parentNode) toast.parentNode.removeChild(toast);
+      }, 2700);
+    }
+
+    // --------------------------------------------
+    // 4. MAIN TAB SWITCHER
+    // --------------------------------------------
+    const tabs = ['dashboard', 'foods', 'log', 'strategy', 'social'];
+    
+    function switchTab(tabName) {
+      if (!tabs.includes(tabName)) return;
+      state.activeTab = tabName;
+
+      // Update screen visibility
+      tabs.forEach(t => {
+        const screenId = `screen${t.charAt(0).toUpperCase() + t.slice(1)}`;
+        const navBtnId = `navBtn${t.charAt(0).toUpperCase() + t.slice(1)}`;
+        const screenEl = document.getElementById(screenId);
+        const navBtnEl = document.getElementById(navBtnId);
+
+        if (t === tabName) {
+          screenEl.classList.remove('hidden');
+          screenEl.classList.add('screen-enter');
+          if (t !== 'log') {
+            navBtnEl.className = 'flex flex-col items-center justify-center space-y-0.5 px-3 py-1 transition-colors text-white cursor-pointer';
+          }
+        } else {
+          screenEl.classList.add('hidden');
+          screenEl.classList.remove('screen-enter');
+          if (t !== 'log') {
+            navBtnEl.className = 'flex flex-col items-center justify-center space-y-0.5 px-3 py-1 transition-colors text-zinc-500 hover:text-zinc-300 cursor-pointer';
+          }
+        }
+      });
+
+      if (tabName === 'foods') renderFoodsList();
+    }
+
+    // --------------------------------------------
+    // 5. DASHBOARD MODE SWITCHER (NUTRITION / WORKOUT)
+    // --------------------------------------------
+    function switchDashboardMode(mode) {
+      state.dashboardMode = mode;
+      const pill = document.getElementById('modeSliderPill');
+      const btnNutrition = document.getElementById('btnModeNutrition');
+      const btnWorkout = document.getElementById('btnModeWorkout');
+      const nutritionContent = document.getElementById('nutritionModeContent');
+      const workoutContent = document.getElementById('workoutModeContent');
+
+      if (mode === 'nutrition') {
+        pill.style.transform = 'translateX(0px)';
+        btnNutrition.className = 'relative z-10 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full text-black font-bold transition-colors';
+        btnWorkout.className = 'relative z-10 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full text-zinc-500 hover:text-zinc-300 transition-colors';
+        nutritionContent.classList.remove('hidden');
+        workoutContent.classList.add('hidden');
+      } else {
+        pill.style.transform = 'translateX(28px)';
+        btnNutrition.className = 'relative z-10 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full text-zinc-500 hover:text-zinc-300 transition-colors';
+        btnWorkout.className = 'relative z-10 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full text-black font-bold transition-colors';
+        nutritionContent.classList.add('hidden');
+        workoutContent.classList.remove('hidden');
+      }
+    }
+
+    // --------------------------------------------
+    // 6. MACRO FRAME MODE (CONSUMED VS REMAINING)
+    // --------------------------------------------
+    function setMacroFrameMode(mode) {
+      state.macroFrameMode = mode;
+      const btnConsumed = document.getElementById('btnModeConsumed');
+      const btnRemaining = document.getElementById('btnModeRemaining');
+      const calorieLabel = document.getElementById('calorieFrameLabel');
+      const calorieDisplay = document.getElementById('calorieDisplayValue');
+      const pVal = document.getElementById('proteinVal');
+      const cVal = document.getElementById('carbsVal');
+      const fVal = document.getElementById('fatVal');
+
+      if (mode === 'consumed') {
+        btnConsumed.className = 'rounded-md px-2.5 py-1 text-[11px] font-bold bg-white text-black transition-all';
+        btnRemaining.className = 'rounded-md px-2.5 py-1 text-[11px] font-medium text-zinc-400 hover:text-white transition-all';
+        calorieLabel.innerText = 'Calorías Consumidas';
+        calorieDisplay.innerText = state.consumed.kcal.toLocaleString();
+        pVal.innerText = `${state.consumed.protein}g`;
+        cVal.innerText = `${state.consumed.carbs}g`;
+        fVal.innerText = `${state.consumed.fat}g`;
+      } else {
+        btnConsumed.className = 'rounded-md px-2.5 py-1 text-[11px] font-medium text-zinc-400 hover:text-white transition-all';
+        btnRemaining.className = 'rounded-md px-2.5 py-1 text-[11px] font-bold bg-white text-black transition-all';
+        calorieLabel.innerText = 'Calorías Restantes';
+        const remKcal = Math.max(0, state.targets.kcal - state.consumed.kcal);
+        const remP = Math.max(0, state.targets.protein - state.consumed.protein);
+        const remC = Math.max(0, state.targets.carbs - state.consumed.carbs);
+        const remF = Math.max(0, state.targets.fat - state.consumed.fat);
+        calorieDisplay.innerText = remKcal.toLocaleString();
+        pVal.innerText = `${remP}g`;
+        cVal.innerText = `${remC}g`;
+        fVal.innerText = `${remF}g`;
+      }
+    }
+
+    // --------------------------------------------
+    // 7. WEEKLY ADHERENCE DAY SELECTION
+    // --------------------------------------------
+    function selectDayAdherence(dayName, kcal, pct) {
+      state.selectedDayAdherence = dayName;
+      showToast(`Día ${dayName}: ${kcal} kcal (${pct}% meta)`);
+    }
+
+    // --------------------------------------------
+    // 8. FOODS LIBRARY RENDERING & FILTERING
+    // --------------------------------------------
+    function renderFoodsList() {
+      const container = document.getElementById('foodsListContainer');
+      const query = (document.getElementById('foodSearchInput')?.value || '').toLowerCase().trim();
+      
+      let list = state.foods;
+      if (state.currentFoodTab === 'favorites') {
+        list = list.filter(f => f.fav);
+      } else if (state.currentFoodTab === 'regional') {
+        list = list.filter(f => f.regional);
+      }
+
+      if (query) {
+        list = list.filter(f => f.name.toLowerCase().includes(query) || f.desc.toLowerCase().includes(query));
+      }
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-8 text-zinc-500 text-xs">
+            No se encontraron alimentos para "${query}".
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = list.map(item => `
+        <div class="p-3.5 rounded-2xl border border-kalon-border bg-kalon-card hover:bg-kalon-hover/60 transition-all flex items-center justify-between">
+          <div class="space-y-0.5">
+            <div class="flex items-center gap-1.5">
+              <span class="text-xs font-bold text-white">${item.name}</span>
+              ${item.regional ? '<span class="text-[9px] px-1.5 py-0.2 rounded bg-blue-500/15 text-blue-300 font-mono">LATAM</span>' : ''}
+            </div>
+            <span class="text-[10px] text-zinc-400 block">${item.desc}</span>
+            <div class="flex items-center gap-2 pt-1 font-mono text-[10px]">
+              <span class="text-zinc-200 font-bold">${item.kcal} kcal</span>
+              <span class="text-zinc-500">•</span>
+              <span class="text-macro-protein font-semibold">P ${item.p}g</span>
+              <span class="text-macro-carbs font-semibold">C ${item.c}g</span>
+              <span class="text-macro-fat font-semibold">G ${item.f}g</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button onclick="toggleFoodFavorite(${item.id})" class="p-2 text-zinc-500 hover:text-yellow-400 transition-colors cursor-pointer" title="Favorito">
+              <span class="material-symbols-outlined text-lg ${item.fav ? 'fill text-yellow-400' : ''}">star</span>
+            </button>
+            <button onclick="quickAddFoodFromCatalog('${item.name}', ${item.kcal}, ${item.p}, ${item.c}, ${item.f})" class="w-8 h-8 rounded-xl bg-white text-black flex items-center justify-center hover:bg-zinc-200 transition-all cursor-pointer shadow-sm" title="Añadir a registro">
+              <span class="material-symbols-outlined text-base font-bold">add</span>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterFoodsList() {
+      renderFoodsList();
+    }
+
+    function switchFoodTab(tab) {
+      state.currentFoodTab = tab;
+      const tabAll = document.getElementById('tabFoodAll');
+      const tabFav = document.getElementById('tabFoodFav');
+      const tabReg = document.getElementById('tabFoodRegional');
+
+      [tabAll, tabFav, tabReg].forEach(b => {
+        b.className = 'flex-1 py-1.5 rounded-lg font-medium text-zinc-400 hover:text-white transition-all';
+      });
+
+      if (tab === 'all') tabAll.className = 'flex-1 py-1.5 rounded-lg font-bold bg-white text-black transition-all';
+      if (tab === 'favorites') tabFav.className = 'flex-1 py-1.5 rounded-lg font-bold bg-white text-black transition-all';
+      if (tab === 'regional') tabReg.className = 'flex-1 py-1.5 rounded-lg font-bold bg-white text-black transition-all';
+
+      renderFoodsList();
+    }
+
+    function toggleFoodFavorite(id) {
+      const food = state.foods.find(f => f.id === id);
+      if (food) {
+        food.fav = !food.fav;
+        renderFoodsList();
+        showToast(food.fav ? 'Añadido a favoritos ⭐' : 'Removido de favoritos');
+      }
+    }
+
+    function quickAddFoodFromCatalog(name, kcal, p, c, f) {
+      state.consumed.kcal += Math.round(kcal);
+      state.consumed.protein += Math.round(p);
+      state.consumed.carbs += Math.round(c);
+      state.consumed.fat += Math.round(f);
+      updateDashboardDisplays();
+      showToast(`${name} registrado (+${kcal} kcal)`);
+    }
+
+    // --------------------------------------------
+    // 9. STRATEGY MATHEMATICAL RECALCULATOR
+    // --------------------------------------------
+    function updateMacroMath() {
+      const kcal = Number(document.getElementById('strategyKcalRange').value);
+      const p = Number(document.getElementById('strategyProteinRange').value);
+      const f = Number(document.getElementById('strategyFatRange').value);
+
+      document.getElementById('sliderKcalVal').innerText = `${kcal.toLocaleString()} kcal`;
+      document.getElementById('sliderProteinVal').innerHTML = `${p}g <span class="text-zinc-500 font-normal">(${p * 4} kcal)</span>`;
+      document.getElementById('sliderFatVal').innerHTML = `${f}g <span class="text-zinc-500 font-normal">(${f * 9} kcal)</span>`;
+
+      // Mathematical balance formula: Carbs = (Kcal - P*4 - F*9) / 4
+      const remainingKcal = kcal - (p * 4) - (f * 9);
+      const c = Math.max(0, Math.round(remainingKcal / 4));
+      document.getElementById('calculatedCarbsVal').innerText = `${c}g (${c * 4} kcal)`;
+
+      state.targets.kcal = kcal;
+      state.targets.protein = p;
+      state.targets.fat = f;
+      state.targets.carbs = c;
+    }
+
+    function setStrategyGoal(goal) {
+      const cutBtn = document.getElementById('goalCutBtn');
+      const maintainBtn = document.getElementById('goalMaintainBtn');
+      const bulkBtn = document.getElementById('goalBulkBtn');
+
+      [cutBtn, maintainBtn, bulkBtn].forEach(b => {
+        b.className = 'p-2.5 rounded-xl border border-kalon-border bg-kalon-hover text-zinc-400 font-semibold text-center transition-all cursor-pointer';
+      });
+
+      if (goal === 'CUT') {
+        cutBtn.className = 'p-2.5 rounded-xl border border-white bg-white text-black font-bold text-center transition-all cursor-pointer';
+        document.getElementById('strategyKcalRange').value = 2240;
+      } else if (goal === 'MAINTAIN') {
+        maintainBtn.className = 'p-2.5 rounded-xl border border-white bg-white text-black font-bold text-center transition-all cursor-pointer';
+        document.getElementById('strategyKcalRange').value = 2640;
+      } else {
+        bulkBtn.className = 'p-2.5 rounded-xl border border-white bg-white text-black font-bold text-center transition-all cursor-pointer';
+        document.getElementById('strategyKcalRange').value = 2890;
+      }
+      updateMacroMath();
+      showToast(`Objetivo cambiado a: ${goal}`);
+    }
+
+    function saveStrategy() {
+      updateDashboardDisplays();
+      showToast('Estrategia guardada y sincronizada');
+    }
+
+    function updateDashboardDisplays() {
+      const pct = Math.min(100, Math.round((state.consumed.kcal / state.targets.kcal) * 100));
+      const pPct = Math.min(100, Math.round((state.consumed.protein / state.targets.protein) * 100));
+      const cPct = Math.min(100, Math.round((state.consumed.carbs / state.targets.carbs) * 100));
+      const fPct = Math.min(100, Math.round((state.consumed.fat / state.targets.fat) * 100));
+
+      document.getElementById('caloriePercentBadge').innerText = `${pct}%`;
+      document.getElementById('calorieProgressBar').style.width = `${pct}%`;
+
+      document.getElementById('proteinBar').style.width = `${pPct}%`;
+      document.getElementById('proteinPct').innerText = `${pPct}%`;
+
+      document.getElementById('carbsBar').style.width = `${cPct}%`;
+      document.getElementById('carbsPct').innerText = `${cPct}%`;
+
+      document.getElementById('fatBar').style.width = `${fPct}%`;
+      document.getElementById('fatPct').innerText = `${fPct}%`;
+
+      setMacroFrameMode(state.macroFrameMode);
+    }
+
+    // --------------------------------------------
+    // 10. MODALS MANAGEMENT
+    // --------------------------------------------
+    function openModal(modalId, contextTitle) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        if (contextTitle && modalId === 'modalAddFoodItem') {
+          document.getElementById('modalAddFoodTitle').innerText = `Registrar en ${contextTitle}`;
+        }
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+    }
+
+    function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    }
+
+    // Food portion calculator in Modal
+    const foodDatabase = {
+      pechuga: { kcal: 165, p: 31, c: 0, f: 3.6 },
+      huevos: { kcal: 155, p: 13, c: 1.1, f: 11 },
+      arroz: { kcal: 130, p: 2.7, c: 28, f: 0.3 },
+      avena: { kcal: 370, p: 13.5, c: 60, f: 7 },
+      bife: { kcal: 140, p: 26, c: 0, f: 4 },
+      palta: { kcal: 160, p: 2, c: 9, f: 15 },
+      whey: { kcal: 380, p: 85, c: 3, f: 2 }
+    };
+
+    function updateFoodPortionCalc() {
+      const select = document.getElementById('modalFoodSelect').value;
+      const grams = Number(document.getElementById('modalGramsRange').value);
+      document.getElementById('modalGramsDisplay').innerText = `${grams} g`;
+
+      const base = foodDatabase[select] || { kcal: 100, p: 10, c: 10, f: 5 };
+      const factor = grams / 100;
+
+      document.getElementById('modalCalcKcal').innerText = `${Math.round(base.kcal * factor)} kcal`;
+      document.getElementById('modalCalcP').innerText = `${(base.p * factor).toFixed(1)}g`;
+      document.getElementById('modalCalcC').innerText = `${(base.c * factor).toFixed(1)}g`;
+      document.getElementById('modalCalcF').innerText = `${(base.f * factor).toFixed(1)}g`;
+    }
+
+    function confirmAddFood() {
+      const select = document.getElementById('modalFoodSelect').value;
+      const grams = Number(document.getElementById('modalGramsRange').value);
+      const base = foodDatabase[select];
+      const factor = grams / 100;
+
+      state.consumed.kcal += Math.round(base.kcal * factor);
+      state.consumed.protein += Math.round(base.p * factor);
+      state.consumed.carbs += Math.round(base.c * factor);
+      state.consumed.fat += Math.round(base.f * factor);
+
+      updateDashboardDisplays();
+      closeModal('modalAddFoodItem');
+      showToast(`Alimento registrado: +${Math.round(base.kcal * factor)} kcal`);
+    }
+
+    function applyDietSolver() {
+      state.consumed.kcal = state.targets.kcal;
+      state.consumed.protein = state.targets.protein;
+      state.consumed.carbs = state.targets.carbs;
+      state.consumed.fat = state.targets.fat;
+      updateDashboardDisplays();
+      closeModal('modalDietSolver');
+      showToast('¡Plato de cena optimizado! Macros clavados al 100%');
+    }
+
+    function showExerciseDetail(name, muscle, oneRm, gain, notes) {
+      document.getElementById('detailExerciseName').innerText = name;
+      document.getElementById('detailMuscleGroup').innerText = muscle;
+      document.getElementById('detail1RMValue').innerText = `${oneRm} kg`;
+      document.getElementById('detailMonthlyGain').innerText = `${gain} este mes`;
+      document.getElementById('detailNotes').innerText = notes;
+      openModal('modalExerciseDetail');
+    }
+
+    function adjustWeightInput(delta) {
+      const input = document.getElementById('weightInputVal');
+      let val = parseFloat(input.value) || 76.0;
+      val = Math.round((val + delta) * 10) / 10;
+      input.value = val.toFixed(1);
+    }
+
+    function confirmWeightLog() {
+      const val = parseFloat(document.getElementById('weightInputVal').value) || 76.1;
+      state.currentWeight = val;
+      document.getElementById('currentWeightDisplay').innerText = val.toFixed(1);
+      closeModal('modalWeightLog');
+      showToast(`Pesaje guardado: ${val.toFixed(1)} kg`);
+    }
+
+    function saveCustomFoodItem() {
+      const name = document.getElementById('newFoodName').value.trim();
+      const kcal = Number(document.getElementById('newFoodKcal').value) || 150;
+      const p = Number(document.getElementById('newFoodP').value) || 10;
+      const c = Number(document.getElementById('newFoodC').value) || 15;
+      const f = Number(document.getElementById('newFoodF').value) || 5;
+
+      if (!name) {
+        showToast('Ingresa un nombre para el alimento');
+        return;
+      }
+
+      state.foods.unshift({
+        id: Date.now(),
+        name,
+        desc: 'Alimento personalizado',
+        kcal,
+        p,
+        c,
+        f,
+        fav: true,
+        regional: false
+      });
+
+      renderFoodsList();
+      closeModal('modalAddCustomFood');
+      showToast(`"${name}" agregado a tu biblioteca`);
+    }
+
+    function addExerciseToTracker(name) {
+      closeModal('modalExercisePicker');
+      showToast(`"${name}" añadido a tu lista de sobrecarga`);
+    }
+
+    function toggleLike(btn) {
+      const countSpan = btn.querySelector('span:last-child');
+      const current = parseInt(countSpan.innerText);
+      countSpan.innerText = current + 1;
+      btn.classList.add('text-white');
+      showToast('¡Choque de manos enviado! 👏');
+    }
+
+    // --------------------------------------------
+    // 11. DESKTOP VIEWPORT / FRAME CONTROLLER
+    // --------------------------------------------
+    let isFramedMode = true;
+    function toggleDeviceFrame() {
+      isFramedMode = !isFramedMode;
+      const container = document.getElementById('phoneContainer');
+      const statusText = document.getElementById('frameStatusText');
+
+      if (isFramedMode) {
+        container.className = 'relative w-full h-[100dvh] max-w-md bg-black overflow-hidden flex flex-col sm:h-[844px] sm:max-h-[92vh] sm:rounded-[48px] phone-outer-shadow transition-all duration-300';
+        statusText.innerText = 'Encuadre iPhone';
+      } else {
+        container.className = 'relative w-full h-[100dvh] max-w-md bg-black overflow-hidden flex flex-col sm:rounded-none sm:h-screen sm:max-h-none shadow-none transition-all duration-300';
+        statusText.innerText = 'Pantalla Completa';
+      }
+    }
+
+    // Initial render
+    renderFoodsList();
+    updateMacroMath();
+
+    window.addEventListener('message', (e) => {
+      if (e.data?.type === 'SWITCH_KALON_MODE' && (e.data.mode === 'nutrition' || e.data.mode === 'workout')) {
+        switchDashboardMode(e.data.mode);
+      }
+    });
+  </script>
+</body>
+</html>

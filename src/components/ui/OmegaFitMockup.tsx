@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 
 const YTIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
   <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
@@ -26,6 +27,40 @@ export default function OmegaFitMockup() {
 
   return (
     <div className="anim-on-scroll opacity-0 translate-y-6 transition-all duration-700 w-full flex flex-col items-center justify-between">
+
+      {/* ── App Store Header Badge ── */}
+      <div className="w-full max-w-[340px] mb-3.5 px-1">
+        <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-neutral-900/80 border border-neutral-800 shadow-lg backdrop-blur-md">
+          {/* App Icon */}
+          <div className="relative w-12 h-12 rounded-[14px] overflow-hidden shadow-md shadow-black/50 border border-white/10 shrink-0 bg-[#ff6d00]">
+            <Image
+              src="/assets/logo-omegafit.png"
+              alt="OmegaFit Logo"
+              fill
+              className="object-cover"
+              sizes="48px"
+              priority
+            />
+          </div>
+          {/* Details */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center justify-between gap-1">
+              <h3 className="text-sm font-extrabold text-white truncate tracking-tight">OmegaFit</h3>
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-[#ff6d00]/15 text-[#ff8c33] border border-[#ff6d00]/30 shrink-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#ff6d00] animate-pulse" />
+                +20 usuarios diarios
+              </span>
+            </div>
+            <p className="text-[11px] text-neutral-400 truncate mt-0.5">Kinesiología & Rehabilitación</p>
+            <div className="flex items-center gap-1.5 mt-0.5 text-[10px] text-amber-400 font-semibold">
+              {/* <span>★ 4.9</span> */}
+              <span className="text-neutral-600">•</span>
+              <span className="text-neutral-400 font-normal">Salud & Bienestar</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Selector Flotante de Vistas con Sliding Pill estilo iOS */}
       <div className="flex flex-col items-center gap-1.5 mb-3 w-full max-w-[340px]">
         <div className="relative inline-flex w-full p-1 bg-neutral-900/90 border border-neutral-800 rounded-2xl shadow-xl backdrop-blur-md overflow-hidden">
@@ -39,9 +74,7 @@ export default function OmegaFitMockup() {
             id="btnViewAdmin"
             type="button"
             onClick={() => setActiveView("admin")}
-            className={`relative z-10 flex-1 py-2 text-xs font-bold rounded-xl transition-colors duration-200 flex items-center justify-center gap-1.5 cursor-pointer ${activeView === "admin"
-                ? "text-white"
-                : "text-neutral-400 hover:text-white"
+            className={`relative z-10 flex-1 py-2 text-xs font-bold rounded-xl transition-colors duration-200 flex items-center justify-center gap-1.5 cursor-pointer ${activeView === "admin" ? "text-white" : "text-neutral-400 hover:text-white"
               }`}
           >
             <span>👨‍⚕️ Kinesiólogo</span>
@@ -50,9 +83,7 @@ export default function OmegaFitMockup() {
             id="btnViewUser"
             type="button"
             onClick={() => setActiveView("user")}
-            className={`relative z-10 flex-1 py-2 text-xs font-bold rounded-xl transition-colors duration-200 flex items-center justify-center gap-1.5 cursor-pointer ${activeView === "user"
-                ? "text-white"
-                : "text-neutral-400 hover:text-white"
+            className={`relative z-10 flex-1 py-2 text-xs font-bold rounded-xl transition-colors duration-200 flex items-center justify-center gap-1.5 cursor-pointer ${activeView === "user" ? "text-white" : "text-neutral-400 hover:text-white"
               }`}
           >
             <span>📱 Paciente</span>
@@ -67,41 +98,33 @@ export default function OmegaFitMockup() {
         <div className="absolute -left-[5px] top-36 w-[3px] h-9 bg-neutral-600 rounded-l pointer-events-none" />
         <div className="absolute -right-[5px] top-28 w-[3px] h-14 bg-neutral-600 rounded-r pointer-events-none" />
 
-        {/* Dynamic Island / Cámara Frontal */}
-        {/* <div className="absolute top-4 left-1/2 -translate-x-1/2 w-24 h-5 bg-black rounded-full z-30 flex items-center justify-between px-2.5 border border-neutral-800/90 shadow-md pointer-events-none">
-          <div className="w-2.5 h-2.5 rounded-full bg-neutral-900 border border-neutral-700/60 flex items-center justify-center">
-            <div className="w-1 h-1 rounded-full bg-[#152238]" />
-          </div>
-          <div className="w-2 h-2 rounded-full bg-[#0a101d] border border-neutral-800" />
-        </div> */}
-
         {/* Pantalla / Marco del display con transición suave instantánea */}
         <div className="w-full h-full rounded-[40px] overflow-hidden bg-[#09090b] relative z-10 border border-neutral-800/60">
           {/* Vista Kinesiólogo (Admin) */}
           <iframe
             id="phoneIframeAdmin"
-            src="/api/omega/omegamini.html"
+            src="/omegamini.html"
             className={`w-full h-full border-0 absolute inset-0 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${activeView === "admin"
                 ? "opacity-100 scale-100 pointer-events-auto z-10"
                 : "opacity-0 scale-[0.98] pointer-events-none z-0"
               }`}
             title="OmegaFit - Panel Kinesiólogo"
             scrolling="yes"
-            loading="lazy"
+            loading="eager"
             style={{ overscrollBehavior: "contain" }}
           />
 
           {/* Vista Paciente (User) */}
           <iframe
             id="phoneIframeUser"
-            src="/api/omega/omegausermini.html"
+            src="/omegausermini.html"
             className={`w-full h-full border-0 absolute inset-0 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${activeView === "user"
                 ? "opacity-100 scale-100 pointer-events-auto z-10"
                 : "opacity-0 scale-[0.98] pointer-events-none z-0"
               }`}
             title="OmegaFit - Vista Paciente"
             scrolling="yes"
-            loading="lazy"
+            loading="eager"
             style={{ overscrollBehavior: "contain" }}
           />
         </div>

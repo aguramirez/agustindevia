@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "391275065417",
+    "project_id": "notes-app-7ab34",
+    "storage_bucket": "notes-app-7ab34.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:391275065417:android:f8f3ecf7d8bf9d16468f98",
+        "android_client_info": {
+          "package_name": "com.agustindev.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJB9IxIGi0k8iS_AeBqyhEAABKzjL93bI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
