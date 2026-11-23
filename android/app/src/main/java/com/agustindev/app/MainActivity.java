@@ -19,7 +19,7 @@ import java.nio.charset.StandardCharsets;
 public class MainActivity extends BridgeActivity {
     private static final String TAG = "AgustinDev";
     private static final int PERMISSION_REQUEST_CODE = 101;
-    private static final String REGISTER_URL = "http://192.168.1.14:3000/api/notifications/register";
+    private static final String REGISTER_URL = "https://www.agustindev.com.ar/api/notifications/register";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

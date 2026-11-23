@@ -5,8 +5,8 @@ const config: CapacitorConfig = {
   appName: 'AgustinDev',
   webDir: 'public',
   server: {
-    url: 'http://192.168.1.14:3000/calendar',
-    cleartext: true,
+    url: 'https://www.agustindev.com.ar/calendar',
+    cleartext: false,
   },
   plugins: {
     PushNotifications: {
