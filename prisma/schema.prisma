@@ -15,6 +15,8 @@ model Appointment {
   date       DateTime
   time       String   // Added for simpler querying (e.g. "15:00")
   status     String   @default("PENDING") // PENDING, CONFIRMED, CANCELLED
+  meetUrl    String?  // Google Meet link (e.g. "https://meet.google.com/xxx-yyyy-zzz")
+  googleEventId String? // Google Calendar Event ID
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   timezone   String?  // Customer's timezone (e.g. "America/Mexico_City")

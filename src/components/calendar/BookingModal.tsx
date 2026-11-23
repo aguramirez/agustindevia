@@ -334,7 +334,9 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1 text-text-dark dark:text-text-light">Email</label>
+                  <label className="block text-sm font-medium mb-1 text-text-dark dark:text-text-light">
+                    Email <span className="text-xs font-normal text-violet-400 dark:text-violet-300">(a este mail te va a llegar la invitación de Google Meet)</span>
+                  </label>
                   <input required type="email" className="w-full p-3 rounded-lg border border-gray-300 dark:border-white/20 bg-white dark:bg-black/20 text-text-dark dark:text-text-light focus:outline-none focus:border-primary" 
                     value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="tu@email.com" />
                 </div>
@@ -359,7 +361,7 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
                 </p>
               </div>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                Por favor, asegúrate de que tu número de WhatsApp es correcto, ya que te enviaremos la confirmación y los recordatorios por ese medio. Si notas algún error, haz clic en "Volver" para editarlo.
+                Por favor, asegúrate de que tu email y WhatsApp sean correctos. Te enviaremos la confirmación oficial con el enlace de Google Meet a tu casilla de correo.
               </p>
             </div>
           )}
@@ -370,9 +372,9 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
               <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 text-green-500 rounded-full flex items-center justify-center">
                 <span className="material-symbols-outlined text-4xl">check_circle</span>
               </div>
-              <h3 className="text-2xl font-bold text-text-dark dark:text-text-light">¡Turno Agendado!</h3>
-              <p className="text-text-dark/70 dark:text-text-light/70">
-                Te enviamos un mensaje por WhatsApp con los detalles de la reserva. ¡Hablamos pronto!
+              <h3 className="text-2xl font-bold text-text-dark dark:text-text-light">¡Turno Agendado con Éxito!</h3>
+              <p className="text-text-dark/70 dark:text-text-light/70 max-w-sm">
+                Ya te enviamos el link de la llamada a tu mail. Por favor revisa tu casilla de correo para aceptar la invitación de Google Meet.
               </p>
             </div>
           )}

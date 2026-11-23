@@ -221,6 +221,17 @@ export default function AdminCalendar() {
                   </div>
 
                   <div className="flex items-center gap-2 w-full sm:w-auto justify-end pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-200 dark:border-white/10">
+                    {apt.meetUrl && (
+                      <a
+                        href={apt.meetUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="px-3 py-1.5 rounded-lg bg-blue-500/15 hover:bg-blue-500/25 text-blue-400 border border-blue-500/30 text-xs font-bold flex items-center gap-1"
+                      >
+                        <span className="material-symbols-outlined text-[15px]">videocam</span>
+                        <span>Meet</span>
+                      </a>
+                    )}
                     <a
                       href={`https://wa.me/${apt.whatsapp?.replace(/\D/g, "")}`}
                       target="_blank"
@@ -279,6 +290,22 @@ export default function AdminCalendar() {
                   {selectedEvent.status}
                 </span>
               </p>
+              {selectedEvent.meetUrl && (
+                <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/25 flex flex-col gap-1.5">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-blue-400">
+                    <span className="material-symbols-outlined text-[16px]">videocam</span>
+                    <span>Google Meet Programado:</span>
+                  </div>
+                  <a 
+                    href={selectedEvent.meetUrl} 
+                    target="_blank" 
+                    rel="noreferrer" 
+                    className="text-xs text-blue-300 underline font-mono break-all hover:text-white"
+                  >
+                    {selectedEvent.meetUrl}
+                  </a>
+                </div>
+              )}
             </div>
             <div className="p-4 border-t border-gray-200 dark:border-white/10 flex justify-end gap-2 bg-gray-50 dark:bg-black/30">
               <button onClick={() => handleDelete(selectedEvent.id)} className="px-3.5 py-1.5 bg-red-500/20 text-red-400 border border-red-500/30 rounded-lg text-xs font-bold hover:bg-red-500/30">

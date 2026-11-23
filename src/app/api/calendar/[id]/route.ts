@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { createGoogleMeetEvent } from '@/lib/googleCalendar';
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -18,12 +19,29 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   try {
     const { id } = await params;
     const body = await req.json();
-    const updated = await prisma.appointment.update({
+    let updated = await prisma.appointment.update({
       where: { id },
       data: body,
     });
 
     if (body.status === 'CONFIRMED') {
+      // 1. Generar automáticamente el evento en Google Calendar con Google Meet
+      try {
+        const meetData = await createGoogleMeetEvent(updated);
+        if (meetData?.meetUrl) {
+          updated = await prisma.appointment.update({
+            where: { id },
+            data: {
+              meetUrl: meetData.meetUrl,
+              googleEventId: meetData.eventId || null,
+            },
+          });
+        }
+      } catch (meetErr) {
+        console.error("Error generando evento de Google Meet:", meetErr);
+      }
+
+      // 2. Notificar al bot de WhatsApp si está configurado
       const botUrl = process.env.BOT_WEBHOOK_URL || 'http://localhost:3001';
       fetch(`${botUrl}/webhook/confirm-appointment`, {
         method: 'POST',
