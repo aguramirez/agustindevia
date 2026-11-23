@@ -5,7 +5,7 @@ import { sendPushToAdmin } from '@/lib/notifications';
 export async function GET() {
   try {
     const appointments = await prisma.appointment.findMany({
-      orderBy: { date: 'asc' },
+      orderBy: { createdAt: 'desc' }, // Última llamada agendada primero
     });
     return NextResponse.json(appointments);
   } catch (error) {
@@ -31,25 +31,32 @@ export async function POST(req: Request) {
       },
     });
 
-    // 1. Notificar al bot de WhatsApp (Express webhook)
-    const botUrl = process.env.BOT_WEBHOOK_URL || 'http://localhost:3001';
-    fetch(`${botUrl}/webhook/new-appointment`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(appointment),
-    }).catch(e => console.error("Error contactando al bot:", e));
+    // 1. Notificar al bot de WhatsApp si está configurado
+    const botUrl = process.env.BOT_WEBHOOK_URL;
+    if (botUrl) {
+      fetch(`${botUrl}/webhook/new-appointment`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(appointment),
+      }).catch(e => console.error("Error contactando al bot:", e));
+    }
 
-    // 2. Notificación Push a tu celular (Firebase Cloud Messaging / Capacitor)
-    const formattedDate = appointment.date.toLocaleDateString('es-AR', {
-      weekday: 'short',
-      day: 'numeric',
-      month: 'short',
-    });
-    sendPushToAdmin(
-      "📅 ¡Nueva llamada agendada!",
-      `${appointment.name} (${appointment.business || "Sin negocio"}) agendó para el ${formattedDate} a las ${appointment.time}`,
-      { url: "/calendar", id: appointment.id }
-    ).catch(e => console.error("Error enviando push notification:", e));
+    // 2. Notificación Push a tu celular (Firebase Cloud Messaging)
+    try {
+      const formattedDate = appointment.date.toLocaleDateString('es-AR', {
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short',
+      });
+      // IMPORTANTE: En Vercel Serverless se DEBE esperar el envío antes de retornar la respuesta
+      await sendPushToAdmin(
+        "📅 ¡Nueva llamada agendada!",
+        `${appointment.name} (${appointment.business || "Sin negocio"}) agendó para el ${formattedDate} a las ${appointment.time} hs`,
+        { url: "/calendar", id: appointment.id }
+      );
+    } catch (pushErr) {
+      console.error("Error enviando push notification:", pushErr);
+    }
 
     return NextResponse.json(appointment, { status: 201 });
   } catch (error) {

@@ -59,8 +59,11 @@ function getFirebaseAdmin() {
   return null;
 }
 
-// Guardar token en respaldo local
+// Guardar token en respaldo local (solo en entorno local/desarrollo)
 export function saveTokenFallback(token: string) {
+  if (process.env.VERCEL) {
+    return; // En Vercel el filesystem es de solo lectura (/var/task)
+  }
   try {
     let tokens: string[] = [];
     if (fs.existsSync(TOKENS_FALLBACK_FILE)) {
@@ -79,25 +82,35 @@ export function saveTokenFallback(token: string) {
 export async function getAllDeviceTokens(): Promise<string[]> {
   const tokenSet = new Set<string>();
 
-  // 1. Intentar leer de Base de Datos
+  // 1. Intentar leer de Base de Datos PostgreSQL (Neon)
   try {
     const dbTokens = await (prisma as any).deviceToken?.findMany();
     if (dbTokens && Array.isArray(dbTokens)) {
-      dbTokens.forEach((t: { token: string }) => tokenSet.add(t.token));
+      dbTokens.forEach((t: { token: string }) => {
+        if (t.token && !t.token.startsWith('probe_')) {
+          tokenSet.add(t.token);
+        }
+      });
     }
-  } catch {
-    // Si la tabla no existe aún en PostgreSQL, no pasa nada
+  } catch (dbErr) {
+    console.error('Error leyendo deviceToken de DB:', dbErr);
   }
 
-  // 2. Leer de respaldo local
-  try {
-    if (fs.existsSync(TOKENS_FALLBACK_FILE)) {
-      const localTokens = JSON.parse(fs.readFileSync(TOKENS_FALLBACK_FILE, 'utf8'));
-      if (Array.isArray(localTokens)) {
-        localTokens.forEach((t: string) => tokenSet.add(t));
+  // 2. Leer de respaldo local solo en local
+  if (!process.env.VERCEL) {
+    try {
+      if (fs.existsSync(TOKENS_FALLBACK_FILE)) {
+        const localTokens = JSON.parse(fs.readFileSync(TOKENS_FALLBACK_FILE, 'utf8'));
+        if (Array.isArray(localTokens)) {
+          localTokens.forEach((t: string) => {
+            if (t && !t.startsWith('probe_')) {
+              tokenSet.add(t);
+            }
+          });
+        }
       }
-    }
-  } catch {}
+    } catch {}
+  }
 
   return Array.from(tokenSet);
 }
@@ -111,14 +124,14 @@ export async function sendPushToAdmin(
   const app = getFirebaseAdmin();
   if (!app) {
     console.warn(
-      '⚠️ Firebase Admin no está inicializado. Para recibir notificaciones en tu celular, agrega tus credenciales en firebase-service-account.json o la variable de entorno FIREBASE_SERVICE_ACCOUNT_KEY.'
+      '⚠️ Firebase Admin no está inicializado.'
     );
     return { success: false, reason: 'Firebase not configured' };
   }
 
   const tokens = await getAllDeviceTokens();
   if (tokens.length === 0) {
-    console.warn('⚠️ No hay tokens de dispositivos registrados aún. Abre la app en tu celular para registrarlo.');
+    console.warn('⚠️ No hay tokens de dispositivos registrados aún.');
     return { success: false, reason: 'No registered tokens' };
   }
 

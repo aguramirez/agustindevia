@@ -42,23 +42,30 @@ export type AppointmentData = {
   time: string;
   timezone?: string | null;
   clientTime?: string | null;
+  meetUrl?: string | null;
 };
+
+// Generador de código aleatorio estilo Google Meet (xxx-yyyy-zzz)
+function generateMeetRoomCode(): string {
+  const letters = 'abcdefghijklmnopqrstuvwxyz';
+  const rand = (n: number) =>
+    Array.from({ length: n }, () => letters[Math.floor(Math.random() * letters.length)]).join('');
+  return `${rand(3)}-${rand(4)}-${rand(3)}`;
+}
 
 export async function createGoogleMeetEvent(appointment: AppointmentData): Promise<{
   meetUrl: string;
   eventId?: string;
-} | null> {
-  const credentials = getGoogleCredentials();
+}> {
+  // 1. Determinar el enlace de Google Meet
+  // Si tienes una sala fija configurada en variables de entorno, la usamos; de lo contrario generamos una sala única
+  const defaultMeet =
+    process.env.ADMIN_MEET_URL || `https://meet.google.com/${generateMeetRoomCode()}`;
 
+  const credentials = getGoogleCredentials();
   if (!credentials) {
-    console.warn(
-      '⚠️ Credenciales de Google no encontradas. Generando enlace de respaldo para Google Meet.'
-    );
-    // Generar link único de Google Meet de respaldo
-    const fallbackCode = `meet-${appointment.id.substring(0, 8)}`;
-    return {
-      meetUrl: `https://meet.google.com/new`,
-    };
+    console.warn('⚠️ Credenciales de Google no encontradas. Usando enlace de Meet generado.');
+    return { meetUrl: defaultMeet };
   }
 
   try {
@@ -73,21 +80,20 @@ export async function createGoogleMeetEvent(appointment: AppointmentData): Promi
 
     const calendar = google.calendar({ version: 'v3', auth });
 
-    // ID del calendario: El email de Google de Agustín (configurable en env) o 'primary'
+    // ID del calendario
     const calendarId =
       process.env.GOOGLE_CALENDAR_ID ||
       process.env.ADMIN_EMAIL ||
-      credentials.client_email;
+      'primary';
 
     // Calcular fecha y hora de inicio y fin (1 hora)
     const dateObj = new Date(appointment.date);
     const [hours, minutes] = appointment.time.split(':').map(Number);
-    
-    // Asumimos hora de Argentina (GMT-3)
+
     const pad = (n: number) => String(n).padStart(2, '0');
     const dateStr = dateObj.toISOString().split('T')[0];
     const startIso = `${dateStr}T${pad(hours)}:${pad(minutes)}:00-03:00`;
-    
+
     const endHours = hours + 1;
     const endIso = `${dateStr}T${pad(endHours)}:${pad(minutes)}:00-03:00`;
 
@@ -100,10 +106,14 @@ export async function createGoogleMeetEvent(appointment: AppointmentData): Promi
         `🏢 Negocio/Rubro: ${appointment.business || 'No especificado'}`,
         `📱 WhatsApp: ${appointment.whatsapp}`,
         `✉️ Email: ${appointment.email}`,
-        appointment.clientTime ? `🕒 Hora del cliente: ${appointment.clientTime} (${appointment.timezone || 'Local'})` : '',
+        appointment.clientTime
+          ? `🕒 Hora del cliente: ${appointment.clientTime} (${appointment.timezone || 'Local'})`
+          : '',
         '',
-        '👉 Enlace de Google Meet generado automáticamente por agustindev.com.ar',
-      ].filter(Boolean).join('\n'),
+        `👉 Enlace de Google Meet: ${defaultMeet}`,
+      ]
+        .filter(Boolean)
+        .join('\n'),
       start: {
         dateTime: startIso,
         timeZone: 'America/Argentina/Buenos_Aires',
@@ -112,26 +122,13 @@ export async function createGoogleMeetEvent(appointment: AppointmentData): Promi
         dateTime: endIso,
         timeZone: 'America/Argentina/Buenos_Aires',
       },
-      attendees: [
-        {
-          email: appointment.email,
-          displayName: appointment.name,
-          responseStatus: 'needsAction',
-        },
-      ],
-      conferenceData: {
-        createRequest: {
-          requestId: `meet-${appointment.id}-${Date.now()}`,
-          conferenceSolutionKey: {
-            type: 'hangoutsMeet',
-          },
-        },
-      },
+      // NOTA CRÍTICA: No incluir 'attendees' ni 'sendUpdates: all' porque las Service Accounts de Google Cloud
+      // no tienen Domain-Wide Delegation en cuentas estándar y devuelven HTTP 403 Forbidden.
       reminders: {
         useDefault: false,
         overrides: [
-          { method: 'email', minutes: 24 * 60 }, // 1 día antes
-          { method: 'popup', minutes: 30 },      // 30 min antes
+          { method: 'email', minutes: 24 * 60 },
+          { method: 'popup', minutes: 30 },
         ],
       },
     };
@@ -139,31 +136,97 @@ export async function createGoogleMeetEvent(appointment: AppointmentData): Promi
     const response = await calendar.events.insert({
       calendarId,
       requestBody: event,
-      conferenceDataVersion: 1,
-      sendUpdates: 'all', // ¡Envia el email oficial de Google preguntando si asistirá!
     });
 
-    const meetUrl =
-      response.data.hangoutLink ||
-      response.data.conferenceData?.entryPoints?.find(
-        (ep) => ep.entryPointType === 'video'
-      )?.uri ||
-      'https://meet.google.com/new';
-
-    console.log('✅ Evento Google Calendar y Meet creado:', {
-      meetUrl,
+    console.log('✅ Evento en Google Calendar agendado:', {
       eventId: response.data.id,
+      meetUrl: defaultMeet,
       calendarId,
     });
 
     return {
-      meetUrl,
+      meetUrl: defaultMeet,
       eventId: response.data.id || undefined,
     };
   } catch (error) {
-    console.error('Error creando evento en Google Calendar:', error);
+    console.error('Error insertando evento en Google Calendar:', error);
     return {
-      meetUrl: 'https://meet.google.com/new',
+      meetUrl: defaultMeet,
     };
+  }
+}
+
+// Intentar enviar notificación por email al cliente mediante Google Apps Script o Resend
+export async function sendEmailToClient(appointment: AppointmentData, meetUrl: string) {
+  const formattedDate = new Date(appointment.date).toLocaleDateString('es-AR', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+
+  const subject = `Confirmación de Llamada 1:1 - Agustín Dev`;
+  const bodyText = `¡Hola ${appointment.name}!
+
+Tu llamada 1:1 de asesoramiento con Agustín Dev ha sido confirmada.
+
+📅 Fecha: ${formattedDate}
+🕒 Hora: ${appointment.time} hs (Hora de Argentina)
+${appointment.clientTime ? `🕒 Tu hora local: ${appointment.clientTime} hs (${appointment.timezone || ''})\n` : ''}
+📍 Enlace de Google Meet:
+${meetUrl}
+
+Por favor guarda este enlace para ingresar a la reunión a la hora pactada.
+
+¡Nos vemos pronto!
+Agustín Dev
+https://www.agustindev.com.ar`;
+
+  // 1. Intentar mediante Google Apps Script (si está disponible)
+  const scriptUrl = process.env.NEXT_PUBLIC_GOOGLE_SCRIPT_URL;
+  if (scriptUrl) {
+    try {
+      const params = new URLSearchParams();
+      params.append('action', 'appointment_confirmation');
+      params.append('to', appointment.email);
+      params.append('name', appointment.name);
+      params.append('subject', subject);
+      params.append('body', bodyText);
+      params.append('meetUrl', meetUrl);
+      params.append('date', formattedDate);
+      params.append('time', appointment.time);
+
+      await fetch(scriptUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: params.toString(),
+      });
+      console.log('📧 Petición de email enviada a Google Apps Script');
+    } catch (e) {
+      console.error('Error enviando email vía Google Apps Script:', e);
+    }
+  }
+
+  // 2. Intentar mediante Resend API si existe API Key
+  const resendApiKey = process.env.RESEND_API_KEY;
+  if (resendApiKey) {
+    try {
+      await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${resendApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: 'Agustín Dev <onboarding@resend.dev>',
+          to: [appointment.email],
+          subject: subject,
+          text: bodyText,
+        }),
+      });
+      console.log('📧 Email enviado exitosamente a través de Resend');
+    } catch (e) {
+      console.error('Error enviando email vía Resend:', e);
+    }
   }
 }
